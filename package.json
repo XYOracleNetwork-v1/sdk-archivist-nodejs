@@ -1,6 +1,6 @@
 {
   "name": "sdk-archivist-nodejs",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "main": "dist/index.js",
   "repository": "https://github.com/XYOracleNetwork/sdk-archivist-nodejs.git",
   "author": "Arie Trouw <arie.trouw@xyfindables.com>",
