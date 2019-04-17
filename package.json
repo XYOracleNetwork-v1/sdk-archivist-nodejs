@@ -6,7 +6,8 @@
   "author": "Arie Trouw <arie.trouw@xyfindables.com>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "echo 0"
   },
   "devDependencies": {
     "@xyo-network/config-tslint": "^0.1.6",
