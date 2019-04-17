@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+
+// tslint:disable
+
+var XyoArchivistLauncher = require('../dist/scripts/archivist-launcher.js').XyoArchivistLauncher;
+XyoArchivistLauncher.main(process.argv);
