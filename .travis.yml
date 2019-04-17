@@ -7,7 +7,7 @@ cache:
   - node_modules
 addons:
   sonarcloud:
-    organization: xyo-network
+    organization: "xyo-network"
 install:
 - yarn install
 script:
