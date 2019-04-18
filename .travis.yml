@@ -8,8 +8,6 @@ cache:
 addons:
   sonarcloud:
     organization: xyo-network
-    token:
-      secure: PZc6HAkcZ4PHf9elOGX9XlRR1RdxhwChyrG6uCFi4msK1PEF95WtaEe82KqHeS8mhNeNL/lCCRWMwnz227aynkCx3zTQVTYPNMgzih7j5+CCYlgcoIfcQC/bek+X1ZmsB6ChVZ8l1l6mLD7m2IAitqlwKP+G3TWHWYOeAVnSstmAoWia57E3pUPOMjiqbwU+nkV/fKCopvCdLcbflFS5zLbBIwrq2IP5/q4kIY0BRWtjfXr2rvHdSqKaqLDMCtPLzPkWgu0KYPrIPy1RWpV4ygzI+hbOXNmjFYeJCUnTrfZCWGVy3Dsn9KNd+2Iqb7M+xc3PczgayDstGBSwbaHxBitMXBOgW+jU/na2du39dqFj0dp44+GBXQkzBTfBds28TKmStnKZJziQZNeiMk8ESa+l3WGiurMKxEW+OgmMPbGfYjjL/UuAlA5G8rDuO5opF1GxU/AoYiEKZf91ewYjubArlibZTtZQ7YIosAgaKOgz3BXF0bbDDv8Yeaa2iHSwtdHKncm2pZeJeI465TssCn9FaDDUKmixwzgrRsqoH7rd/TFddFtth2Kpu5pzjqkdh6JfXT1+vUmsP/3GBL93vbI7uc5HiAqacvSCgzpdgirl9LiZB1u7akxIsePC//HZ+Th0PqPOymG0l1RsRENzAFFJp+3a7vbtmJg0Si6FRts=
 install:
 - yarn install
 script:
