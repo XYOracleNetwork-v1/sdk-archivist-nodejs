@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.2.32",
+  "version": "0.2.33",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -27,6 +27,7 @@
     "mock-data": "node packages/data-generator/dist/index.js --host=127.0.0.1 --user=admin --password=password --database=Xyo --port=3306"
   },
   "devDependencies": {
+    "@types/ethereumjs-tx": "^1.0.1",
     "@types/graphql": "^14.2.0",
     "@types/jest": "^24.0.11",
     "@types/leveldown": "^4.0.0",
@@ -42,7 +43,9 @@
   "dependencies": {
     "@xyo-network/about-me": "^0.55.6-alpha.0",
     "@xyo-network/attribution-request": "^0.55.6-alpha.0",
+    "@xyo-network/attribution-request.node-network": "^0.55.6-alpha.0",
     "@xyo-network/base": "^0.55.6-alpha.0",
+    "@xyo-network/block-producer": "^0.55.2-alpha.0",
     "@xyo-network/block-witness": "^0.55.6-alpha.0",
     "@xyo-network/bound-witness": "^0.55.6-alpha.0",
     "@xyo-network/consensus": "^0.55.6-alpha.0",
@@ -69,12 +72,14 @@
     "@xyo-network/serializer": "^0.55.6-alpha.0",
     "@xyo-network/signing": "^0.55.6-alpha.0",
     "@xyo-network/signing.ecdsa": "^0.55.6-alpha.0",
+    "@xyo-network/storage": "^0.55.6-alpha.0",
     "@xyo-network/storage.leveldb": "^0.55.6-alpha.0",
     "@xyo-network/transaction-pool": "^0.55.6-alpha.0",
     "@xyo-network/utils": "^0.55.6-alpha.0",
     "@xyo-network/web3-service": "^0.55.6-alpha.0",
     "abstract-leveldown": "^6.0.2",
     "aws-sdk": "^2.440.0",
+    "ethereumjs-tx": "^1.3.7",
     "graphql": "^14.2.1",
     "leveldown": "^5.0.1",
     "levelup": "^4.0.1",

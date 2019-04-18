@@ -4,7 +4,8 @@
     "prefer-array-literal": false,
     "import-name": [
       true, {
-        "lodash": "_"
+        "lodash": "_",
+        "web3": "Web3"
       }
     ]
   }

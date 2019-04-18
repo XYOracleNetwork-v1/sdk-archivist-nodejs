@@ -3,19 +3,19 @@
  * @Date:   Monday, 4th March 2019 1:36:37 pm
  * @Email:  developer@xyfindables.com
  * @Filename: xyo-block-witness-runnable.ts
- 
+
  * @Last modified time: Wednesday, 13th March 2019 4:01:27 pm
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { XyoBase } from "@xyo-network/base"
-import { IXyoRunnable, providerFn } from "@xyo-network/utils"
-import { XyoBlockWitness } from "@xyo-network/block-witness"
+import { XyoBase } from '@xyo-network/base'
+import { IXyoRunnable, providerFn } from '@xyo-network/utils'
+import { XyoBlockWitness } from '@xyo-network/block-witness'
 
 export class XyoBlockWitnessRunnable extends XyoBase implements IXyoRunnable {
 
-  public readonly type = "daemon"
+  public readonly type = 'daemon'
   private blockWitness: XyoBlockWitness | undefined
   private daemonStarted = false
 
@@ -28,7 +28,7 @@ export class XyoBlockWitnessRunnable extends XyoBase implements IXyoRunnable {
   }
 
   public async initialize(): Promise<void> {
-    this.logInfo(`BlockWitness daemon started`)
+    this.logInfo('BlockWitness daemon started')
     this.blockWitness = await this.blockWitnessProvider()
   }
 
