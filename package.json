@@ -7,6 +7,10 @@
   "repository": "https://github.com/XYOracleNetwork/sdk-archivist-nodejs.git",
   "author": "Arie Trouw <arie.trouw@xyfindables.com>",
   "license": "MIT",
+  "files": [
+    "dist",
+    "bin"
+  ],
   "scripts": {
     "pretest": "yarn install",
     "lint": "tslint --config tslint.json src/**/*.ts",
