@@ -20,7 +20,7 @@ import { IXyoNodeNetwork, IBlockWitnessRequestDTO } from '@xyo-network/node-netw
 import { XyoBase } from '@xyo-network/base'
 import { IXyoContentAddressableService } from '@xyo-network/content-addressable-service'
 import { XyoBlockWitnessValidator } from '@xyo-network/block-witness'
-import { IXyoIntersectionTransaction } from '../questions';
+import { IXyoIntersectionTransaction } from '../questions'
 
 const MAX_TRANSACTIONS = 10
 const MIN_TRANSACTIONS = 1
