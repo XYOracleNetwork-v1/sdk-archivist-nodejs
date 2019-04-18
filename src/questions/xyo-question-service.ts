@@ -122,10 +122,12 @@ export class XyoQuestionService extends XyoBase implements IXyoQuestionService {
       )
       return continueFn()
     }
-    let publicKeysToFind = block.publicKeys.reduce((acc, pks) => {
-      acc.push(...pks.keys)
-      return acc
-    }, [] as IXyoPublicKey[])
+    let publicKeysToFind = block.publicKeys.reduce(
+      (acc, pks) => {
+        acc.push(...pks.keys)
+        return acc
+      },
+      [] as IXyoPublicKey[])
     const transfers: IXyoBlockTransfer[] = []
 
     // Loops through attribution data provided and attempt to build attribution proof ending with

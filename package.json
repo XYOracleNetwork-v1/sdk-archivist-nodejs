@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.2.28",
+  "version": "0.2.29",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -35,9 +35,9 @@
     "@types/mysql": "^2.15.5",
     "@types/node": "^11.13.4",
     "@types/yargs": "^13.0.0",
-    "@xyo-network/config-tslint": "^0.1.6",
-    "tslint": "^5.12.1",
-    "typescript": "^3.4.1"
+    "@xyo-network/config-tslint": "^0.1.12",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.3"
   },
   "dependencies": {
     "@xyo-network/about-me": "^0.55.6-alpha.0",
@@ -74,6 +74,7 @@
     "leveldown": "^5.0.1",
     "levelup": "^4.0.1",
     "lodash": "^4.17.11",
+    "merge": "^1.2.1",
     "mysql": "^2.17.1",
     "yargs": "^13.2.2"
   }

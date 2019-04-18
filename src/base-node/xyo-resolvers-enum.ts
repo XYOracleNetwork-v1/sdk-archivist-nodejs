@@ -34,8 +34,8 @@ export enum IResolvers {
   ABOUT_ME_SERVICE = 'aboutMeService',
   GRAPHQL = 'graphql',
   WEB3_SERVICE = 'web3Service',
-  CONTENT_ADDRESSABLE_SERVICE = "contentAddressableService",
-  CONSENSUS_PROVIDER = "consensusProvider",
-  BLOCK_PRODUCER = "blockProducer",
-  BLOCK_WITNESS = "blockWitness"
+  CONTENT_ADDRESSABLE_SERVICE = 'contentAddressableService',
+  CONSENSUS_PROVIDER = 'consensusProvider',
+  BLOCK_PRODUCER = 'blockProducer',
+  BLOCK_WITNESS = 'blockWitness'
 }

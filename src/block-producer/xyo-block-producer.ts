@@ -47,14 +47,14 @@ export class XyoBlockProducer extends XyoDaemon {
     const canSubmit = await this.consensusProvider.canSubmitBlock(this.accountAddress)
     if (!canSubmit) {
       if (this.myTurnToSubmitBlock) {
-        this.logInfo(`Unable to compose a block in window`)
+        this.logInfo('Unable to compose a block in window')
       }
       this.myTurnToSubmitBlock = false
       return
     }
 
     this.myTurnToSubmitBlock = true
-    this.logInfo(`Its my turn to submit a block 🤑`)
+    this.logInfo('Its my turn to submit a block 🤑')
     return this.tryBuildBlock()
   }
 
@@ -97,7 +97,7 @@ export class XyoBlockProducer extends XyoDaemon {
 
       memo.supportingData.push(intersection.data.response)
       return memo
-    }, Promise.resolve({
+    },                                               Promise.resolve({
       previousBlockHash: latestBlockHash,
       requests: [] as string[],
       responses: Buffer.alloc(0),
@@ -105,7 +105,7 @@ export class XyoBlockProducer extends XyoDaemon {
     }))
 
     if (candidate.requests.length === 0) {
-      this.logInfo("No responses for questions in transaction pool, continuing")
+      this.logInfo('No responses for questions in transaction pool, continuing')
       return
     }
 
@@ -131,20 +131,20 @@ export class XyoBlockProducer extends XyoDaemon {
         candidate.responses
       )
 
-      if (!validates) throw new XyoError(`Could not validate block candidate`)
+      if (!validates) throw new XyoError('Could not validate block candidate')
     } catch (e) {
-      this.logError(`Could not validate block candidate`, e)
+      this.logError('Could not validate block candidate', e)
       return
     }
 
-    this.logInfo("GOT THE ENCODED BLOCK", blockHash)
+    this.logInfo('GOT THE ENCODED BLOCK', blockHash)
 
     const quorum = await this.consensusProvider.getStakeQuorumPct()
     const networkActiveStake = await this.consensusProvider.getNetworkActiveStake()
     const target = networkActiveStake.mul(new BN(quorum)).div(new BN(100))
 
     if (target.lte(new BN(0))) {
-      throw new XyoError(`Unknown state where target stake is lte to 0`)
+      throw new XyoError('Unknown state where target stake is lte to 0')
     }
 
     const sigAccumulator: Array<{ pk: string, r: string, s: string, v: number}> = []

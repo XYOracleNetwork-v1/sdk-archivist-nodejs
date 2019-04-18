@@ -10,14 +10,14 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { BaseLifeCyclable, IXyoProviderContainer, depScope, IXyoRunnable, IXyoProvider, createDirectoryIfNotExists } from "@xyo-network/utils"
-import { IResolvers } from "./xyo-resolvers-enum"
-import { PartialNodeOptions } from "./@types"
-import { XyoError } from "@xyo-network/errors"
-import { XyoBase } from "@xyo-network/base"
+import { BaseLifeCyclable, IXyoProviderContainer, depScope, IXyoRunnable, IXyoProvider, createDirectoryIfNotExists } from '@xyo-network/utils'
+import { IResolvers } from './xyo-resolvers-enum'
+import { PartialNodeOptions } from './@types'
+import { XyoError } from '@xyo-network/errors'
+import { XyoBase } from '@xyo-network/base'
 import merge from 'merge'
 import path from 'path'
-import { DEFAULT_NODE_OPTIONS } from "./default-node-options"
+import { DEFAULT_NODE_OPTIONS } from './default-node-options'
 
 export class XyoNodeLifeCycle extends BaseLifeCyclable implements IXyoProviderContainer {
 
@@ -72,7 +72,7 @@ export class XyoNodeLifeCycle extends BaseLifeCyclable implements IXyoProviderCo
 
   public async start() {
     if (!this.delegates) {
-      throw new XyoError(`No delegates to start`)
+      throw new XyoError('No delegates to start')
     }
 
     this.delegates.map(async (runnable, index) => {
@@ -143,7 +143,7 @@ export class XyoNodeLifeCycle extends BaseLifeCyclable implements IXyoProviderCo
 
   public register<T, C>(dep: IResolvers, provider: IXyoProvider<T, C>, scope: depScope): void {
     if (this.cachedModules[dep] !== undefined) {
-      throw new XyoError(`This module has already been resolved, can not be re-registered safely`)
+      throw new XyoError('This module has already been resolved, can not be re-registered safely')
     }
 
     // @ts-ignore
@@ -156,13 +156,13 @@ export class XyoNodeLifeCycle extends BaseLifeCyclable implements IXyoProviderCo
       try {
         await runnable.run()
       } catch (e) {
-        this.logError(`There was an error in runnable`, e)
+        this.logError('There was an error in runnable', e)
       }
 
       if (runnable.type === 'loop') {
         XyoBase.timeout(async () => {
           this.run(runnable)
-        }, runnable.getSleepTime())
+        },              runnable.getSleepTime())
       }
     })
   }

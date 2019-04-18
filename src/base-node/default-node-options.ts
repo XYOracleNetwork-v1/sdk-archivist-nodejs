@@ -4,7 +4,7 @@
  * File Created: Thursday, 18th April 2019 1:55:31 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 1:55:54 pm
+ * Last Modified: Thursday, 18th April 2019 2:32:52 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -103,10 +103,12 @@ export const DEFAULT_NODE_OPTIONS: IXyoNodeOptions = {
         XyStakingConsensus: {
           ipfsHash: 'QmRpytEw449ujLTQzRmyHNoJpYvDtWKktfhKZAciizZYG4',
           address: '0xBFd89f65C0F7B600e720EC3Cd7Ef392424351f6F',
-        }, XyBlockProducer: {
+        },
+        XyBlockProducer: {
           ipfsHash: 'QmR9yrmMGGzE5nqHPGxbkBYNvVHnVG8csfJVZtkgWSbeEX',
           address: '0x6797aceC0E47B7849CDc8F7B5546777681C1d4D1',
-        }, XyGovernance: {
+        },
+        XyGovernance: {
           ipfsHash: 'QmT3zhyoWJ7MA9nqpVP8pSiBaVs5MTqQ2mNNHZ2LbYismQ',
           address: '0x98d1Df3A49Defd8b28e9Feb71d1c7370457643f0',
         }
