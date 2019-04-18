@@ -9,11 +9,6 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-// tslint:disable:no-object-literal-type-assertion
-
-// tslint:disable-next-line:no-reference
-/// <reference path="./@types/merge.d.ts" />
-
 import { IXyoNodeOptions } from './@types'
 import {
   LifeCycleRunner,
