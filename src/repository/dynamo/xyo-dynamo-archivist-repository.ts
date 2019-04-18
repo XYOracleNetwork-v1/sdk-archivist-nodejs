@@ -4,13 +4,11 @@
  * File Created: Tuesday, 16th April 2019 2:04:07 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 16th April 2019 6:07:28 pm
+ * Last Modified: Thursday, 18th April 2019 9:50:38 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
-
-// tslint:disable:prefer-array-literal
 
 import {
   IXyoArchivistRepository,

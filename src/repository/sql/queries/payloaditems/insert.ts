@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 16th April 2019 6:09:36 pm
+ * Last Modified: Thursday, 18th April 2019 9:49:10 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -14,8 +14,6 @@ import { SqlQuery } from "../query"
 import { SqlService } from "../../sql-service"
 import { IXyoSerializationService, IXyoSerializableObject } from "@xyo-network/serialization"
 import _ from 'lodash'
-
-// tslint:disable:prefer-array-literal
 
 export class InsertPayloadItemsQuery extends SqlQuery {
 

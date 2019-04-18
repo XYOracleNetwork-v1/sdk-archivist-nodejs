@@ -375,7 +375,7 @@ async function getConsensusProvider(options: {
 }
 
 async function getAvailableValidatedTransactions(
-  transactions: Array<IXyoTransaction<any>> // tslint:disable-line:prefer-array-literal
+  transactions: Array<IXyoTransaction<any>>
 ): Promise<IXyoTransactionRepository> {
   // @ts-ignore
   const transactionProvider: IXyoTransactionRepository = {
@@ -407,14 +407,12 @@ async function getContentService() {
 
 async function getNodeNetwork(options?: {
   unsubscribe?: () => void,
-  // tslint:disable-next-line:prefer-array-literal
   callbackParams?: Array<{publicKey: string, r: string, s: string, v: number}>
 }): Promise<IXyoNodeNetwork> {
 
   // @ts-ignore
   const nodeNetwork: IXyoNodeNetwork = {
     requestSignaturesForBlockCandidate: (dto, cb) => {
-      // tslint:disable-next-line:prefer-array-literal
       const cbs: Array<{publicKey: string, r: string, s: string, v: number}> =
         (options && options.callbackParams) || []
 
