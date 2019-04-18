@@ -9,16 +9,16 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { IXyoDataResolver } from "@xyo-network/graphql-server"
-import { XyoAboutMeService } from "@xyo-network/about-me"
-import { GraphQLResolveInfo } from "graphql"
+import { IXyoDataResolver } from '@xyo-network/graphql-server'
+import { XyoAboutMeService } from '@xyo-network/about-me'
+import { GraphQLResolveInfo } from 'graphql'
 
-export const serviceDependencies = [`aboutMeService`]
+export const serviceDependencies = ['aboutMeService']
 
 export default class XyoAboutMeResolver implements IXyoDataResolver<any, any, any, any> {
 
-  public static query = `about: XyoAboutMe`
-  public static dependsOnTypes = [`XyoAboutMe`]
+  public static query = 'about: XyoAboutMe'
+  public static dependsOnTypes = ['XyoAboutMe']
 
   constructor (private readonly aboutMeService: XyoAboutMeService) {}
 

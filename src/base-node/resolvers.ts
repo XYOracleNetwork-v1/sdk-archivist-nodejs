@@ -404,6 +404,7 @@ export const resolvers: IXyoResolvers = {
   [IResolvers.DISCOVERY_NETWORK]: discoveryNetwork,
   [IResolvers.TRANSACTION_REPOSITORY]: transactionsRepository,
   [IResolvers.ABOUT_ME_SERVICE]: aboutMe,
+  [IResolvers.GRAPHQL]: graphql,
   [IResolvers.WEB3_SERVICE]: web3Service,
   [IResolvers.CONSENSUS_PROVIDER]: consensusProvider,
   [IResolvers.CONTENT_ADDRESSABLE_SERVICE]: contentAddressableService,
