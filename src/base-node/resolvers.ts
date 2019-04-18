@@ -44,6 +44,7 @@ import { XyoGraphQLServerRunnable } from './runnables/xyo-graphql-server-runnabl
 import { XyoBoundWitnessServerRunnable } from './runnables/xyo-bound-witness-server-runnable'
 import { XyoBlockWitnessRunnable } from './runnables/xyo-block-witness-runnable'
 import { IXyoContentAddressableService } from '@xyo-network/content-addressable-service'
+import { buildGraphQLServer } from '../graphql-apis'
 
 const runnables: IXyoProvider<IXyoRunnable[], any> = {
   async get(container, config) {
@@ -69,6 +70,13 @@ const runnables: IXyoProvider<IXyoRunnable[], any> = {
     }
 
     return delegates
+  }
+}
+
+const graphql: IXyoProvider<XyoGraphQLServer, IXyoGraphQLConfig> = {
+  async get(container, config) {
+    const graphqlServer = await buildGraphQLServer(config, container)
+    return graphqlServer
   }
 }
 
