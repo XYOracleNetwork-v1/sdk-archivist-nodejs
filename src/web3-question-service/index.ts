@@ -35,10 +35,12 @@ export class Web3QuestionService extends XyoBase implements IQuestionsProvider {
       }
 
       // Consider rejecting after a certain amount of time or using exponential back-off
-      XyoBase.timeout(async () => {
-        const result = await this.nextQuestion()
-        resolve(result)
-      }, 3000)
+      XyoBase.timeout(
+        async () => {
+          const result = await this.nextQuestion()
+          resolve(result)
+        },
+        3000)
     }) as Promise<IQuestion<IIntersectionRequest, IProofOfIntersection>>
   }
 
