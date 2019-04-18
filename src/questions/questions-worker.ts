@@ -3,7 +3,6 @@
  * @Date:   Friday, 21st December 2018 11:46:46 am
  * @Email:  developer@xyfindables.com
  * @Filename: questions-worker.ts
- 
  * @Last modified time: Monday, 11th March 2019 3:53:06 pm
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
