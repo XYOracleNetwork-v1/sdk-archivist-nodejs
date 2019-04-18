@@ -9,9 +9,6 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-// tslint:disable:max-line-length
-// tslint:disable:no-implicit-dependencies
-
 import { IXyoResolvers, IXyoDiscoveryConfig, IXyoNodeNetworkConfig, IXyoPeerTransportConfig, IXyoNetworkConfig, IXyoNetworkProcedureCatalogueConfig, IXyoOriginChainConfig, IXyoAboutMeConfig, IXyoGraphQLConfig, IXyoWeb3ServiceConfig } from './@types'
 import { IXyoPeerConnectionDelegate, XyoSimplePeerConnectionDelegate, XyoPeerConnectionHandler } from '@xyo-network/peer-connections'
 import { IXyoNodeNetwork, XyoNodeNetwork } from '@xyo-network/node-network'
@@ -44,7 +41,6 @@ import { XyoGraphQLServerRunnable } from './runnables/xyo-graphql-server-runnabl
 import { XyoBoundWitnessServerRunnable } from './runnables/xyo-bound-witness-server-runnable'
 import { XyoBlockWitnessRunnable } from './runnables/xyo-block-witness-runnable'
 import { IXyoContentAddressableService } from '@xyo-network/content-addressable-service'
-import { buildGraphQLServer } from '../graphql-apis'
 
 const runnables: IXyoProvider<IXyoRunnable[], any> = {
   async get(container, config) {
@@ -70,13 +66,6 @@ const runnables: IXyoProvider<IXyoRunnable[], any> = {
     }
 
     return delegates
-  }
-}
-
-const graphql: IXyoProvider<XyoGraphQLServer, IXyoGraphQLConfig> = {
-  async get(container, config) {
-    const graphqlServer = await buildGraphQLServer(config, container)
-    return graphqlServer
   }
 }
 
@@ -404,7 +393,6 @@ export const resolvers: IXyoResolvers = {
   [IResolvers.DISCOVERY_NETWORK]: discoveryNetwork,
   [IResolvers.TRANSACTION_REPOSITORY]: transactionsRepository,
   [IResolvers.ABOUT_ME_SERVICE]: aboutMe,
-  [IResolvers.GRAPHQL]: graphql,
   [IResolvers.WEB3_SERVICE]: web3Service,
   [IResolvers.CONSENSUS_PROVIDER]: consensusProvider,
   [IResolvers.CONTENT_ADDRESSABLE_SERVICE]: contentAddressableService,
