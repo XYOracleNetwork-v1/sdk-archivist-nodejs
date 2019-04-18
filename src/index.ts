@@ -4,7 +4,7 @@
  * File Created: Wednesday, 17th April 2019 2:51:11 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 1:56:50 pm
+ * Last Modified: Thursday, 18th April 2019 3:49:20 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -26,3 +26,4 @@ export {
   IArchivistRepositoryConfig
 } from './repository'
 export { IXyoComponentArchivistFeatureDetail } from './@types'
+export { XyoNode } from './base-node'
