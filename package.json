@@ -34,7 +34,7 @@
     "@xyo-network/diviner-archivist-client": "^0.55.0",
     "@xyo-network/diviner-archivist-client.graphql": "^0.55.0",
     "@xyo-network/errors": "^0.55.0",
-    "@xyo-network/hashing": "^0.55.0",
+    "@xyo-network/hashing": "^0.56.0",
     "@xyo-network/node-network": "^0.55.0",
     "@xyo-network/origin-block-repository": "^0.55.0",
     "@xyo-network/origin-chain": "^0.55.0",
