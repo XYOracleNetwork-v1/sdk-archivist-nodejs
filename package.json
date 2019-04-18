@@ -1,6 +1,7 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
   "version": "0.2.7",
+  "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/XYOracleNetwork/sdk-archivist-nodejs.git",
