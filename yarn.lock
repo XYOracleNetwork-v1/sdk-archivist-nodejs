@@ -106,6 +106,14 @@
     "@xyo-network/logger" "^0.55.0"
     fast-safe-stringify "^2.0.6"
 
+"@xyo-network/base@^0.56.0":
+  version "0.56.0"
+  resolved "https://registry.yarnpkg.com/@xyo-network/base/-/base-0.56.0.tgz#fa310097024af3070637c1c8d6b0e4787d5bf834"
+  integrity sha512-v0/HyRwFFLtHj7K1ShVhQkfyBLe+5bOUid0cvDHR8cjRMrSPWF1tRngNrVFTEbuh0DTry6SL4iCfOsUYsXZ03g==
+  dependencies:
+    "@xyo-network/logger" "^0.56.0"
+    fast-safe-stringify "^2.0.6"
+
 "@xyo-network/bound-witness@^0.55.0":
   version "0.55.0"
   resolved "https://registry.yarnpkg.com/@xyo-network/bound-witness/-/bound-witness-0.55.0.tgz#7af033da27d54e6fba72c525babdbab6609e42d8"
@@ -161,14 +169,14 @@
     "@xyo-network/storage" "^0.55.0"
     "@xyo-network/utils" "^0.55.0"
 
-"@xyo-network/diviner-archivist-client.graphql@^0.55.0":
-  version "0.55.0"
-  resolved "https://registry.yarnpkg.com/@xyo-network/diviner-archivist-client.graphql/-/diviner-archivist-client.graphql-0.55.0.tgz#3ca7a5d280c0eb3a4c58cb8dcd6cf0abe4ae6f49"
-  integrity sha512-QiNM0RmkYaH52n3tKLti/pmdAnabbBdexyt3b/+H+JvXk1LNoeHpU5hinvJSG7uIpSsUmvGV7EZKl5+Q9sHA7g==
+"@xyo-network/diviner-archivist-client.graphql@^0.56.0":
+  version "0.56.0"
+  resolved "https://registry.yarnpkg.com/@xyo-network/diviner-archivist-client.graphql/-/diviner-archivist-client.graphql-0.56.0.tgz#a555f4b624e7fa6ef4eaf5786f9909d2ec1472e4"
+  integrity sha512-fBRyVHut9PJyo+Ahz0McBNK2MUBn+mCss1/BX5EWJVligwKTKdrEATZsDOCrSaL63Q7uelMM2Y5MkELdLGw5zw==
   dependencies:
-    "@xyo-network/base" "^0.55.0"
-    "@xyo-network/diviner-archivist-client" "^0.55.0"
-    "@xyo-network/meta-list" "^0.55.0"
+    "@xyo-network/base" "^0.56.0"
+    "@xyo-network/diviner-archivist-client" "^0.56.0"
+    "@xyo-network/meta-list" "^0.56.0"
     apollo-cache-inmemory "^1.3.10"
     apollo-client "^2.4.6"
     apollo-link "^1.2.3"
@@ -183,6 +191,13 @@
   integrity sha512-ZxYDLXjSJJLA5Bz4SXOd+hL7ExUO2IcJcHGFmeV1xbAkLr5MO+iKV1BJH3pLxwWXxSEsM/NqsIzntXN4ogFBjw==
   dependencies:
     "@xyo-network/meta-list" "^0.55.0"
+
+"@xyo-network/diviner-archivist-client@^0.56.0":
+  version "0.56.0"
+  resolved "https://registry.yarnpkg.com/@xyo-network/diviner-archivist-client/-/diviner-archivist-client-0.56.0.tgz#338dea44ac67439673aac39694a2ef744a8be93e"
+  integrity sha512-iUspUgGmnxfj2XIiUAN1bgRG/vMi2WdUZj8d0JscbF1EX4P5rXvGEft31+Z4j59hN3EF7LGzkgfK3veab1D8Og==
+  dependencies:
+    "@xyo-network/meta-list" "^0.56.0"
 
 "@xyo-network/errors@^0.55.0":
   version "0.55.0"
@@ -222,10 +237,23 @@
     winston "^3.1.0"
     winston-daily-rotate-file "^3.4.1"
 
+"@xyo-network/logger@^0.56.0":
+  version "0.56.0"
+  resolved "https://registry.yarnpkg.com/@xyo-network/logger/-/logger-0.56.0.tgz#0f0aa8b2fc459408d747ba2efa77b002d30c7b89"
+  integrity sha512-TARigwoF2kK3bB9gnPw8WoFdGjJEE7aAXkKgGDiTFJQI9qKx5stkvsy50dN86M1dDf9A5esgqX2KFvSbeYqWCw==
+  dependencies:
+    winston "^3.1.0"
+    winston-daily-rotate-file "^3.4.1"
+
 "@xyo-network/meta-list@^0.55.0":
   version "0.55.0"
   resolved "https://registry.yarnpkg.com/@xyo-network/meta-list/-/meta-list-0.55.0.tgz#e6c3f676362fb728ba83e4f4b54e51c59000e6bc"
   integrity sha512-hLvCxhp6qRXDjriA4jRQiWMJNRg0uZt5kr6TymdKbp9u5kGjjYQgQZihoGGNPVPcV9B1yJw2wMsBOaPBYavbwQ==
+
+"@xyo-network/meta-list@^0.56.0":
+  version "0.56.0"
+  resolved "https://registry.yarnpkg.com/@xyo-network/meta-list/-/meta-list-0.56.0.tgz#dc533a8ef7e84e6d5f3351aa863cdf6e093ac6ef"
+  integrity sha512-eHKohjN56yQJbJLnJQWvInVdf4ovat+/HfX9ioKpiOHY9ZFgblyQofx4NBwnuvBFz5+zivuJJm+zFLzlk12jPQ==
 
 "@xyo-network/network@^0.55.0":
   version "0.55.0"
