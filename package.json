@@ -1,13 +1,17 @@
 {
-  "name": "sdk-archivist-nodejs",
-  "version": "0.1.0",
+  "name": "@xyo-network/sdk-archivist-nodejs",
+  "version": "0.2.7",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": "https://github.com/XYOracleNetwork/sdk-archivist-nodejs.git",
   "author": "Arie Trouw <arie.trouw@xyfindables.com>",
   "license": "MIT",
   "scripts": {
+    "pretest": "yarn install",
+    "lint": "tslint --config tslint.json src/**/*.ts",
+    "test": "yarn lint",
     "build": "tsc",
-    "test": "echo 0"
+    "develop": "ts-node --files src/cli.ts"
   },
   "devDependencies": {
     "@xyo-network/config-tslint": "^0.1.6",

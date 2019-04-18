@@ -68,3 +68,5 @@ data/
 archivistdata/
 archivist-db/
 sentinel-db/
+
+\.scannerwork/\.sonar_lock

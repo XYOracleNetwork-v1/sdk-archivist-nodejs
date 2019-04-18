@@ -1,34 +1,33 @@
 {
-  "cSpell.words": [
-    "Deserializer",
-    "Deserializers",
-    "Findables",
-    "IXyo",
-    "Serializables",
-    "Truthy",
-    "blockchain",
-    "cryptographically",
-    "deserializable",
-    "deserialization",
-    "deserialize",
-    "deserialized",
-    "deserializing",
-    "ecdsa",
-    "hasher",
-    "lerna",
-    "leveldb",
-    "pojo",
-    "promisify",
-    "repo",
-    "rssi",
-    "ryanxyo",
-    "secp",
-    "serializable",
-    "serializer",
-    "serializers",
-    "transpiled",
-    "transpiles",
-    "xyfindables"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "psi-header.changes-tracking": {
+    "isActive": true,
+    "autoHeader": "manualSave"
+  },
+  "psi-header.config": {
+    "forceToTop": true,
+    "blankLinesAfter": 1,
+    "author": "XYO Development Team",
+    "authorEmail": "support@xyo.network",
+    "copyrightHolder": "XY - The Persistent Company"
+  },
+  "psi-header.variables": [
+    ["projectCreationYear", "2017"]
   ],
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "psi-header.templates": [
+    {
+      "language": "*",
+      "template": [
+        "File: <<filename>>",
+        "Project: <<projectname>>",
+        "File Created: <<filecreated('dddd, Do MMMM YYYY h:mm:ss a')>>",
+        "Author: <<author>> (<<authoremail>>)",
+        "-----",
+        "Last Modified: <<dateformat('dddd, Do MMMM YYYY h:mm:ss a')>>",
+        "Modified By: <<author>> (<<authoremail>>>)",
+        "-----",
+        "Copyright <<projectCreationYear>> - <<year>> <<copyrightholder>>"
+      ]
+    }
+  ]
 }
