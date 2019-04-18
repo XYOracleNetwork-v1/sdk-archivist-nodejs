@@ -63,10 +63,4 @@ dist/
 # OS specific
 .DS_Store
 
-# data
-data/
-archivistdata/
-archivist-db/
-sentinel-db/
-
 \.scannerwork/
