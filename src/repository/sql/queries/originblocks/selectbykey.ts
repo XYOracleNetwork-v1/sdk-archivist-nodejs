@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 16th April 2019 6:09:23 pm
+ * Last Modified: Thursday, 18th April 2019 9:49:00 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -16,8 +16,6 @@ import { IXyoSerializationService } from "@xyo-network/serialization"
 import { IXyoBoundWitness } from '@xyo-network/bound-witness'
 import _ from 'lodash'
 import { IXyoPublicKey } from "@xyo-network/signing"
-
-// tslint:disable:prefer-array-literal
 
 export class SelectOriginBlocksByKeyQuery extends SqlQuery {
 

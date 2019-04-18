@@ -9,8 +9,6 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-// tslint:disable:prefer-template
-
 import { XyoError } from '@xyo-network/errors'
 import { IXyoHashProvider } from '@xyo-network/hashing'
 import { IXyoTransactionRepository } from '@xyo-network/transaction-pool'
@@ -65,8 +63,8 @@ export class XyoBlockProducer extends XyoDaemon {
 
     if (Object.keys(list).length < MIN_TRANSACTIONS) {
       this.logInfo(
-        'There are ' + Object.keys(list).length + ' transactions in the transaction pool, ' +
-        'which is not enough transactions to process'
+        `There are ${Object.keys(list).length}\
+        transactions in the transaction pool, which is not enough transactions to process`
       )
       return
     }
@@ -149,7 +147,6 @@ export class XyoBlockProducer extends XyoDaemon {
       throw new XyoError(`Unknown state where target stake is lte to 0`)
     }
 
-    // tslint:disable-next-line:prefer-array-literal
     const sigAccumulator: Array<{ pk: string, r: string, s: string, v: number}> = []
     let totalStakeAccumulated = new BN(0)
 
@@ -271,7 +268,7 @@ export class XyoBlockProducer extends XyoDaemon {
   }
 
   private async submitBlock(
-    sigAccumulator: { pk: string, r: string, s: string, v: number}[], // tslint:disable-line:array-type
+    sigAccumulator: Array<{ pk: string, r: string, s: string, v: number}>,
     mySig: ISignatureComponents,
     stakeConsensusBlockHeight: BN,
     latestBlockHash: string,

@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 16th April 2019 6:10:26 pm
+ * Last Modified: Thursday, 18th April 2019 9:49:53 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -16,8 +16,6 @@ import { IXyoSerializationService } from "@xyo-network/serialization"
 import _ from 'lodash'
 import { OriginChainBlockCountQuery } from "./originchainblockcount"
 import { IXyoIntersectionsList } from "../../@types"
-
-// tslint:disable:prefer-array-literal
 
 export class IntersectionsQuery extends SqlQuery {
 

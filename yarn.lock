@@ -349,9 +349,9 @@
     bn.js "^4.11.8"
 
 "@xyo-network/config-tslint@^0.1.6":
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/@xyo-network/config-tslint/-/config-tslint-0.1.7.tgz#09dd608129c4576566e25972848ef7dd8ee81fe2"
-  integrity sha512-27MV56FAO8B8NpyFf6QTOkYrK+p8sWYtpMJM8EVU0DWsX+Ym4Sv0LF4UcbsaJnfbu2IIxHxg2XV+Ds9+6qfZ8w==
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@xyo-network/config-tslint/-/config-tslint-0.1.9.tgz#ac704e5f220002eef1097519b55291dec7b40b0a"
+  integrity sha512-ELgM2CqLYlqyJxds8mwULhBv+u+4Ux7RdHSxphRLeyWpHxZrPBcMwhaFITt+xa0wsA46Cj4OVAXoktWgfbJfSw==
   dependencies:
     tslint-config-airbnb "^5.11.0"
     tslint-react "^3.6.0"
@@ -592,33 +592,41 @@
     "@xyo-network/utils" "^0.55.2-alpha.0"
 
 "@xyo-network/sdk-archivist-nodejs@^0.2.9":
-  version "0.2.13"
-  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-archivist-nodejs/-/sdk-archivist-nodejs-0.2.13.tgz#6c0c4cc2ed62e2fb89d75ed9529b660ddde3c788"
-  integrity sha512-C3yoBiw/ilGoul++xDMLyiog8HhLSJFNPYtki11RCDBGhOHPxd1//fAgdIV533UjS0yQ8ghZfV/Ef1bJ8xhvRg==
+  version "0.2.15"
+  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-archivist-nodejs/-/sdk-archivist-nodejs-0.2.15.tgz#49127b251459e0f8216a86b8cfc5716cace49306"
+  integrity sha512-cmCwSnoLUrKSVGNTofpmLCRPV/E+qhdH3rXgjxS/XLdg07VkIfAFB5+L5qs31X5QOehGvQzqDYP9YygEQgLmwA==
   dependencies:
-    "@types/leveldown" "^4.0.0"
-    "@types/levelup" "^3.1.0"
-    "@types/lodash" "^4.14.123"
-    "@types/mysql" "^2.15.5"
-    "@types/node" "^11.13.4"
+    "@xyo-network/about-me" "^0.55.2-alpha.0"
+    "@xyo-network/attribution-request" "^0.55.2-alpha.0"
     "@xyo-network/base" "^0.55.2-alpha.0"
+    "@xyo-network/block-witness" "^0.55.2-alpha.0"
     "@xyo-network/bound-witness" "^0.55.2-alpha.0"
+    "@xyo-network/consensus" "^0.55.2-alpha.0"
+    "@xyo-network/content-addressable-service" "^0.55.2-alpha.0"
     "@xyo-network/diviner-archivist-client" "^0.55.2-alpha.0"
     "@xyo-network/diviner-archivist-client.graphql" "^0.55.2-alpha.0"
     "@xyo-network/errors" "^0.55.2-alpha.0"
+    "@xyo-network/graphql-server" "^0.55.2-alpha.0"
     "@xyo-network/hashing" "^0.55.2-alpha.0"
+    "@xyo-network/heuristics-common" "^0.55.2-alpha.0"
     "@xyo-network/node-network" "^0.55.2-alpha.0"
     "@xyo-network/origin-block-repository" "^0.55.2-alpha.0"
     "@xyo-network/origin-chain" "^0.55.2-alpha.0"
     "@xyo-network/serialization" "^0.55.2-alpha.0"
     "@xyo-network/serialization-schema" "^0.55.2-alpha.0"
+    "@xyo-network/serializer" "^0.55.2-alpha.0"
     "@xyo-network/signing" "^0.55.2-alpha.0"
+    "@xyo-network/signing.ecdsa" "^0.55.2-alpha.0"
+    "@xyo-network/transaction-pool" "^0.55.2-alpha.0"
+    "@xyo-network/utils" "^0.55.2-alpha.0"
     abstract-leveldown "^6.0.2"
     aws-sdk "^2.438.0"
+    graphql "^14.2.1"
     leveldown "^5.0.1"
     levelup "^4.0.1"
     lodash "^4.17.11"
     mysql "^2.16.0"
+    yargs "^13.2.2"
 
 "@xyo-network/serialization-schema@^0.55.2-alpha.0":
   version "0.55.2-alpha.0"
@@ -1509,7 +1517,7 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
-concat-stream@hugomrdias/concat-stream#feat/smaller:
+"concat-stream@github:hugomrdias/concat-stream#feat/smaller":
   version "2.0.0"
   resolved "https://codeload.github.com/hugomrdias/concat-stream/tar.gz/057bc7b5d6d8df26c8cf00a3f151b6721a0a8034"
   dependencies:
@@ -3379,7 +3387,7 @@ napi-macros@~1.8.1:
   resolved "https://registry.yarnpkg.com/napi-macros/-/napi-macros-1.8.2.tgz#299265c1d8aa401351ad0675107d751228c03eda"
   integrity sha512-Tr0DNY4RzTaBG2W2m3l7ZtFuJChTH6VZhXVhkGGjF/4cZTt+i8GcM9ozD+30Lmr4mDoZ5Xx34t2o4GJqYWDGcg==
 
-ndjson@hugomrdias/ndjson#feat/readable-stream3:
+"ndjson@github:hugomrdias/ndjson#feat/readable-stream3":
   version "1.5.0"
   resolved "https://codeload.github.com/hugomrdias/ndjson/tar.gz/4db16da6b42e5b39bf300c3a7cde62abb3fa3a11"
   dependencies:

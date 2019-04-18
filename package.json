@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.2.15",
+  "version": "0.2.16",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,7 +20,7 @@
   },
   "scripts": {
     "pretest": "yarn install",
-    "lint": "tslint --config tslint.json src/**/*.ts",
+    "lint": "tslint --config tslint.json --project tsconfig.json src/**/*.ts",
     "test": "yarn lint",
     "build": "tsc",
     "develop": "ts-node --files src/cli.ts",

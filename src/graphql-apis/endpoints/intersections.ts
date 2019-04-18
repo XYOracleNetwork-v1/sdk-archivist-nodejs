@@ -17,8 +17,8 @@ export const serviceDependencies = [`archivistRepository`]
 
 export default class XyoGetIntersectionsResolver implements IXyoDataResolver<any, any, any, any> {
 
-  // tslint:disable-next-line:max-line-length
-  public static query = `intersections(publicKeyA: String!, publicKeyB: String!, limit: Int!, cursor: String): XyoIntersectionList!`
+  public static query =
+    `intersections(publicKeyA: String!, publicKeyB: String!, limit: Int!, cursor: String): XyoIntersectionList!`
   public static dependsOnTypes = [`XyoIntersectionList`]
 
   constructor (private readonly archivistRepository: IXyoArchivistRepository) {}
