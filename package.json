@@ -40,7 +40,7 @@
     "@xyo-network/origin-chain": "^0.55.0",
     "@xyo-network/serialization": "^0.55.0",
     "@xyo-network/serialization-schema": "^0.55.0",
-    "@xyo-network/signing": "^0.55.0",
+    "@xyo-network/signing": "^0.56.0",
     "abstract-leveldown": "^6.0.2",
     "aws-sdk": "^2.438.0",
     "leveldown": "^5.0.1",
