@@ -184,6 +184,13 @@
   dependencies:
     "@xyo-network/meta-list" "^0.55.0"
 
+"@xyo-network/diviner-archivist-client@^0.56.0":
+  version "0.56.0"
+  resolved "https://registry.yarnpkg.com/@xyo-network/diviner-archivist-client/-/diviner-archivist-client-0.56.0.tgz#338dea44ac67439673aac39694a2ef744a8be93e"
+  integrity sha512-iUspUgGmnxfj2XIiUAN1bgRG/vMi2WdUZj8d0JscbF1EX4P5rXvGEft31+Z4j59hN3EF7LGzkgfK3veab1D8Og==
+  dependencies:
+    "@xyo-network/meta-list" "^0.56.0"
+
 "@xyo-network/errors@^0.55.0":
   version "0.55.0"
   resolved "https://registry.yarnpkg.com/@xyo-network/errors/-/errors-0.55.0.tgz#36c826bfec4b493391a535732c5f9651efae75d0"
@@ -226,6 +233,11 @@
   version "0.55.0"
   resolved "https://registry.yarnpkg.com/@xyo-network/meta-list/-/meta-list-0.55.0.tgz#e6c3f676362fb728ba83e4f4b54e51c59000e6bc"
   integrity sha512-hLvCxhp6qRXDjriA4jRQiWMJNRg0uZt5kr6TymdKbp9u5kGjjYQgQZihoGGNPVPcV9B1yJw2wMsBOaPBYavbwQ==
+
+"@xyo-network/meta-list@^0.56.0":
+  version "0.56.0"
+  resolved "https://registry.yarnpkg.com/@xyo-network/meta-list/-/meta-list-0.56.0.tgz#dc533a8ef7e84e6d5f3351aa863cdf6e093ac6ef"
+  integrity sha512-eHKohjN56yQJbJLnJQWvInVdf4ovat+/HfX9ioKpiOHY9ZFgblyQofx4NBwnuvBFz5+zivuJJm+zFLzlk12jPQ==
 
 "@xyo-network/network@^0.55.0":
   version "0.55.0"
