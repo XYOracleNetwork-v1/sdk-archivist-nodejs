@@ -1,8 +1,9 @@
 /*
- * @Author: XY | The Findables Company <xyo-network>
+ * @Author: XY | The Findables Company <ryanxyo>
  * @Date:   Friday, 21st December 2018 11:46:46 am
  * @Email:  developer@xyfindables.com
  * @Filename: questions-worker.ts
+ * @Last modified by: ryanxyo
  * @Last modified time: Monday, 11th March 2019 3:53:06 pm
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
@@ -61,7 +62,7 @@ export class QuestionsWorker extends XyoBase {
         this.logInfo('Found intersection!', q.getId!())
         await this.handleQuestionAnswered(q.getId!(), q, proof.answer)
       } else {
-        this.logInfo('No intersection found, retrying', q.getId!())
+        this.logInfo(`No intersection found, retrying question: ${q.getId!()}`)
       }
 
       return
