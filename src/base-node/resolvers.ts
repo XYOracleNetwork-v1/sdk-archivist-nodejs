@@ -46,7 +46,6 @@ import { XyoWeb3Service } from '@xyo-network/web3-service'
 import { Web3QuestionService } from '../web3-question-service'
 import { XyoIpfsClient, XyoIpfsClientCtorOptions } from '@xyo-network/ipfs-client'
 import { XyoScscConsensusProvider, IConsensusProvider } from '@xyo-network/consensus'
-import { XyoBlockProducer } from '@xyo-network/block-producer'
 import { XyoBlockWitness, XyoBlockWitnessValidator } from '@xyo-network/block-witness'
 import { XyoGraphQLServerRunnable } from './runnables/xyo-graphql-server-runnable'
 import { XyoBoundWitnessServerRunnable } from './runnables/xyo-bound-witness-server-runnable'
@@ -55,6 +54,7 @@ import { XyoQuestionsWorkerRunnable } from './runnables/xyo-questions-worker-run
 import { XyoBlockProducerRunnable } from './runnables/xyo-block-producer-runnable'
 import { XyoBlockWitnessRunnable } from './runnables/xyo-block-witness-runnable'
 import { IXyoContentAddressableService } from '@xyo-network/content-addressable-service'
+import { XyoBlockProducer } from '../block-producer'
 
 const graphql: IXyoProvider<XyoGraphQLServer, IXyoGraphQLConfig> = {
   async get(container, config) {

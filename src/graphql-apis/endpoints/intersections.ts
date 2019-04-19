@@ -9,17 +9,17 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { IXyoDataResolver } from "@xyo-network/graphql-server"
-import { GraphQLResolveInfo } from "graphql"
-import { IXyoArchivistRepository } from "../../repository"
+import { IXyoDataResolver } from '@xyo-network/graphql-server'
+import { GraphQLResolveInfo } from 'graphql'
+import { IXyoArchivistRepository } from '../../repository'
 
-export const serviceDependencies = [`archivistRepository`]
+export const serviceDependencies = ['archivistRepository']
 
 export default class XyoGetIntersectionsResolver implements IXyoDataResolver<any, any, any, any> {
 
   public static query =
-    `intersections(publicKeyA: String!, publicKeyB: String!, limit: Int!, cursor: String): XyoIntersectionList!`
-  public static dependsOnTypes = [`XyoIntersectionList`]
+    'intersections(publicKeyA: String!, publicKeyB: String!, limit: Int!, cursor: String): XyoIntersectionList!'
+  public static dependsOnTypes = ['XyoIntersectionList']
 
   constructor (private readonly archivistRepository: IXyoArchivistRepository) {}
 

@@ -11,7 +11,7 @@
 
 import { XyoBase } from '@xyo-network/base'
 import { IXyoRunnable, providerFn } from '@xyo-network/utils'
-import { XyoBlockProducer } from '@xyo-network/block-producer'
+import { XyoBlockProducer } from '../../block-producer'
 
 export class XyoBlockProducerRunnable extends XyoBase implements IXyoRunnable {
   public readonly type = 'daemon'

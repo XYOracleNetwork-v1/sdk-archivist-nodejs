@@ -10,18 +10,18 @@
  */
 
 import { IXyoHashProvider } from '@xyo-network/hashing'
-import { IXyoDataResolver } from "@xyo-network/graphql-server"
+import { IXyoDataResolver } from '@xyo-network/graphql-server'
 import { IXyoSerializationService } from '@xyo-network/serialization'
 import { IXyoPublicKey } from '@xyo-network/signing'
 import { XyoBase } from '@xyo-network/base'
 import { IXyoArchivistRepository } from '../../repository'
 
-export const serviceDependencies = [`archivistRepository`, `hashProvider`, `serializationService`]
+export const serviceDependencies = ['archivistRepository', 'hashProvider', 'serializationService']
 
 export default class XyoGetBlocksByPublicKeyResolver extends XyoBase implements IXyoDataResolver<any, any, any, any> {
 
-  public static query = `blocksByPublicKey(publicKeys: [String!]): [XyoBlockCollection]`
-  public static dependsOnTypes = [`XyoBlockCollection`]
+  public static query = 'blocksByPublicKey(publicKeys: [String!]): [XyoBlockCollection]'
+  public static dependsOnTypes = ['XyoBlockCollection']
 
   constructor(
     private readonly archivistRepository: IXyoArchivistRepository,
@@ -97,7 +97,7 @@ export default class XyoGetBlocksByPublicKeyResolver extends XyoBase implements 
       }
 
     } catch (e) {
-      this.logError(`There was an error getting block-collection from public-key`, e)
+      this.logError('There was an error getting block-collection from public-key', e)
       return {
         blocks: [],
         keySet: [publicKey]

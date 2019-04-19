@@ -4,7 +4,7 @@
  * File Created: Thursday, 18th April 2019 1:55:31 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 1:55:32 pm
+ * Last Modified: Thursday, 18th April 2019 4:46:16 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -107,9 +107,9 @@ export class XyoNodeLifeCycle extends BaseLifeCyclable implements IXyoProviderCo
 
     if (instanceLifeCycle === 'singleton') {
       const cachedModule = this.cachedModules[provider]
-      if (cachedModule === null) {
+      /*if (cachedModule === null) {
         throw new XyoError(`Circular dependency detected for provider ${provider}`)
-      }
+      }*/
 
       if (cachedModule)return cachedModule as T
     }
