@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 9:49:46 am
+ * Last Modified: Thursday, 18th April 2019 2:49:38 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -76,7 +76,7 @@ export class EntitiesQuery extends SqlQuery {
     }
 
     const list = _.chain(entitiesResults)
-      .map((result) => {
+      .map((result: any) => {
         return {
           firstKnownPublicKey: this.serialization
             .deserialize(result.publicKey)
@@ -89,7 +89,7 @@ export class EntitiesQuery extends SqlQuery {
           },
           mostRecentIndex: result.maxIndex,
           allPublicKeys: _.chain(result.allPublicKeys).split(',')
-            .map(str => this.serialization
+            .map((str: any) => this.serialization
               .deserialize(str.trim())
               .hydrate<IXyoPublicKey>())
             .value()

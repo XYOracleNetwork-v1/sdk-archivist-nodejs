@@ -9,16 +9,16 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { IXyoDataResolver } from "@xyo-network/graphql-server"
-import { GraphQLResolveInfo } from "graphql"
-import { IXyoArchivistRepository } from "../../repository"
+import { IXyoDataResolver } from '@xyo-network/graphql-server'
+import { GraphQLResolveInfo } from 'graphql'
+import { IXyoArchivistRepository } from '../../repository'
 
-export const serviceDependencies = [`archivistRepository`]
+export const serviceDependencies = ['archivistRepository']
 
 export default class GetEntitiesResolver implements IXyoDataResolver<any, any, any, any> {
 
-  public static query = `entities(limit: Int!, cursor: String): XyoEntitiesList!`
-  public static dependsOnTypes = [`XyoEntitiesList`]
+  public static query = 'entities(limit: Int!, cursor: String): XyoEntitiesList!'
+  public static dependsOnTypes = ['XyoEntitiesList']
 
   constructor (private readonly archivistRepository: IXyoArchivistRepository) {}
 

@@ -173,7 +173,7 @@ async function main(args: Arguments<any>) {
     entity.originChain = entity.originChain || []
     entity.originChain.push(boundWitness)
     return blocks
-  }, Promise.resolve([]) as Promise<IHashBoundWitnessPair[]>)
+  },                                                           Promise.resolve([]) as Promise<IHashBoundWitnessPair[]>)
 
   const boundWitnesses = await dataSet.reduce(async (interactionsPromise, interaction, index) => {
     const interactions = await interactionsPromise
@@ -228,30 +228,32 @@ async function main(args: Arguments<any>) {
     clientEntity.originChain = clientEntity.originChain || []
     clientEntity.originChain.push(boundWitness)
     return interactions
-  }, Promise.resolve(genesisBlocks))
+  },                                          Promise.resolve(genesisBlocks))
 
-  const repo = await createArchivistSqlRepository({
-    name: 'MySql',
-    platform: 'mysql',
-    host: args.host as string,
-    user: args.user as string,
-    password: args.password as string,
-    database: args.database as string,
-    port: args.port as number
-  }, serializer)
+  const repo = await createArchivistSqlRepository(
+    {
+      name: 'MySql',
+      platform: 'mysql',
+      host: args.host as string,
+      user: args.user as string,
+      password: args.password as string,
+      database: args.database as string,
+      port: args.port as number
+    },
+    serializer)
 
   await boundWitnesses.reduce(async (memo, data) => {
     await memo
     return repo.addOriginBlock(data.hash, data.boundWitness)
-  }, Promise.resolve())
+  },                          Promise.resolve())
 
   console.log(`\nCreated ${Object.keys(entitiesById).length} key-pairs`)
   Object.keys(entitiesById).forEach((k) => {
     const signer = entitiesById[k].signer
-    console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`)
+    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
     console.log(`Public Key: ${signer.publicKey.serializeHex()}`)
     console.log(`Private Key: ${signer.privateKey}`)
-    console.log(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n`)
+    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n')
   })
 }
 
@@ -303,7 +305,7 @@ async function tryBuildHeuristics(
       const serializable = new XyoKeyValueSerializable(key, val)
       memo.push(serializable)
       return memo
-    }, Promise.resolve(heuristicsCollection))
+    },      Promise.resolve(heuristicsCollection))
 }
 
 function createPublicKeys(data: IXyoInteraction[]): IXyoEntityById {
@@ -311,14 +313,14 @@ function createPublicKeys(data: IXyoInteraction[]): IXyoEntityById {
     memo[item.party1Id] = (memo[item.party1Id] || 0) + 1
     memo[item.party2Id] = (memo[item.party2Id] || 0) + 1
     return memo
-  }, {})
+  },                                  {})
 
   const signerProvider = getSignerProvider('secp256k1-sha256')
   return Object.keys(uniqueKeyCounts)
     .reduce((memo: {[s: string]: { signer: IXyoSigner}}, key) => {
       memo[key] = { signer: signerProvider.newInstance() }
       return memo
-    }, {})
+    },      {})
 }
 
 if (require.main === module) {

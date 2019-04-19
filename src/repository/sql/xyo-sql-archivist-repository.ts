@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 9:50:04 am
+ * Last Modified: Thursday, 18th April 2019 2:40:24 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -209,7 +209,7 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
       await originBlockPartyIds.reduce(async (promiseChain, originBlockPartyId) => {
         await promiseChain
         return this.linkPreviousInsertOriginBlockParties(originBlockPartyId)
-      }, Promise.resolve() as Promise<void>)
+      },                               Promise.resolve() as Promise<void>)
 
       await originBlock.parties.reduce(async (promiseChain, blockParty) => {
         await promiseChain
@@ -233,8 +233,8 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
             originBlockPartyIndex,
             providesAttributionForSignedHash
           ) VALUES ${valuesQuery};
-        `, [])
-      }, Promise.resolve())
+        `,                          [])
+      },                               Promise.resolve())
 
       const idHierarchy = {
         originBlockId,
@@ -249,7 +249,7 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
         `Successfully created an origin block with component parts:\n${XyoBase.stringify(idHierarchy)}`
       )
     } catch (err) {
-      this.logError(`Failed to add an origin block`, err)
+      this.logError('Failed to add an origin block', err)
       throw err
     }
   }
@@ -278,7 +278,7 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
         const pkSet = await this.tryCreatePublicKeyset(publicKeySet.keys)
         aggregator.push(pkSet)
         return aggregator
-      }, Promise.resolve([]) as Promise<Array<{publicKeyGroupId: number, publicKeyIds: number[]}>>)
+      },                                                 Promise.resolve([]) as Promise<Array<{publicKeyGroupId: number, publicKeyIds: number[]}>>)
 
       const allPublicKeyIds = _.chain(result).map('publicKeyIds').flatten().join(', ').value()
       const allPublicKeyGroupIds = _.chain(result).map('publicKeyGroupId').join(', ').value()
@@ -286,7 +286,7 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
       this.logInfo(`Succeeded in creating public key group with ids ${allPublicKeyGroupIds}`)
       return result
     } catch (err) {
-      this.logError(`Failed to create Public Keys`, err)
+      this.logError('Failed to create Public Keys', err)
       throw err
     }
   }
@@ -295,7 +295,7 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
     publicKeySet: IXyoPublicKey[]
   ): Promise<{publicKeyGroupId: number, publicKeyIds: number[]}> {
     try {
-      const pks = _.chain(publicKeySet).map(key => key.serializeHex()).value()
+      const pks = _.chain(publicKeySet).map((key: any) => key.serializeHex()).value()
       const existingKeys = await new SelectPublicKeysByKeysQuery(this.sqlService, this.serializationService).send(pks)
 
       if (existingKeys.length === 0) {
@@ -311,7 +311,7 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
 
           ids.push(newId)
           return ids
-        }, Promise.resolve([]) as Promise<number[]>)
+        },                                             Promise.resolve([]) as Promise<number[]>)
 
         return {
           publicKeyGroupId,
@@ -326,7 +326,7 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
       const aggregateMismatchedPublicKeyGroups = async () => {
         const sortedKeys = _.chain(keysGroupedByPublicKeyGroupId).keys().sortBy().value()
         const firstKey = _.chain(sortedKeys).first().parseInt(10).value()
-        const otherKeys = _.chain(sortedKeys).drop(1).map(sk => parseInt(sk, 10)).value()
+        const otherKeys = _.chain(sortedKeys).drop(1).map((sk: any) => parseInt(sk, 10)).value()
         await this.sqlService.query(XyoArchivistSqlRepository.qryAggrigateKeys, [firstKey, otherKeys])
         await this.sqlService.query(XyoArchivistSqlRepository.qryDeleteKeys, [otherKeys])
         return firstKey
@@ -343,7 +343,7 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
         const publicKeyGroupId = _.chain(keysGroupedByPublicKeyGroup).keys().first().parseInt(10).value()
         const newlyCreatedPublicKeyIds = await _.reduce(
           keysThatNeedToBeCreated,
-          async (promiseChain, keyThatNeedToBeCreated) => {
+          async (promiseChain: any, keyThatNeedToBeCreated: any) => {
             const ids = await promiseChain
             const newId = await new UpsertPublicKeysQuery(this.sqlService, this.serializationService).send(
               {
@@ -394,10 +394,10 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
         return addNewKeysToExistingPublicKeyGroup(newKeysGroupedByPublicKeyGroupId)
       }
 
-      throw new Error(`This should never get here exception`)
+      throw new Error('This should never get here exception')
 
     } catch (err) {
-      this.logError(`Failed to create Public Keys`, err)
+      this.logError('Failed to create Public Keys', err)
       throw err
     }
   }
@@ -423,7 +423,7 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
       this.logInfo(`Created new origin block with id ${id}`)
       return id
     } catch (err) {
-      this.logError(`Failed to create new origin block`, err)
+      this.logError('Failed to create new origin block', err)
       throw err
     }
   }
@@ -470,12 +470,12 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
         )
         collections.push(newIds)
         return collections
-      }, Promise.resolve([]) as Promise<number[][]>)
+      },                                     Promise.resolve([]) as Promise<number[][]>)
 
       this.logInfo(`Successfully create key signature sets with ids ${_.flatten(ids).join(', ')}`)
       return ids
     } catch (err) {
-      this.logError(`Failed to create key signature sets`, err)
+      this.logError('Failed to create key signature sets', err)
       throw err
     }
   }
@@ -495,13 +495,13 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
         )
         ids.push(payloadItemIds)
         return ids
-      }, Promise.resolve([]) as Promise<number[][]>)
+      },      Promise.resolve([]) as Promise<number[][]>)
 
       const allIds = _.chain(result).flatten().join(', ').value()
       this.logInfo(`Succeeded in creating PayloadItems with ids ${allIds}`)
       return result
     } catch (err) {
-      this.logError(`Failed to create PayloadItems`, err)
+      this.logError('Failed to create PayloadItems', err)
       throw err
     }
   }

@@ -1,18 +1,25 @@
 /*
- * @Author: XY | The Findables Company <xyo-network>
+ * @Author: XY | The Findables Company <ryanxyo>
  * @Date:   Friday, 21st December 2018 3:33:58 pm
  * @Email:  developer@xyfindables.com
  * @Filename: index.ts
-
+ * @Last modified by: ryanxyo
  * @Last modified time: Friday, 8th March 2019 2:29:51 pm
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
  */
 
 import { XyoBase } from '@xyo-network/base'
+import {
+  IQuestionsProvider,
+  IQuestionType,
+  IQuestion,
+  IRequestDocument,
+  IIntersectionRequest,
+  IProofOfIntersection,
+} from '../questions'
 import { IConsensusProvider } from '@xyo-network/consensus'
 import { IXyoContentAddressableService } from '@xyo-network/content-addressable-service'
-import { IQuestion, IQuestionsProvider, IIntersectionRequest, IProofOfIntersection, IRequestDocument, IQuestionType } from '../questions'
 
 export class Web3QuestionService extends XyoBase implements IQuestionsProvider {
   private readonly alreadyFetchedQuestions: {
@@ -22,7 +29,7 @@ export class Web3QuestionService extends XyoBase implements IQuestionsProvider {
 
   constructor(
     private readonly consensusProvider: IConsensusProvider,
-    private readonly requestResolver: IXyoContentAddressableService,
+    private readonly contentService: IXyoContentAddressableService,
   ) {
     super()
   }
@@ -38,7 +45,7 @@ export class Web3QuestionService extends XyoBase implements IQuestionsProvider {
       XyoBase.timeout(async () => {
         const result = await this.nextQuestion()
         resolve(result)
-      }, 3000)
+      },              3000)
     }) as Promise<IQuestion<IIntersectionRequest, IProofOfIntersection>>
   }
 
@@ -63,7 +70,7 @@ export class Web3QuestionService extends XyoBase implements IQuestionsProvider {
 
     this.alreadyFetchedQuestions[questionId] = true
     try {
-      const resolvedQuestionBuffer = await this.requestResolver.get(questionId)
+      const resolvedQuestionBuffer = await this.contentService.get(questionId)
       if (!resolvedQuestionBuffer) return
       const resolvedQuestion = JSON.parse(
         resolvedQuestionBuffer.toString(),

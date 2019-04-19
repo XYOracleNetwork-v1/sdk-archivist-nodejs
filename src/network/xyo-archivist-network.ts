@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Wednesday, 17th April 2019 10:37:14 pm
+ * Last Modified: Thursday, 18th April 2019 2:24:34 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -93,10 +93,12 @@ export class XyoArchivistNetwork extends XyoBase implements IXyoArchivistNetwork
       })
     )
 
-    const hashesByKey = results.reduce((memo: {[s: string]: IXyoHash}, hashes) => {
-      hashes.forEach(hash => memo[hash.serializeHex()] = hash)
-      return memo
-    }, {})
+    const hashesByKey = results.reduce(
+      (memo: {[s: string]: IXyoHash}, hashes) => {
+        hashes.forEach(hash => memo[hash.serializeHex()] = hash)
+        return memo
+      },
+      {})
 
     return Object.values(hashesByKey)
   }
