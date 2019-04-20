@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.2.48",
+  "version": "0.2.49",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,6 +25,7 @@
     "build": "tsc && yarn copy",
     "copy": "copyfiles -u 1 src/**/*.sql dist/",
     "develop": "ts-node --files src/cli.ts",
+    "license": "yarn license-checker --onlyAllow 'MIT;BSD-2-Clause;BSD-3-Clause;Apache-2.0;ISC;Unlicense;UNKNOWN;BSD*;CC0-1.0' --excludePackages 'colors@0.6.2'",
     "mock-data": "node packages/data-generator/dist/index.js --host=127.0.0.1 --user=admin --password=password --database=Xyo --port=3306"
   },
   "devDependencies": {
@@ -35,10 +36,11 @@
     "@types/levelup": "^3.1.0",
     "@types/lodash": "^4.14.123",
     "@types/mysql": "^2.15.5",
-    "@types/node": "^11.13.4",
+    "@types/node": "^11.13.6",
     "@types/yargs": "^13.0.0",
     "@xyo-network/config-tslint": "^0.1.12",
     "copyfiles": "^2.1.0",
+    "license-checker": "^25.0.1",
     "tslint": "^5.16.0",
     "typescript": "^3.4.3"
   },
