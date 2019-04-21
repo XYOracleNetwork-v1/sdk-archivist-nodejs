@@ -10,8 +10,8 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { XyoArchivistDynamoRepository } from "./xyo-dynamo-archivist-repository"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import { IDynamoArchivistRepositoryConfig } from './@types'
 
 export async function createArchivistDynamoRepository(

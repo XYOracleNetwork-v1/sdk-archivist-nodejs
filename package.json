@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.2.49",
+  "version": "0.2.50",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,7 +20,7 @@
   },
   "scripts": {
     "pretest": "yarn install",
-    "lint": "tslint --config tslint.json --project tsconfig.json src/**/*.ts",
+    "lint": "tslint --config tslint.json --project tsconfig.json",
     "test": "yarn lint",
     "build": "tsc && yarn copy",
     "copy": "copyfiles -u 1 src/**/*.sql dist/",
@@ -60,6 +60,7 @@
     "@xyo-network/hashing": "^0.55.9-alpha.0",
     "@xyo-network/heuristics-common": "^0.55.9-alpha.0",
     "@xyo-network/ipfs-client": "^0.55.9-alpha.0",
+    "@xyo-network/meta-list": "^0.55.9-alpha.0",
     "@xyo-network/network": "^0.55.9-alpha.0",
     "@xyo-network/network.tcp": "^0.55.9-alpha.0",
     "@xyo-network/node-network": "^0.55.9-alpha.0",

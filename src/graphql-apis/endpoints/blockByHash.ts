@@ -8,26 +8,26 @@
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
  */
-import { IXyoDataResolver } from "@xyo-network/graphql-server"
-import { GraphQLResolveInfo } from "graphql"
-import { IXyoHashProvider, IXyoHash } from "@xyo-network/hashing"
-import { IXyoOriginBlockRepository } from "@xyo-network/origin-block-repository"
-import { IXyoBoundWitness } from "@xyo-network/bound-witness"
-import { IXyoSerializationService } from "@xyo-network/serialization"
-import { XyoBase } from "@xyo-network/base"
-import { IXyoArchivistNetwork } from "../../network"
+import { IXyoDataResolver } from '@xyo-network/graphql-server'
+import { GraphQLResolveInfo } from 'graphql'
+import { IXyoHashProvider, IXyoHash } from '@xyo-network/hashing'
+import { IXyoOriginBlockRepository } from '@xyo-network/origin-block-repository'
+import { IXyoBoundWitness } from '@xyo-network/bound-witness'
+import { IXyoSerializationService } from '@xyo-network/serialization'
+import { XyoBase } from '@xyo-network/base'
+import { IXyoArchivistNetwork } from '../../network'
 
 export const serviceDependencies = [
-  `originBlockRepository`,
-  `hashProvider`,
-  `serializationService`,
-  `archivistNetwork?`
+  'originBlockRepository',
+  'hashProvider',
+  'serializationService',
+  'archivistNetwork?'
 ]
 
 export default class XyoGetBlockByHashResolver extends XyoBase implements IXyoDataResolver<any, any, any, any> {
 
-  public static query = `blockByHash(hash: String!): XyoBlock`
-  public static dependsOnTypes = [`XyoBlock`]
+  public static query = 'blockByHash(hash: String!): XyoBlock'
+  public static dependsOnTypes = ['XyoBlock']
 
   constructor (
     private readonly originBlockRepository: IXyoOriginBlockRepository,
@@ -56,7 +56,7 @@ export default class XyoGetBlockByHashResolver extends XyoBase implements IXyoDa
           const hash = this.serializationService.deserialize(bufferHash).hydrate<IXyoHash>()
           block = await archivists.getBlock(hash)
         } catch (e) {
-          this.logError(`There was an error deserializing the hash`, e)
+          this.logError('There was an error deserializing the hash', e)
         }
       }
     }

@@ -10,8 +10,8 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { XyoArchivistNeo4jRepository } from "./xyo-neo4j-archivist-repository"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { XyoArchivistNeo4jRepository } from './xyo-neo4j-archivist-repository'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import path from 'path'
 
 export async function createArchivistNeo4jRepository(

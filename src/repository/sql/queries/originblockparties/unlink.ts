@@ -10,11 +10,11 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "../query"
-import { SqlService } from "../../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from '../query'
+import { SqlService } from '../../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
-import { IXyoSignature, IXyoPublicKey } from "@xyo-network/signing"
+import { IXyoSignature, IXyoPublicKey } from '@xyo-network/signing'
 
 export class UnlinkOriginBlockPartiesQuery extends SqlQuery {
 
@@ -26,7 +26,7 @@ export class UnlinkOriginBlockPartiesQuery extends SqlQuery {
       SET obp2.previousOriginBlockPartyId = NULL
       WHERE ob.signedHash = ?;
     `,
-    serialization)
+          serialization)
   }
 
   public async send(

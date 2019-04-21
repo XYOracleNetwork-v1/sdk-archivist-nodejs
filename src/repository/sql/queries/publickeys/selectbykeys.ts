@@ -10,9 +10,9 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "../query"
-import { SqlService } from "../../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from '../query'
+import { SqlService } from '../../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
 
 export class SelectPublicKeysByKeysQuery extends SqlQuery {
@@ -26,7 +26,7 @@ export class SelectPublicKeysByKeysQuery extends SqlQuery {
       FROM PublicKeys pk
       WHERE pk.key in (?)
     `,
-    serialization)
+          serialization)
   }
 
   public async send(pks: string[]): Promise<Array<{id: number, key: string, publicKeyGroupId: number}>> {

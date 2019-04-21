@@ -3,7 +3,7 @@
  * @Date:   Thursday, 14th February 2019 10:02:40 am
  * @Email:  developer@xyfindables.com
  * @Filename: XyoEntitiesList.ts
- 
+
  * @Last modified time: Thursday, 14th February 2019 1:42:28 pm
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
@@ -16,4 +16,4 @@ type XyoEntitiesList implements List {
 }
 `
 
-export const dependsOnTypes = [`List`, `ListMeta`, `XyoEntity`]
+export const dependsOnTypes = ['List', 'ListMeta', 'XyoEntity']

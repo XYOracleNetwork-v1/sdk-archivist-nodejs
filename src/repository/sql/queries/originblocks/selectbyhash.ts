@@ -10,9 +10,9 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "../query"
-import { SqlService } from "../../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from '../query'
+import { SqlService } from '../../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import { IXyoBoundWitness } from '@xyo-network/bound-witness'
 import _ from 'lodash'
 export class SelectOriginBlocksByHashQuery extends SqlQuery {
@@ -24,7 +24,7 @@ export class SelectOriginBlocksByHashQuery extends SqlQuery {
       WHERE signedHash = ?
       LIMIT 1;
     `,
-    serialization)
+          serialization)
   }
 
   public async send({ hash }: {hash: Buffer}): Promise<any> {

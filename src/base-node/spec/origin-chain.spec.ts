@@ -3,7 +3,7 @@
  * @Date:   Friday, 14th December 2018 12:53:13 pm
  * @Email:  developer@xyfindables.com
  * @Filename: origin-chain.spec.ts
- 
+
  * @Last modified time: Wednesday, 30th January 2019 11:06:29 am
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
@@ -15,9 +15,9 @@ import { XyoBoundWitness, XyoFetter, XyoKeySet, XyoWitness, XyoSignatureSet } fr
 import { XyoIndex, XyoPreviousHash, XyoOriginChainStateInMemoryRepository } from '@xyo-network/origin-chain'
 import { serializer } from '@xyo-network/serializer'
 
-describe(`OriginChain`, () => {
-  it(`Should update origin chain`, async () => {
-    const originChainSigner = new XyoStubSigner(new XyoStubPublicKey('aabbccdd'), new XyoStubSignature("ddccbbaa"))
+describe('OriginChain', () => {
+  it('Should update origin chain', async () => {
+    const originChainSigner = new XyoStubSigner(new XyoStubPublicKey('aabbccdd'), new XyoStubSignature('ddccbbaa'))
     const repo = new XyoOriginChainStateInMemoryRepository(
       0,
       [],
@@ -50,14 +50,14 @@ describe(`OriginChain`, () => {
     expect(index).toBe(1)
     expect((await repo.getPreviousHash())!.isEqual(hash)).toBe(true)
 
-    const newSigner = new XyoStubSigner(new XyoStubPublicKey('11223344'), new XyoStubSignature("44332211"))
+    const newSigner = new XyoStubSigner(new XyoStubPublicKey('11223344'), new XyoStubSignature('44332211'))
     await repo.addSigner(newSigner)
     console.log((await repo.getNextPublicKey())!.isEqual(new XyoStubPublicKey('11223344')))
   })
 
   it('Should track publicKeys of parties communicated with', async () => {
     const genesisPublicKey = new XyoStubPublicKey('aabbccdd')
-    const genesisSig = new XyoStubSignature("ddccbbaa")
+    const genesisSig = new XyoStubSignature('ddccbbaa')
     const originChainSigner = new XyoStubSigner(genesisPublicKey, genesisSig)
     const genesisHash = new XyoStubHash(Buffer.from('xxyyzz'))
 

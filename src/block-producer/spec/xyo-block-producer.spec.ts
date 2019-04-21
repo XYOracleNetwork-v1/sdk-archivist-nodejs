@@ -3,21 +3,21 @@
  * @Date:   Wednesday, 27th February 2019 2:12:26 pm
  * @Email:  developer@xyfindables.com
  * @Filename: xyo-block-producer.spec.ts
- 
+
  * @Last modified time: Monday, 11th March 2019 5:01:06 pm
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { XyoBlockProducer } from "../xyo-block-producer"
-import { IConsensusProvider, ISignatureComponents } from "@xyo-network/consensus"
-import { BN } from "@xyo-network/utils"
-import { getHashingProvider } from "@xyo-network/hashing"
-import { IXyoTransaction, IXyoTransactionRepository } from "@xyo-network/transaction-pool"
-import { IXyoNodeNetwork } from "@xyo-network/node-network"
-import { IXyoMetaList } from "@xyo-network/meta-list"
+import { XyoBlockProducer } from '../xyo-block-producer'
+import { IConsensusProvider, ISignatureComponents } from '@xyo-network/consensus'
+import { BN } from '@xyo-network/utils'
+import { getHashingProvider } from '@xyo-network/hashing'
+import { IXyoTransaction, IXyoTransactionRepository } from '@xyo-network/transaction-pool'
+import { IXyoNodeNetwork } from '@xyo-network/node-network'
+import { IXyoMetaList } from '@xyo-network/meta-list'
 import { XyoIpfsClient } from '@xyo-network/ipfs-client'
-import { XyoBlockWitnessValidator } from "@xyo-network/block-witness"
+import { XyoBlockWitnessValidator } from '@xyo-network/block-witness'
 
 jest.setTimeout(1000000)
 
@@ -33,11 +33,11 @@ describe('BlockProducer', () => {
         }
       },
       canSubmitBlock: () => true,
-      latestBlockHash: () => "0x100",
-      encodeBlock: () => "0x200",
+      latestBlockHash: () => '0x100',
+      encodeBlock: () => '0x200',
       networkActiveStake: () => new BN(10000),
       activeStakeByPaymentId: {
-        [accountAddr]: new BN("6000")
+        [accountAddr]: new BN('6000')
       },
       onSubmitBlock: (
         agreedStakeBlockHeight: BN,
@@ -99,7 +99,7 @@ describe('BlockProducer', () => {
         } catch (e) {
           reject(e)
         }
-      }, 1500)
+      },         1500)
     })
   })
 
@@ -108,14 +108,14 @@ describe('BlockProducer', () => {
     let submitBlockGotCalled = false
     const consensusProvider = await getConsensusProvider({
       canSubmitBlock: () => true,
-      latestBlockHash: () => "100",
+      latestBlockHash: () => '100',
       nextUnhandledRequests: () => {
         return { DEF: true }
       },
-      encodeBlock: () => "0x200",
+      encodeBlock: () => '0x200',
       networkActiveStake: () => new BN(100000), // <----- Increase active stake
       activeStakeByPaymentId: {
-        [accountAddr]: new BN("6000")
+        [accountAddr]: new BN('6000')
       },
       onSubmitBlock: (
         agreedStakeBlockHeight: BN,
@@ -181,7 +181,7 @@ describe('BlockProducer', () => {
         } catch (e) {
           reject(e)
         }
-      }, 1500)
+      },         1500)
 
     })
   })
@@ -196,12 +196,12 @@ describe('BlockProducer', () => {
       nextUnhandledRequests: () => {
         return { DEF: true }
       },
-      latestBlockHash: () => "100",
-      encodeBlock: () => "0x200",
+      latestBlockHash: () => '100',
+      encodeBlock: () => '0x200',
       networkActiveStake: () => new BN(10000),
       activeStakeByPaymentId: {
-        [accountAddr]: new BN("4999"),
-        [witnessAccount]: new BN("1") // <---- needs 1 more
+        [accountAddr]: new BN('4999'),
+        [witnessAccount]: new BN('1') // <---- needs 1 more
       },
       onSubmitBlock: (
         agreedStakeBlockHeight: BN,
@@ -215,7 +215,7 @@ describe('BlockProducer', () => {
         sigV: number[]
       ) => {
         submitBlockGotCalled = true
-        expect(previousBlock === "100").toBe(true)
+        expect(previousBlock === '100').toBe(true)
         expect(requests.length).toEqual(1)
         expect(supportingData.length).toEqual(64)
         expect(responses.length).toEqual(1)
@@ -254,8 +254,8 @@ describe('BlockProducer', () => {
     const nodeNetwork = await getNodeNetwork({
       callbackParams: [{
         publicKey: witnessAccount,
-        r: "HALLO",
-        s: "HALLO",
+        r: 'HALLO',
+        s: 'HALLO',
         v: 28
       }]
     })
@@ -277,7 +277,7 @@ describe('BlockProducer', () => {
     setTimeout(async () => {
       await producer.stop()
       expect(submitBlockGotCalled).toBe(true)
-    }, 1500)
+    },         1500)
   })
 })
 
@@ -311,10 +311,10 @@ async function getConsensusProvider(options: {
       return (options.canSubmitBlock && options.canSubmitBlock()) || false
     },
     getLatestBlockHash: async () => {
-      return (options.latestBlockHash && options.latestBlockHash()) || ""
+      return (options.latestBlockHash && options.latestBlockHash()) || ''
     },
     encodeBlock: async () => {
-      return (options.encodeBlock && options.encodeBlock()) || ""
+      return (options.encodeBlock && options.encodeBlock()) || ''
     },
     getStakeQuorumPct: async () => {
       return (options.stakeQuorumPct && options.stakeQuorumPct()) || 50
@@ -325,8 +325,8 @@ async function getConsensusProvider(options: {
     signBlock: async () => {
       return (options.signBlock && options.signBlock()) || {
         publicKey: '0xffff',
-        sigR: "HELLO_RY",
-        sigS: "HELLO_RY",
+        sigR: 'HELLO_RY',
+        sigS: 'HELLO_RY',
         sigV: 27,
       }
     },
@@ -368,7 +368,7 @@ async function getConsensusProvider(options: {
         )
         if (res) return res
       }
-      return "1000000"
+      return '1000000'
     }
   }
   return consensusProvider
@@ -419,7 +419,7 @@ async function getNodeNetwork(options?: {
       cbs.map((x, index) => {
         setTimeout(() => {
           cb(x.publicKey, { r: x.r, s: x.s, v: x.v })
-        }, 100 * index)
+        },         100 * index)
       })
       return () => {
         if (options && options.unsubscribe) options.unsubscribe()

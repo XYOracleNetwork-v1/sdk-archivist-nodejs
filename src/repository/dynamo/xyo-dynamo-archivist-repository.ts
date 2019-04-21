@@ -120,18 +120,18 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
       const createParams = {
         AttributeDefinitions: [
           {
-            AttributeName: "Hash",
-            AttributeType: "S"
+            AttributeName: 'Hash',
+            AttributeType: 'S'
           },
           {
-            AttributeName: "Data",
-            AttributeType: "B"
+            AttributeName: 'Data',
+            AttributeType: 'B'
           }
         ],
         KeySchema: [
           {
-            AttributeName: "Hash",
-            KeyType: "HASH"
+            AttributeName: 'Hash',
+            KeyType: 'HASH'
           }
         ],
         ProvisionedThroughput: {

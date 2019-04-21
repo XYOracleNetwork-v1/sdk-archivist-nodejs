@@ -4,18 +4,18 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 9:49:00 am
+ * Last Modified: Sunday, 21st April 2019 1:54:23 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "../query"
-import { SqlService } from "../../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from '../query'
+import { SqlService } from '../../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import { IXyoBoundWitness } from '@xyo-network/bound-witness'
 import _ from 'lodash'
-import { IXyoPublicKey } from "@xyo-network/signing"
+import { IXyoPublicKey } from '@xyo-network/signing'
 
 export class SelectOriginBlocksByKeyQuery extends SqlQuery {
 
@@ -33,7 +33,7 @@ export class SelectOriginBlocksByKeyQuery extends SqlQuery {
       GROUP BY ob.id
       ORDER BY obp.blockIndex;
     `,
-    serialization)
+          serialization)
   }
 
   public async send({ publicKey }: {publicKey: IXyoPublicKey}):
@@ -50,23 +50,27 @@ export class SelectOriginBlocksByKeyQuery extends SqlQuery {
       originBlocks: IXyoBoundWitness[]
     } = { publicKeys: {}, originBlocks: [] }
 
-    const reducedValue = _.reduce(results, (memo, result) => {
-      const boundWitness = this.serialization
-        .deserialize(Buffer.from(result.originBlockBytes))
-        .hydrate<IXyoBoundWitness>()
+    const reducedValue = _.reduce(
+      results,
+      (memo, result) => {
+        const boundWitness = this.serialization
+          .deserialize(Buffer.from(result.originBlockBytes))
+          .hydrate<IXyoBoundWitness>()
 
-      _.chain(result.publicKeysForBlock).split(',').map(str => str.trim()).each((pk) => {
-        if (!memo.publicKeys.hasOwnProperty(pk)) {
-          memo.publicKeys[pk] =
-              this.serialization.deserialize(
-                Buffer.from(pk, 'hex')
-              ).hydrate<IXyoPublicKey>()
-        }
-      }).value()
+        _.chain(result.publicKeysForBlock).split(',').map(str => str.trim()).each((pk) => {
+          if (!memo.publicKeys.hasOwnProperty(pk)) {
+            memo.publicKeys[pk] =
+                this.serialization.deserialize(
+                  Buffer.from(pk, 'hex')
+                ).hydrate<IXyoPublicKey>()
+          }
+        }).value()
 
-      memo.originBlocks.push(boundWitness as IXyoBoundWitness)
-      return memo
-    }, reducer)
+        memo.originBlocks.push(boundWitness as IXyoBoundWitness)
+        return memo
+      },
+      reducer
+    )
 
     return {
       publicKeys: _.chain(reducedValue.publicKeys).values().value(),

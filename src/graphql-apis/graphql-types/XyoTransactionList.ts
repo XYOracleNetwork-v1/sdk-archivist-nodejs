@@ -3,7 +3,7 @@
  * @Date:   Tuesday, 19th February 2019 10:58:30 am
  * @Email:  developer@xyfindables.com
  * @Filename: XyoTransactionList.ts
- 
+
  * @Last modified time: Tuesday, 19th February 2019 10:58:56 am
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
@@ -16,4 +16,4 @@ type XyoTransactionList implements List {
 }
 `
 
-export const dependsOnTypes = [`List`, `ListMeta`, `XyoTransaction`]
+export const dependsOnTypes = ['List', 'ListMeta', 'XyoTransaction']

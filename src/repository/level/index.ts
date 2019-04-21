@@ -10,8 +10,8 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { XyoArchivistLevelRepository } from "./xyo-level-archivist-repository"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { XyoArchivistLevelRepository } from './xyo-level-archivist-repository'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import path from 'path'
 
 export async function createArchivistLevelRepository(

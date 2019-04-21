@@ -10,9 +10,9 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "../query"
-import { SqlService } from "../../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from '../query'
+import { SqlService } from '../../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
 import { IXyoBoundWitness } from '@xyo-network/bound-witness'
 
@@ -27,7 +27,7 @@ export class BlocksTheProviderAttributionQuery extends SqlQuery {
         JOIN OriginBlocks ob on ob.signedHash = oba.sourceSignedHash
       WHERE oba.providesAttributionForSignedHash = ?;
     `,
-    serialization)
+          serialization)
   }
 
   public async send({ hash }: {hash: Buffer}): Promise<any> {
@@ -37,6 +37,6 @@ export class BlocksTheProviderAttributionQuery extends SqlQuery {
     return results.reduce((memo: {[h: string]: IXyoBoundWitness}, result) => {
       memo[result.originBlockHash] = this.serialization.deserialize(result.bytes).hydrate()
       return memo
-    }, {})
+    },                    {})
   }
 }

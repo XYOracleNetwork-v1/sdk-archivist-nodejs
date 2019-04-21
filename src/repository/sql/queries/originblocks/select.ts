@@ -4,32 +4,32 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 9:43:10 am
+ * Last Modified: Sunday, 21st April 2019 1:54:50 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "../query"
-import { SqlService } from "../../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from '../query'
+import { SqlService } from '../../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import { IXyoBoundWitness } from '@xyo-network/bound-witness'
 import _ from 'lodash'
-import { CountOriginBlocksQuery } from "./count"
-
-
+import { CountOriginBlocksQuery } from './count'
 
 export class SelectOriginBlocksQuery extends SqlQuery {
 
   constructor(sql: SqlService, serialization: IXyoSerializationService) {
-    super(sql, `
-      SELECT
+    super(
+      sql,
+      `SELECT
         ob.bytes as bytes
       FROM OriginBlocks ob
       ORDER BY ob.id
       LIMIT ?
-    `,
-    serialization)
+      `,
+      serialization
+    )
   }
 
   public async send({ limit }: {limit: number}): Promise<any> {

@@ -10,9 +10,9 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "../query"
-import { SqlService } from "../../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from '../query'
+import { SqlService } from '../../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
 
 export class CountPublicKeyGroupsQuery extends SqlQuery {
@@ -23,7 +23,7 @@ export class CountPublicKeyGroupsQuery extends SqlQuery {
         COUNT(pkg.id) as totalSize
       FROM PublicKeyGroups pkg;
     `,
-    serialization)
+          serialization)
   }
 
   public async send(): Promise<number> {

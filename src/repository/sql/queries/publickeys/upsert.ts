@@ -10,20 +10,20 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "../query"
-import { SqlService } from "../../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from '../query'
+import { SqlService } from '../../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
-import { IXyoPublicKey } from "@xyo-network/signing"
-import { RelinkPublicKeysQuery } from "./relinkall"
-import { InsertPublicKeysQuery } from "./insert"
-import { SelectPublicKeyGroupsByKeyQuery, DeletePublicKeyGroupQuery } from "../publickeygroups"
+import { IXyoPublicKey } from '@xyo-network/signing'
+import { RelinkPublicKeysQuery } from './relinkall'
+import { InsertPublicKeysQuery } from './insert'
+import { SelectPublicKeyGroupsByKeyQuery, DeletePublicKeyGroupQuery } from '../publickeygroups'
 
 export class UpsertPublicKeysQuery extends SqlQuery {
 
   constructor(sql: SqlService, serialization: IXyoSerializationService) {
-    super(sql, ``, // this is a meta query, so no sql
-    serialization)
+    super(sql, '', // this is a meta query, so no sql
+          serialization)
   }
 
   public async send(

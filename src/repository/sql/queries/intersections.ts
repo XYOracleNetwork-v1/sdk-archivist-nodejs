@@ -4,18 +4,18 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 9:49:53 am
+ * Last Modified: Sunday, 21st April 2019 2:01:12 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "./query"
-import { SqlService } from "../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from './query'
+import { SqlService } from '../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
-import { OriginChainBlockCountQuery } from "./originchainblockcount"
-import { IXyoIntersectionsList } from "../../@types"
+import { OriginChainBlockCountQuery } from './originchainblockcount'
+import { IXyoIntersectionsList } from '../../@types'
 
 export class IntersectionsQuery extends SqlQuery {
 
@@ -37,15 +37,17 @@ export class IntersectionsQuery extends SqlQuery {
       ORDER BY obp1.blockIndex
       LIMIT ?
     `,
-    serialization)
+          serialization)
   }
 
   public async send(
     { publicKeyA,
       publicKeyB,
-      limit}: {publicKeyA: string,
+      limit}: {
+        publicKeyA: string,
         publicKeyB: string,
-        limit: number}
+        limit: number
+      }
   ): Promise<IXyoIntersectionsList> {
     type QResult = Array<{signedHash: string, blockIndex: number}>
     let getIntersectionsQuery: Promise<QResult>

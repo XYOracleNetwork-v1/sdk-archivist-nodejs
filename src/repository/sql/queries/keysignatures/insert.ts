@@ -4,17 +4,17 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 9:48:32 am
+ * Last Modified: Sunday, 21st April 2019 2:01:25 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "../query"
-import { SqlService } from "../../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from '../query'
+import { SqlService } from '../../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
-import { IXyoSignature } from "@xyo-network/signing"
+import { IXyoSignature } from '@xyo-network/signing'
 
 export class InsertKeySignaturesQuery extends SqlQuery {
 
@@ -28,15 +28,17 @@ export class InsertKeySignaturesQuery extends SqlQuery {
       )
       VALUES(?, ?, ?, ?)
     `,
-    serialization)
+          serialization)
   }
 
   public async send(
     { publicKeyIds,
       originBlockPartyId,
-      signatures}: {publicKeyIds: number[],
+      signatures}: {
+        publicKeyIds: number[],
         originBlockPartyId: number,
-        signatures: IXyoSignature[]}
+        signatures: IXyoSignature[]
+      }
   ): Promise<number[]> {
     return publicKeyIds.reduce(async (promiseChain, publicKeyId, currentIndex) => {
       const ids = await promiseChain
@@ -49,6 +51,6 @@ export class InsertKeySignaturesQuery extends SqlQuery {
       ])).insertId
       ids.push(insertId)
       return ids
-    }, Promise.resolve([]) as Promise<number[]>)
+    },                         Promise.resolve([]) as Promise<number[]>)
   }
 }

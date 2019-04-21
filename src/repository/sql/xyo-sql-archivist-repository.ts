@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 2:40:24 pm
+ * Last Modified: Sunday, 21st April 2019 2:01:56 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -353,7 +353,8 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
             )
             ids.push(newId)
             return ids
-          }, Promise.resolve([]) as Promise<number[]>
+          },
+          Promise.resolve([]) as Promise<number[]>
         )
 
         return {

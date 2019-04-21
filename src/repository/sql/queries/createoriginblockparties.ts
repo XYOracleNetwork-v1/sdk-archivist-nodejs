@@ -4,36 +4,39 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 9:49:43 am
+ * Last Modified: Sunday, 21st April 2019 2:02:48 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "./query"
-import { SqlService } from "../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from './query'
+import { SqlService } from '../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import { IXyoBoundWitness } from '@xyo-network/bound-witness'
 import _ from 'lodash'
 import { schema } from '@xyo-network/serialization-schema'
 import { XyoNextPublicKey, XyoIndex, XyoPreviousHash } from '@xyo-network/origin-chain'
-import { SelectAllOriginBlockPartyIdsQuery, InsertOriginBlockPartiesQuery, SelectPreviousOriginBlockPartiesQuery } from "./originblockparties"
-import { UpsertPublicKeysQuery } from "./publickeys"
+import { SelectAllOriginBlockPartyIdsQuery, InsertOriginBlockPartiesQuery, SelectPreviousOriginBlockPartiesQuery } from './originblockparties'
+import { UpsertPublicKeysQuery } from './publickeys'
 
 export class CreateOriginBlockPartiesQuery extends SqlQuery {
 
   constructor(sql: SqlService, serialization: IXyoSerializationService) {
-    super(sql, ``, // this is a meta query, so no sql
-    serialization)
+    super(sql, '', // this is a meta query, so no sql
+          serialization)
   }
 
   public async send(
-    {originBlock,
+    { originBlock,
       originBlockId,
-      publicKeyGroupIds}:
-    {originBlock: IXyoBoundWitness,
+      publicKeyGroupIds
+    }: {
+      originBlock: IXyoBoundWitness,
       originBlockId: number,
-      publicKeyGroupIds: number[]}): Promise<number[]> {
+      publicKeyGroupIds: number[]
+    }
+  ): Promise<number[]> {
     try {
       const result = await originBlock.heuristics.reduce(async (promiseChain, payload, currentIndex: number) => {
         const ids = await promiseChain
@@ -71,7 +74,10 @@ export class CreateOriginBlockPartiesQuery extends SqlQuery {
 
         await new SelectAllOriginBlockPartyIdsQuery(this.sql, this.serialization).send()
 
-        const insertId = await new InsertOriginBlockPartiesQuery(this.sql, this.serialization).send(
+        const insertId = await new InsertOriginBlockPartiesQuery(
+          this.sql,
+          this.serialization
+        ).send(
           {
             originBlockId,
             nextPublicKeyId,
@@ -80,22 +86,27 @@ export class CreateOriginBlockPartiesQuery extends SqlQuery {
             positionalIndex: currentIndex,
             blockIndex: blockIndex.number,
             bridgeHashSet: bridgeHashSet && bridgeHashSet.serializeHex(),
-            payloadBytes: Buffer.concat(payload.reduce((collection, item) => {
-              const s = item.serialize()
-              collection.push(s)
-              return collection
-            }, [] as Buffer[]))
+            payloadBytes: Buffer.concat(
+              payload.reduce(
+                (collection, item) => {
+                  const s = item.serialize()
+                  collection.push(s)
+                  return collection
+                },
+                [] as Buffer[]
+              )
+            )
           }
         )
 
         ids.push(insertId)
         return ids
-      }, Promise.resolve([]) as Promise<number[]>)
+      },                                                 Promise.resolve([]) as Promise<number[]>)
 
       this.logInfo(`Succeeded in creating origin block parties with ids ${result.join(', ')}`)
       return result
     } catch (err) {
-      this.logError(`Failed to create origin block parties`, err)
+      this.logError('Failed to create origin block parties', err)
       throw err
     }
   }
