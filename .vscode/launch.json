@@ -47,6 +47,30 @@
       "request": "launch",
       "args": ["${relativeFile}"],
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register"]
-    }
+    },
+    {
+      "name": "Launch Node",
+      "type": "node",
+      "request": "launch",
+      "args": ["src/index.ts"],
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Launch MySql Node",
+      "type": "node",
+      "request": "launch",
+      "args": ["src/index.ts", "mysql"],
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Launch Dynamo Node",
+      "type": "node",
+      "request": "launch",
+      "args": ["src/index.ts", "dynamodb"],
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+      "console": "integratedTerminal"
+    },
   ]
 }
