@@ -35,7 +35,7 @@ import { IResolvers } from './xyo-resolvers-enum'
 import { XyoLevelDbStorageProvider } from '@xyo-network/storage.leveldb'
 import { buildGraphQLServer } from '../graphql-apis'
 import { XyoAboutMeService } from '@xyo-network/about-me'
-import { IXyoArchivistRepository } from '../repository'
+import { IXyoArchivistRepository, IArchivistRepositoryConfig } from '../repository'
 import { createArchivistSqlRepository, ISqlArchivistRepositoryConfig } from '../repository/sql'
 import { XyoError } from '@xyo-network/errors'
 import { XyoGraphQLServer } from '@xyo-network/graphql-server'
@@ -55,6 +55,7 @@ import { XyoBlockProducerRunnable } from './runnables/xyo-block-producer-runnabl
 import { XyoBlockWitnessRunnable } from './runnables/xyo-block-witness-runnable'
 import { IXyoContentAddressableService } from '@xyo-network/content-addressable-service'
 import { XyoBlockProducer } from '../block-producer'
+import { IDynamoDBArchivistRepositoryConfig, createArchivistDynamoDBRepository } from '../repository/dynamodb'
 
 const graphql: IXyoProvider<XyoGraphQLServer, IXyoGraphQLConfig> = {
   async get(container, config) {
@@ -441,14 +442,29 @@ const aboutMe: IXyoProvider<XyoAboutMeService, IXyoAboutMeConfig> = {
   }
 }
 
-const archivistRepository: IXyoProvider<IXyoArchivistRepository, ISqlArchivistRepositoryConfig> = {
+const archivistRepository: IXyoProvider<IXyoArchivistRepository, IArchivistRepositoryConfig> = {
   async get(container, config) {
-    if (config && config.database && config.user && config.password && config.port && config.host) {
-      const serialization = await container.get<IXyoSerializationService>(IResolvers.SERIALIZATION_SERVICE)
-      return createArchivistSqlRepository(config, serialization)
+    switch (config.platform) {
+      case 'mysql': {
+        const sqlConfig = config as ISqlArchivistRepositoryConfig
+        if (sqlConfig && sqlConfig.database && sqlConfig.user && sqlConfig.password && sqlConfig.port && sqlConfig.host) {
+          const serialization = await container.get<IXyoSerializationService>(IResolvers.SERIALIZATION_SERVICE)
+          return createArchivistSqlRepository(sqlConfig, serialization)
+        }
+        throw new XyoError('Archivist repository lacks sql config, can not instantiate')
+      }
+      case 'dynamodb': {
+        const dynamoConfig = config as IDynamoDBArchivistRepositoryConfig
+        if (dynamoConfig) {
+          const serialization = await container.get<IXyoSerializationService>(IResolvers.SERIALIZATION_SERVICE)
+          return createArchivistDynamoDBRepository(dynamoConfig, serialization)
+        }
+        throw new XyoError('Archivist repository lacks sql config, can not instantiate')
+      }
+      default: {
+        throw new XyoError(`Unsupported repository type: ${config.platform}`)
+      }
     }
-
-    throw new XyoError('Archivist repository lacks sql config, can not instantiate')
   }
 }
 

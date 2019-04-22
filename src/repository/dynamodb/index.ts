@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 16th April 2019 6:07:22 pm
+ * Last Modified: Monday, 22nd April 2019 8:28:42 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -12,14 +12,14 @@
 
 import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
 import { IXyoSerializationService } from '@xyo-network/serialization'
-import { IDynamoArchivistRepositoryConfig } from './@types'
+import { IDynamoDBArchivistRepositoryConfig } from './@types'
 
-export async function createArchivistDynamoRepository(
-  config: IDynamoArchivistRepositoryConfig,
+export async function createArchivistDynamoDBRepository(
+  config: IDynamoDBArchivistRepositoryConfig,
   serializationService: IXyoSerializationService
 ) {
   const repo = new XyoArchivistDynamoRepository(serializationService, config.tableName)
   return repo
 }
 
-export { IDynamoArchivistRepositoryConfig } from './@types'
+export { IDynamoDBArchivistRepositoryConfig } from './@types'

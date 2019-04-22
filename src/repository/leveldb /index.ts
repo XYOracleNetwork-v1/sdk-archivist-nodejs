@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 16th April 2019 6:07:42 pm
+ * Last Modified: Monday, 22nd April 2019 8:30:39 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -12,13 +12,14 @@
 
 import { XyoArchivistLevelRepository } from './xyo-level-archivist-repository'
 import { IXyoSerializationService } from '@xyo-network/serialization'
-import path from 'path'
+import { ILevelDBArchivistRepositoryConfig } from './@types'
 
-export async function createArchivistLevelRepository(
+export async function createArchivistLevelDBRepository(
+  config: ILevelDBArchivistRepositoryConfig,
   serializationService: IXyoSerializationService
 ) {
   const repo = new XyoArchivistLevelRepository(serializationService)
   return repo
 }
 
-export { ILevelArchivistRepositoryConfig } from './@types'
+export { ILevelDBArchivistRepositoryConfig } from './@types'

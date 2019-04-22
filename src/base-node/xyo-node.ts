@@ -13,13 +13,11 @@ import { IXyoNodeOptions } from './@types'
 import {
   LifeCycleRunner,
   IXyoProvider,
-  depScope,
-  ProcessManager
+  depScope
 } from '@xyo-network/utils'
 import { IResolvers } from './xyo-resolvers-enum'
 import { XyoNodeLifeCycle } from './xyo-node-lifecycle'
 
-// tslint:disable-next-line:max-classes-per-file
 export class XyoNode extends LifeCycleRunner {
 
   constructor (private readonly nodeOptions?: Partial<IXyoNodeOptions>) {
