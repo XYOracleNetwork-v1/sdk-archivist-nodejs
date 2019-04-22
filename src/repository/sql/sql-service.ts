@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 16th April 2019 6:10:57 pm
+ * Last Modified: Sunday, 21st April 2019 1:44:28 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -43,7 +43,7 @@ export class SqlService extends XyoBase {
     return new Promise((resolve, reject) => {
       connection.beginTransaction(() => {
         const rollback = (): Promise<void> => {
-          this.logInfo(`Rolling back transaction`)
+          this.logInfo('Rolling back transaction')
           return new Promise((res, rej) => {
             connection.rollback((err: any) => {
               this.logInfo(`Callback for rollback called with value ${err}`)
@@ -55,7 +55,7 @@ export class SqlService extends XyoBase {
         const commit = (): Promise<void> => {
           return new Promise((res, rej) => {
             connection.commit(async (err: any) => {
-              this.logInfo(`Callback for commit called`)
+              this.logInfo('Callback for commit called')
               if (err) {
                 await rollback()
                 rej(err)
@@ -95,7 +95,7 @@ export class SqlService extends XyoBase {
 
           return XyoBase.timeout(() => {
             return this.getOrCreateConnection(maxTries, tryNumber + 1).then(resolve).catch(reject)
-          }, 1000 * Math.pow(2, tryNumber)) // exponential back-off
+          },                     1000 * Math.pow(2, tryNumber)) // exponential back-off
         }
 
         this.connection = c
@@ -103,7 +103,7 @@ export class SqlService extends XyoBase {
       })
     }) as Promise<Connection>)
 
-    await this.queryConnection(createdConnection, `SET SQL_MODE="NO_ENGINE_SUBSTITUTION";`)
+    await this.queryConnection(createdConnection, 'SET SQL_MODE="NO_ENGINE_SUBSTITUTION";')
     return createdConnection
   }
 
@@ -155,7 +155,7 @@ async function tryCreateSqlService(
 
     // This will timeout if it does not exist with a `ER_BAD_DB_ERROR`
     await sqlService.query<any[]>(
-      `SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?`,
+      'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?',
       [connectionDetails.database]
     )
   } catch (err) {
@@ -164,23 +164,23 @@ async function tryCreateSqlService(
         XyoBase.logger.info(`Database ${connectionDetails.database} does not exist. Will try to create`)
         await createDatabaseWithSchema(connectionDetails, `${schema}`)
       } else {
-        XyoBase.logger.error(`Bad database error, could not resolve without schema`)
+        XyoBase.logger.error('Bad database error, could not resolve without schema')
         throw err
       }
     } else {
-      XyoBase.logger.error(`An unknown error occurred connecting to the database`, err)
+      XyoBase.logger.error('An unknown error occurred connecting to the database', err)
       throw err
     }
   }
 
-  const result = await sqlService.query<any[]>(`SHOW TABLES;`)
+  const result = await sqlService.query<any[]>('SHOW TABLES;')
 
   if (result.length === 0) {
     if (schema) {
       await createDatabaseWithSchema(connectionDetails, `${schema}`)
     } else {
-      XyoBase.logger.error(`Bad schema error, could not resolve without schema`)
-      throw new Error(`Could not initialize database schema`)
+      XyoBase.logger.error('Bad schema error, could not resolve without schema')
+      throw new Error('Could not initialize database schema')
     }
   }
 
@@ -200,5 +200,5 @@ async function createDatabaseWithSchema(connectionDetails: ISqlArchivistReposito
     CREATE SCHEMA IF NOT EXISTS \`${connectionDetails.database}\` DEFAULT CHARACTER SET utf8 ;
     USE \`${connectionDetails.database}\`;
     ${schema}
-  `, [])
+  `,                        [])
 }

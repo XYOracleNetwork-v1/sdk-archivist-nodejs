@@ -10,9 +10,9 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "../query"
-import { SqlService } from "../../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from '../query'
+import { SqlService } from '../../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
 
 export class SelectPreviousOriginBlockPartiesQuery extends SqlQuery {
@@ -34,7 +34,7 @@ export class SelectPreviousOriginBlockPartiesQuery extends SqlQuery {
     GROUP BY obp.id
     LIMIT 1;
     `,
-    serialization)
+          serialization)
   }
 
   public async send({ blockIndex, previousHash, publicKeys }:

@@ -43,6 +43,7 @@ import { IXyoProvider, IXyoRunnable } from '@xyo-network/utils'
 import { IXyoTransactionRepository } from '@xyo-network/transaction-pool'
 import { XyoAboutMeService } from '@xyo-network/about-me'
 import { IContractData } from '@xyo-network/web3-service'
+import { IArchivistRepositoryConfig } from '../../repository'
 
 export interface IXyoResolvers {
   [key: string]: IXyoProvider<any, any>
@@ -165,7 +166,7 @@ export interface IXyoBoundWitnessConfig {
 }
 
 export interface IXyoDataConfig {
-  path: string
+  path?: string
 }
 
 export interface IXyoNodeDelegatesConfig {
@@ -175,13 +176,28 @@ export interface IXyoNodeDelegatesConfig {
 }
 
 export interface IXyoNodeConfig {
-  [key: string]: any
-  data: IXyoDataConfig
+  data?: IXyoDataConfig,
+  nodeRunnerDelegates?: any,
+  blockProducer?: any,
+  blockWitness?: any,
+  discovery?: any,
+  peerTransport?: any,
+  nodeNetworkFrom?: any,
+  network?: any,
+  originChainRepository?: any,
+  networkProcedureCatalogue?: any,
+  archivistRepository?: any,
+  boundWitnessValidator?: any,
+  aboutMeService?: any,
+  graphql?: any,
+  web3Service?: any,
+  contentAddressableService?: any,
+  transactionRepository?: any
 }
 
 export interface IXyoNodeOptions {
-  modules: Partial<IXyoResolvers>
-  config: IXyoNodeConfig
+  modules?: Partial<IXyoResolvers>
+  config?: IXyoNodeConfig
 }
 
 export type PartialNodeOptions = Partial<IXyoNodeOptions>

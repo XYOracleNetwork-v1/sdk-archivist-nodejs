@@ -10,9 +10,9 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "../query"
-import { SqlService } from "../../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from '../query'
+import { SqlService } from '../../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
 
 export class InsertPublicKeysQuery extends SqlQuery {
@@ -22,7 +22,7 @@ export class InsertPublicKeysQuery extends SqlQuery {
       INSERT INTO PublicKeys(\`key\`, publicKeyGroupId)
       VALUES(?, ?)
     `,
-    serialization)
+          serialization)
   }
 
   public async send(

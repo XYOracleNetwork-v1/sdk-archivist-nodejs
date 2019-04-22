@@ -3,23 +3,23 @@
  * @Date:   Thursday, 14th February 2019 2:11:32 pm
  * @Email:  developer@xyfindables.com
  * @Filename: blockList.ts
- 
+
  * @Last modified time: Tuesday, 19th February 2019 10:55:05 am
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { IXyoDataResolver } from "@xyo-network/graphql-server"
-import { GraphQLResolveInfo } from "graphql"
+import { IXyoDataResolver } from '@xyo-network/graphql-server'
+import { GraphQLResolveInfo } from 'graphql'
 import { IXyoHashProvider } from '@xyo-network/hashing'
-import { IXyoOriginBlockRepository } from "@xyo-network/origin-block-repository"
+import { IXyoOriginBlockRepository } from '@xyo-network/origin-block-repository'
 
-export const serviceDependencies = [`originBlockRepository`, `hashProvider`]
+export const serviceDependencies = ['originBlockRepository', 'hashProvider']
 
 export default class XyoGetBlockList implements IXyoDataResolver<any, any, any, any> {
 
-  public static query = `blockList(limit: Int!, cursor: String): XyoBlockList!`
-  public static dependsOnTypes = [`XyoBlockList`]
+  public static query = 'blockList(limit: Int!, cursor: String): XyoBlockList!'
+  public static dependsOnTypes = ['XyoBlockList']
 
   constructor (
     private readonly originBlockRepository: IXyoOriginBlockRepository,

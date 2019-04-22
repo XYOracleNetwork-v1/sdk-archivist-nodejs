@@ -4,7 +4,7 @@
  * File Created: Thursday, 18th April 2019 1:55:31 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 2:32:52 pm
+ * Last Modified: Monday, 22nd April 2019 12:43:58 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -24,7 +24,7 @@ export const DEFAULT_NODE_OPTIONS: IXyoNodeOptions = {
       enableGraphQLServer: true,
       enableQuestionsWorker: true,
       enableBlockProducer: true,
-      enableBlockWitness: true
+      enableBlockWitness: false
     },
     blockProducer: {
       accountAddress: '0x123'
@@ -61,13 +61,6 @@ export const DEFAULT_NODE_OPTIONS: IXyoNodeOptions = {
         CatalogueItem.TAKE_REQUESTED_BLOCKS,
         CatalogueItem.GIVE_REQUESTED_BLOCKS
       ]
-    },
-    archivistRepository: {
-      host: '127.0.0.1',
-      user: 'admin',
-      password: 'password',
-      database: 'Xyo',
-      port: 3306
     },
     boundWitnessValidator: {
       checkPartyLengths: true,
@@ -121,6 +114,27 @@ export const DEFAULT_NODE_OPTIONS: IXyoNodeOptions = {
     },
     transactionRepository: {
       data: './node-db/transactions'
+    }
+  }
+}
+
+export const DEFAULT_NODE_OPTIONS_MYSQL: Partial<IXyoNodeOptions> = {
+  config: {
+    archivistRepository: {
+      platform: 'mysql',
+      host: '127.0.0.1',
+      user: 'admin',
+      password: 'password',
+      database: 'Xyo',
+      port: 3306
+    }
+  }
+}
+
+export const DEFAULT_NODE_OPTIONS_DYNAMODB: Partial<IXyoNodeOptions> = {
+  config: {
+    archivistRepository: {
+      platform: 'dynamodb'
     }
   }
 }

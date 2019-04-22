@@ -3,7 +3,7 @@
  * @Date:   Thursday, 14th February 2019 9:53:44 am
  * @Email:  developer@xyfindables.com
  * @Filename: XyoBlockCollection.ts
- 
+
  * @Last modified time: Thursday, 14th February 2019 1:42:21 pm
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
@@ -17,4 +17,4 @@ type XyoBlockCollection {
 }
 `
 
-export const dependsOnTypes = [`XyoBlock`]
+export const dependsOnTypes = ['XyoBlock']

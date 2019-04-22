@@ -3,7 +3,7 @@
  * @Date:   Thursday, 14th February 2019 9:47:42 am
  * @Email:  developer@xyfindables.com
  * @Filename: XyoBlock.ts
- 
+
  * @Last modified time: Thursday, 14th February 2019 1:42:18 pm
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
@@ -20,4 +20,4 @@ type XyoBlock {
 }
 `
 
-export const dependsOnTypes = [`XyoKeySet`, `XyoSignatureSet`, `XyoHeuristicSet`]
+export const dependsOnTypes = ['XyoKeySet', 'XyoSignatureSet', 'XyoHeuristicSet']

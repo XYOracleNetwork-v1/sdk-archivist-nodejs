@@ -10,9 +10,9 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "../query"
-import { SqlService } from "../../sql-service"
-import { IXyoSerializationService, IXyoSerializableObject } from "@xyo-network/serialization"
+import { SqlQuery } from '../query'
+import { SqlService } from '../../sql-service'
+import { IXyoSerializationService, IXyoSerializableObject } from '@xyo-network/serialization'
 import _ from 'lodash'
 
 export class DeletePayloadItemsQuery extends SqlQuery {
@@ -24,7 +24,7 @@ export class DeletePayloadItemsQuery extends SqlQuery {
         JOIN OriginBlocks ob on ob.id = obp.originBlockId
       WHERE ob.signedHash = ?;
     `,
-    serialization)
+          serialization)
   }
 
   public async send(

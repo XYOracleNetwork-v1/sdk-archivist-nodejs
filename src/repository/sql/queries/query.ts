@@ -10,9 +10,9 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlService } from "../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
-import { XyoBase } from "@xyo-network/base"
+import { SqlService } from '../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
+import { XyoBase } from '@xyo-network/base'
 
 export class SqlQuery extends XyoBase {
 

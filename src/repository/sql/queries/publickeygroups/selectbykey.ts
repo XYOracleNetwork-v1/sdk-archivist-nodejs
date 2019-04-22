@@ -10,9 +10,9 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { SqlQuery } from "../query"
-import { SqlService } from "../../sql-service"
-import { IXyoSerializationService } from "@xyo-network/serialization"
+import { SqlQuery } from '../query'
+import { SqlService } from '../../sql-service'
+import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
 
 export class SelectPublicKeyGroupsByKeyQuery extends SqlQuery {
@@ -21,7 +21,7 @@ export class SelectPublicKeyGroupsByKeyQuery extends SqlQuery {
     super(sql, `
       SELECT id, publicKeyGroupId FROM PublicKeys WHERE \`key\` = ? LIMIT 1
     `,
-    serialization)
+          serialization)
   }
 
   public async send({ hexKey }: {hexKey: string}): Promise<Array<{id: number, publicKeyGroupId: number}>> {

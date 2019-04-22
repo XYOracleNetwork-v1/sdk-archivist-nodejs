@@ -9,16 +9,16 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { IXyoDataResolver } from "@xyo-network/graphql-server"
-import { GraphQLResolveInfo } from "graphql"
-import { IXyoTransactionRepository } from "@xyo-network/transaction-pool"
+import { IXyoDataResolver } from '@xyo-network/graphql-server'
+import { GraphQLResolveInfo } from 'graphql'
+import { IXyoTransactionRepository } from '@xyo-network/transaction-pool'
 
-export const serviceDependencies = [`transactionRepository`]
+export const serviceDependencies = ['transactionRepository']
 
 export default class XyoGetBlockList implements IXyoDataResolver<any, any, any, any> {
 
-  public static query = `transactionList(limit: Int!, cursor: String): XyoTransactionList!`
-  public static dependsOnTypes = [`XyoTransactionList`]
+  public static query = 'transactionList(limit: Int!, cursor: String): XyoTransactionList!'
+  public static dependsOnTypes = ['XyoTransactionList']
 
   constructor (private readonly transactionRepository: IXyoTransactionRepository) {}
 

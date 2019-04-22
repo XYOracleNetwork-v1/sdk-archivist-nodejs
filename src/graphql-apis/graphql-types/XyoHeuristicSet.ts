@@ -3,7 +3,7 @@
  * @Date:   Thursday, 14th February 2019 9:53:09 am
  * @Email:  developer@xyfindables.com
  * @Filename: XyoHeuristicSet.ts
- 
+
  * @Last modified time: Thursday, 14th February 2019 1:42:38 pm
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
@@ -15,4 +15,4 @@ type XyoHeuristicSet {
 }
 `
 
-export const dependsOnTypes = [`XyoObject`]
+export const dependsOnTypes = ['XyoObject']

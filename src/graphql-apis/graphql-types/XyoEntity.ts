@@ -3,7 +3,7 @@
  * @Date:   Thursday, 14th February 2019 10:01:59 am
  * @Email:  developer@xyfindables.com
  * @Filename: XyoEntity.ts
- 
+
  * @Last modified time: Thursday, 14th February 2019 1:42:31 pm
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
@@ -18,4 +18,4 @@ type XyoEntity {
 }
 `
 
-export const dependsOnTypes = [`XyoEntityType`]
+export const dependsOnTypes = ['XyoEntityType']

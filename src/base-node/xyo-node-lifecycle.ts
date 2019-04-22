@@ -4,7 +4,7 @@
  * File Created: Thursday, 18th April 2019 1:55:31 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 4:46:16 pm
+ * Last Modified: Monday, 22nd April 2019 11:36:24 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -15,7 +15,7 @@ import { IResolvers } from './xyo-resolvers-enum'
 import { PartialNodeOptions } from './@types'
 import { XyoError } from '@xyo-network/errors'
 import { XyoBase } from '@xyo-network/base'
-import merge from 'merge'
+import _ from 'lodash'
 import path from 'path'
 import { DEFAULT_NODE_OPTIONS } from './default-node-options'
 
@@ -97,6 +97,7 @@ export class XyoNodeLifeCycle extends BaseLifeCyclable implements IXyoProviderCo
   }
 
   public async get<T>(provider: string): Promise<T> {
+    console.log(`lifecycle.get: ${provider}`)
     const hasDependency = this.hasDependency(provider)
     if (!hasDependency) {
       throw new XyoError(`Could not resolve dependency ${provider}`)
@@ -116,18 +117,22 @@ export class XyoNodeLifeCycle extends BaseLifeCyclable implements IXyoProviderCo
 
     this.cachedModules[provider] = null
 
-    // @ts-ignore
     const resolvedModule = await resolvedRecipe.get(this, this.opts.config[provider])
 
     if (!resolvedModule) {
       throw new XyoError(`Could not resolve module ${provider}`)
     }
 
-    this.cachedModules[provider] = (instanceLifeCycle === 'singleton') ? resolvedModule : undefined
-    if (resolvedRecipe.postInit) {
-      await resolvedRecipe.postInit(resolvedModule, this, this.opts.config[provider])
-    }
+    try {
 
+      this.cachedModules[provider] = (instanceLifeCycle === 'singleton') ? resolvedModule : undefined
+      if (resolvedRecipe.postInit) {
+        await resolvedRecipe.postInit(resolvedModule, this, this.opts.config[provider])
+      }
+
+    } catch (ex) {
+      throw(ex)
+    }
     return resolvedModule
   }
 
@@ -168,11 +173,7 @@ export class XyoNodeLifeCycle extends BaseLifeCyclable implements IXyoProviderCo
   }
 
   private async resolveOptions() {
-    if (!this.options) {
-      this.opts = DEFAULT_NODE_OPTIONS
-    }
-
-    this.opts = merge.recursive(DEFAULT_NODE_OPTIONS, this.options)
+    this.opts = _.merge({}, DEFAULT_NODE_OPTIONS, this.options)
   }
 
   private async createDataDirectory(nodeOptions: PartialNodeOptions) {
