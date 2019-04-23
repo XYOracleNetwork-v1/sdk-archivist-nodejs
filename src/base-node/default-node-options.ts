@@ -4,7 +4,7 @@
  * File Created: Thursday, 18th April 2019 1:55:31 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Monday, 22nd April 2019 12:43:58 pm
+ * Last Modified: Monday, 22nd April 2019 1:08:20 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -21,16 +21,7 @@ export const DEFAULT_NODE_OPTIONS: IXyoNodeOptions = {
   config: {
     nodeRunnerDelegates: {
       enableBoundWitnessServer: true,
-      enableGraphQLServer: true,
-      enableQuestionsWorker: true,
-      enableBlockProducer: true,
-      enableBlockWitness: false
-    },
-    blockProducer: {
-      accountAddress: '0x123'
-    },
-    blockWitness: {
-
+      enableGraphQLServer: true
     },
     data: {
       path: path.resolve('node-db')
@@ -88,6 +79,31 @@ export const DEFAULT_NODE_OPTIONS: IXyoNodeOptions = {
         transactionList: true
       }
     },
+    contentAddressableService: {
+      host: 'ipfs.xyo.network',
+      port: 5002,
+      protocol: 'https'
+    },
+    transactionRepository: {
+      data: './node-db/transactions'
+    }
+  }
+}
+
+export const DEFAULT_NODE_OPTIONS_DIVINER: IXyoNodeOptions = {
+  modules: resolvers,
+  config: {
+    nodeRunnerDelegates: {
+      enableBlockProducer: true,
+      enableQuestionsWorker: true,
+      enableBlockWitness: true
+    },
+    blockProducer: {
+      accountAddress: '0x123'
+    },
+    blockWitness: {
+
+    },
     web3Service: {
       host: 'https://kovan.infura.io/v3/8f1e6c44394f4366a49095d9cac828e2',
       address: '0xff710bF860e6D8e4a2b1E2023C1283e890017CDb',
@@ -107,14 +123,6 @@ export const DEFAULT_NODE_OPTIONS: IXyoNodeOptions = {
         }
       }
     },
-    contentAddressableService: {
-      host: 'ipfs.xyo.network',
-      port: 5002,
-      protocol: 'https'
-    },
-    transactionRepository: {
-      data: './node-db/transactions'
-    }
   }
 }
 
