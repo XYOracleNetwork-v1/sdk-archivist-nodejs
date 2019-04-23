@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 2:04:07 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Monday, 22nd April 2019 6:16:15 pm
+ * Last Modified: Monday, 22nd April 2019 6:32:27 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -19,7 +19,7 @@ import {
 
 import { XyoBase } from '@xyo-network/base'
 import { IXyoPublicKey, IXyoSignature } from '@xyo-network/signing'
-import { IXyoBoundWitness } from '@xyo-network/bound-witness'
+import { IXyoBoundWitness, XyoBoundWitness } from '@xyo-network/bound-witness'
 import { IXyoSerializationService, IXyoSerializableObject } from '@xyo-network/serialization'
 
 import _ from 'lodash'
@@ -200,6 +200,16 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
       this.dynamodb.scan(params, (err: any, data: DynamoDB.Types.ScanOutput) => {
         if (err) {
           reject(err)
+        }
+        const result: IOriginBlockQueryResult = {
+          list: [],
+          totalSize: data.Count || -1,
+          hasNextPage: true
+        }
+        if (data.Items) {
+          for (const item of data.Items) {
+            result.list.push(XyoBoundWitness.deserializer.deserialize(item.Data.B as Buffer, this.serializationService))
+          }
         }
         resolve(data.Items)
       })
