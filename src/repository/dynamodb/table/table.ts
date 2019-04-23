@@ -4,13 +4,15 @@
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 8:42:46 am
+ * Last Modified: Tuesday, 23rd April 2019 10:13:36 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
 import { DynamoDB } from 'aws-sdk'
+import crypto from 'crypto'
+import chalk from 'chalk'
 
 export class Table {
   protected createTableInput?: DynamoDB.Types.CreateTableInput
@@ -26,6 +28,10 @@ export class Table {
     })
   }
 
+  public sha1(data: Buffer) {
+    return crypto.createHash('sha1').update(data).digest()
+  }
+
   public async initialize() {
     this.tableInfo = await this.getTableInfo()
     return true
@@ -33,53 +39,68 @@ export class Table {
 
   private async createTable() {
     return new Promise((resolve, reject) => {
-      if (this.createTableInput) {
-        this.dynamodb.createTable(this.createTableInput, (createErr: any, tableData: DynamoDB.Types.CreateTableOutput) => {
-          if (createErr) {
-            reject(createErr)
-            return
-          }
-          resolve(tableData)
-        })
-      } else {
-        reject('createTableInput Required')
+      try {
+        if (this.createTableInput) {
+          this.dynamodb.createTable(this.createTableInput, (createErr: any, tableData: DynamoDB.Types.CreateTableOutput) => {
+            if (createErr) {
+              reject(createErr)
+              return
+            }
+            resolve(tableData)
+          })
+        } else {
+          reject('createTableInput Required')
+        }
+      } catch (ex) {
+        console.log(chalk.red(ex))
+        reject(ex)
       }
     })
   }
 
   private async readTableDescription(tableName: string) {
     return new Promise((resolve, reject) => {
-      this.dynamodb.describeTable({ TableName: tableName }, ((describeErr: any, describeData: DynamoDB.Types.DescribeTableOutput) => {
-        if (describeErr) {
-          reject(describeErr)
-          return
-        }
-        resolve(describeData)
-      }))
+      try {
+        this.dynamodb.describeTable({ TableName: tableName }, ((describeErr: any, describeData: DynamoDB.Types.DescribeTableOutput) => {
+          if (describeErr) {
+            reject(describeErr)
+            return
+          }
+          resolve(describeData)
+        }))
+      } catch (ex) {
+        console.log(chalk.red(ex))
+        reject(ex)
+      }
     })
   }
 
   private async createTableIfNeeded() {
     return new Promise((resolve, reject) => {
-      this.dynamodb.listTables(async (listErr, listData) => {
-        if (listErr) {
-          reject(listErr)
-          return
-        }
-        let found = false
-        if (listData.TableNames) {
-          for (const table of listData.TableNames) {
-            if (table === this.tableName) {
-              found = true
+      try {
+        this.dynamodb.listTables(async (listErr, listData) => {
+          if (listErr) {
+            reject(listErr)
+            return
+          }
+          let found = false
+          if (listData.TableNames) {
+            for (const table of listData.TableNames) {
+              if (table === this.tableName) {
+                found = true
+              }
             }
           }
-        }
-        if (!found) {
-          resolve(await this.createTable())
-        } else {
-          resolve(await this.readTableDescription(this.tableName))
-        }
-      })
+          if (!found) {
+            resolve(await this.createTable())
+          } else {
+            resolve(await this.readTableDescription(this.tableName))
+          }
+        })
+      } catch (ex) {
+        console.log(chalk.red(ex))
+        reject(ex)
+      }
     })
   }
 

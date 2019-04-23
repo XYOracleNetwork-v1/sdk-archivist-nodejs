@@ -4,7 +4,7 @@
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 8:53:14 am
+ * Last Modified: Tuesday, 23rd April 2019 10:11:20 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -12,6 +12,7 @@
 
 import { Table } from './table'
 import { DynamoDB } from 'aws-sdk'
+import chalk from 'chalk'
 
 export class BoundWitnessTable extends Table {
 
@@ -43,21 +44,26 @@ export class BoundWitnessTable extends Table {
 
   public async getItem(hash: Buffer): Promise<any> {
     return new Promise<boolean>((resolve: any, reject: any) => {
-      const params: DynamoDB.Types.GetItemInput = {
-        Key: {
-          Hash: {
-            B: hash
-          }
-        },
-        ReturnConsumedCapacity: 'TOTAL',
-        TableName: this.tableName
-      }
-      this.dynamodb.getItem(params, (err: any, data: DynamoDB.Types.GetItemOutput) => {
-        if (err) {
-          reject(err)
+      try {
+        const params: DynamoDB.Types.GetItemInput = {
+          Key: {
+            Hash: {
+              B: this.sha1(hash)
+            }
+          },
+          ReturnConsumedCapacity: 'TOTAL',
+          TableName: this.tableName
         }
-        resolve(data.Item)
-      })
+        this.dynamodb.getItem(params, (err: any, data: DynamoDB.Types.GetItemOutput) => {
+          if (err) {
+            reject(err)
+          }
+          resolve(data.Item)
+        })
+      } catch (ex) {
+        console.log(chalk.red(ex))
+        reject(ex)
+      }
     })
   }
 
@@ -66,24 +72,29 @@ export class BoundWitnessTable extends Table {
     originBlock: Buffer
   ): Promise<void> {
     return new Promise<void>((resolve: any, reject: any) => {
-      const params: DynamoDB.Types.PutItemInput = {
-        Item: {
-          Hash: {
-            B: hash
+      try {
+        const params: DynamoDB.Types.PutItemInput = {
+          Item: {
+            Hash: {
+              B: this.sha1(hash)
+            },
+            Data: {
+              B: originBlock
+            }
           },
-          Data: {
-            B: originBlock
-          }
-        },
-        ReturnConsumedCapacity: 'TOTAL',
-        TableName: this.tableName
-      }
-      this.dynamodb.putItem(params, (err: any, data: DynamoDB.Types.PutItemOutput) => {
-        if (err) {
-          reject(err)
+          ReturnConsumedCapacity: 'TOTAL',
+          TableName: this.tableName
         }
-        resolve()
-      })
+        this.dynamodb.putItem(params, (err: any, data: DynamoDB.Types.PutItemOutput) => {
+          if (err) {
+            reject(err)
+          }
+          resolve()
+        })
+      } catch (ex) {
+        console.log(chalk.red(ex))
+        reject(ex)
+      }
     })
   }
 
@@ -92,7 +103,7 @@ export class BoundWitnessTable extends Table {
       const params: DynamoDB.Types.DeleteItemInput = {
         Key: {
           Hash: {
-            B: hash
+            B: this.sha1(hash)
           }
         },
         ReturnConsumedCapacity: 'TOTAL',
@@ -110,14 +121,14 @@ export class BoundWitnessTable extends Table {
   public async scan(limit: number, offsetHash ?: Buffer | undefined): Promise <any[]> {
     return new Promise<[]>((resolve: any, reject: any) => {
       const params: DynamoDB.Types.ScanInput = {
-        Limit: 100,
+        Limit: limit,
         ReturnConsumedCapacity: 'TOTAL',
         TableName: this.tableName
       }
       if (offsetHash) {
         params.ExclusiveStartKey = {
           Hash: {
-            B: offsetHash
+            B: this.sha1(offsetHash)
           }
         }
       }

@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 2:04:07 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 8:54:01 am
+ * Last Modified: Tuesday, 23rd April 2019 9:47:29 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -29,6 +29,7 @@ import { IOriginBlockQueryResult } from '@xyo-network/origin-block-repository'
 import { XyoError } from '@xyo-network/errors'
 import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
+import chalk from 'chalk'
 
 export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivistRepository {
 
@@ -102,7 +103,18 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     originBlock: IXyoBoundWitness,
     bridgedFromOriginBlockHash?: IXyoHash
   ): Promise<void> {
-    return this.boundWitnessTable.putItem(hash.serialize(), originBlock.serialize())
+    try {
+      const blockHash = hash.serialize()
+      for (const pks of originBlock.publicKeys) {
+        for (const pk of pks.keys) {
+          await this.publicKeyTable.putItem(pk.serialize(), blockHash)
+        }
+      }
+      return await this.boundWitnessTable.putItem(blockHash, originBlock.serialize())
+    } catch (ex) {
+      console.log(chalk.red(ex))
+      throw ex
+    }
   }
 
   public async getOriginBlockByHash(hash: Buffer): Promise < IXyoBoundWitness | undefined > {

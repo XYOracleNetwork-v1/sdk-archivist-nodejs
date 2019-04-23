@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.2.55",
+  "version": "0.2.56",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -84,6 +84,7 @@
     "@xyo-network/web3-service": "^0.55.9-alpha.0",
     "abstract-leveldown": "^6.0.2",
     "aws-sdk": "^2.441.0",
+    "chalk": "^2.4.2",
     "ethereumjs-tx": "^1.3.7",
     "graphql": "^14.2.1",
     "leveldown": "^5.0.1",
