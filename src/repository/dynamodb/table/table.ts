@@ -4,7 +4,7 @@
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 10:13:36 am
+ * Last Modified: Tuesday, 23rd April 2019 10:29:42 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -12,9 +12,9 @@
 
 import { DynamoDB } from 'aws-sdk'
 import crypto from 'crypto'
-import chalk from 'chalk'
+import { XyoBase } from '@xyo-network/base'
 
-export class Table {
+export class Table extends XyoBase {
   protected createTableInput?: DynamoDB.Types.CreateTableInput
   protected dynamodb: DynamoDB
   private tableInfo: any
@@ -23,6 +23,7 @@ export class Table {
     protected readonly tableName: string,
     region: string = 'us-east-1'
   ) {
+    super()
     this.dynamodb = new DynamoDB({
       region
     })
@@ -52,7 +53,7 @@ export class Table {
           reject('createTableInput Required')
         }
       } catch (ex) {
-        console.log(chalk.red(ex))
+        this.logError(ex)
         reject(ex)
       }
     })
@@ -69,7 +70,7 @@ export class Table {
           resolve(describeData)
         }))
       } catch (ex) {
-        console.log(chalk.red(ex))
+        this.logError(ex)
         reject(ex)
       }
     })
@@ -98,7 +99,7 @@ export class Table {
           }
         })
       } catch (ex) {
-        console.log(chalk.red(ex))
+        this.logError(ex)
         reject(ex)
       }
     })
