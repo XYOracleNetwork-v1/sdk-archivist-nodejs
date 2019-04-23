@@ -9,7 +9,7 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { IXyoDataResolver } from '@xyo-network/graphql-server'
+import { IXyoDataResolver } from '../../graphql-server'
 import { GraphQLResolveInfo } from 'graphql'
 import { IXyoHashProvider } from '@xyo-network/hashing'
 import { IXyoOriginBlockRepository } from '@xyo-network/origin-block-repository'

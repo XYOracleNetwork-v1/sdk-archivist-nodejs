@@ -11,7 +11,7 @@
 
 import { XyoBase } from '@xyo-network/base'
 import { IXyoRunnable, providerFn } from '@xyo-network/utils'
-import { XyoGraphQLServer } from '@xyo-network/graphql-server'
+import { XyoGraphQLServer } from '../../graphql-server'
 
 export class XyoGraphQLServerRunnable extends XyoBase implements IXyoRunnable {
 
