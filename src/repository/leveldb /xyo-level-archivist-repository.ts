@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 9:50:33 am
+ * Last Modified: Monday, 22nd April 2019 1:43:59 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -39,6 +39,10 @@ export class XyoArchivistLevelRepository extends XyoBase implements IXyoArchivis
   ) {
     super()
     this.db = levelup(leveldown('./xyo-blocks'))
+  }
+
+  public async initialize() {
+    return true
   }
 
   public async getOriginBlocksByPublicKey(publicKey: IXyoPublicKey): Promise<IXyoOriginBlocksByPublicKeyResult> {
