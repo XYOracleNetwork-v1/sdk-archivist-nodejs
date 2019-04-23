@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 2:04:07 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 9:47:29 am
+ * Last Modified: Tuesday, 23rd April 2019 12:34:39 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -29,7 +29,10 @@ import { IOriginBlockQueryResult } from '@xyo-network/origin-block-repository'
 import { XyoError } from '@xyo-network/errors'
 import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
-import chalk from 'chalk'
+import crypto from 'crypto'
+
+// Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
+// must use shortHashes (sha1)
 
 export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivistRepository {
 
@@ -53,11 +56,24 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   }
 
   public async getOriginBlocksByPublicKey(publicKey: IXyoPublicKey): Promise<IXyoOriginBlocksByPublicKeyResult> {
-    throw new XyoError('getOriginBlocksByPublicKey: Not Implemented')
-    return {
+    const shortKey = this.sha1(publicKey.serialize())
+    const hashes = await this.publicKeyTable.scanByKey(shortKey, 100)
+
+    const result: {
+      publicKeys: IXyoPublicKey[],
+      boundWitnesses: IXyoBoundWitness[]
+    } = {
       publicKeys: [],
       boundWitnesses: []
     }
+
+    for (const hash of hashes) {
+      const data = await this.boundWitnessTable.getItem(hash)
+      const bw = XyoBoundWitness.deserializer.deserialize(data, this.serializationService)
+      result.boundWitnesses.push(bw)
+      result.publicKeys.push(publicKey)
+    }
+    return result
   }
 
   public async getIntersections(
@@ -86,11 +102,13 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   }
 
   public async removeOriginBlock(hash: Buffer): Promise<void> {
-    return this.boundWitnessTable.deleteItem(hash)
+    const shortHash = this.sha1(hash)
+    return this.boundWitnessTable.deleteItem(shortHash)
   }
 
   public async containsOriginBlock(hash: Buffer): Promise<boolean> {
-    return this.boundWitnessTable.getItem(hash)
+    const shortHash = this.sha1(hash)
+    return this.boundWitnessTable.getItem(shortHash)
   }
 
   public async getAllOriginBlockHashes(): Promise<Buffer[]> {
@@ -104,21 +122,26 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     bridgedFromOriginBlockHash?: IXyoHash
   ): Promise<void> {
     try {
-      const blockHash = hash.serialize()
+      const shortHash = this.sha1(hash.serialize())
       for (const pks of originBlock.publicKeys) {
         for (const pk of pks.keys) {
-          await this.publicKeyTable.putItem(pk.serialize(), blockHash)
+          const shortKey = this.sha1(pk.serialize())
+          await this.publicKeyTable.putItem(shortKey, shortHash)
         }
       }
-      return await this.boundWitnessTable.putItem(blockHash, originBlock.serialize())
+      return await this.boundWitnessTable.putItem(shortHash, originBlock.serialize())
     } catch (ex) {
-      console.log(chalk.red(ex))
+      this.logError(ex)
       throw ex
     }
   }
 
   public async getOriginBlockByHash(hash: Buffer): Promise < IXyoBoundWitness | undefined > {
-    return this.boundWitnessTable.getItem(hash)
+    const shortHash = this.sha1(hash)
+    const data = await this.boundWitnessTable.getItem(shortHash)
+    if (data) {
+      return XyoBoundWitness.deserializer.deserialize(data, this.serializationService)
+    }
   }
 
   public async getBlocksThatProviderAttribution(hash: Buffer): Promise < { [h: string]: IXyoBoundWitness } > {
@@ -129,15 +152,20 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   }
 
   public async getOriginBlocks(limit: number, offsetHash ?: Buffer | undefined): Promise < IOriginBlockQueryResult > {
-    const items = await this.boundWitnessTable.scan(limit, offsetHash)
+    const shortOffsetHash = offsetHash ? this.sha1(offsetHash) : undefined
+    const items = await this.boundWitnessTable.scan(limit, shortOffsetHash)
     const result: IOriginBlockQueryResult = {
       list: [],
       totalSize: items.length || -1,
       hasNextPage: true
     }
     for (const item of items) {
-      result.list.push(XyoBoundWitness.deserializer.deserialize(item.Data.B as Buffer, this.serializationService))
+      result.list.push(XyoBoundWitness.deserializer.deserialize(item, this.serializationService))
     }
     return result
+  }
+
+  private sha1(data: Buffer) {
+    return crypto.createHash('sha1').update(data).digest()
   }
 }

@@ -4,14 +4,13 @@
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 10:29:42 am
+ * Last Modified: Tuesday, 23rd April 2019 11:18:58 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
 import { DynamoDB } from 'aws-sdk'
-import crypto from 'crypto'
 import { XyoBase } from '@xyo-network/base'
 
 export class Table extends XyoBase {
@@ -27,10 +26,6 @@ export class Table extends XyoBase {
     this.dynamodb = new DynamoDB({
       region
     })
-  }
-
-  public sha1(data: Buffer) {
-    return crypto.createHash('sha1').update(data).digest()
   }
 
   public async initialize() {

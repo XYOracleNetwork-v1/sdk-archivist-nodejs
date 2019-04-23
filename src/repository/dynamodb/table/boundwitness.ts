@@ -4,7 +4,7 @@
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 11:02:02 am
+ * Last Modified: Tuesday, 23rd April 2019 12:24:05 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -32,13 +32,13 @@ export class BoundWitnessTable extends Table {
     this.createTableInput = {
       AttributeDefinitions: [
         {
-          AttributeName: 'Hash',
+          AttributeName: 'BlockHash',
           AttributeType: 'B'
         }
       ],
       KeySchema: [
         {
-          AttributeName: 'Hash',
+          AttributeName: 'BlockHash',
           KeyType: 'HASH'
         }
       ],
@@ -53,16 +53,15 @@ export class BoundWitnessTable extends Table {
   public async getItem(hash: Buffer): Promise<any> {
     return new Promise<boolean>((resolve: any, reject: any) => {
       try {
-        const shortHash = this.sha1(hash)
-        const value = this.cache.get(shortHash.toString())
+        const value = this.cache.get(hash.toString())
         if (value) {
           resolve(value)
           return
         }
         const params: DynamoDB.Types.GetItemInput = {
           Key: {
-            Hash: {
-              B: shortHash
+            BlockHash: {
+              B: hash
             }
           },
           ReturnConsumedCapacity: 'TOTAL',
@@ -74,7 +73,7 @@ export class BoundWitnessTable extends Table {
           }
           if (data.Item) {
             const result = data.Item.Data.B as Buffer
-            this.cache.set(shortHash.toString(), result)
+            this.cache.set(hash.toString(), result)
             resolve(result)
             return
           }
@@ -93,11 +92,10 @@ export class BoundWitnessTable extends Table {
   ): Promise<void> {
     return new Promise<void>((resolve: any, reject: any) => {
       try {
-        const shortHash = this.sha1(hash)
         const params: DynamoDB.Types.PutItemInput = {
           Item: {
-            Hash: {
-              B: shortHash
+            BlockHash: {
+              B: hash
             },
             Data: {
               B: originBlock
@@ -110,7 +108,7 @@ export class BoundWitnessTable extends Table {
           if (err) {
             reject(err)
           }
-          this.cache.set(shortHash.toString(), originBlock)
+          this.cache.set(hash.toString(), originBlock)
           resolve()
         })
       } catch (ex) {
@@ -123,11 +121,10 @@ export class BoundWitnessTable extends Table {
   public async deleteItem(hash: Buffer): Promise<void> {
     return new Promise<void>((resolve: any, reject: any) => {
       try {
-        const shortHash = this.sha1(hash)
         const params: DynamoDB.Types.DeleteItemInput = {
           Key: {
-            Hash: {
-              B: shortHash
+            BlockHash: {
+              B: hash
             }
           },
           ReturnConsumedCapacity: 'TOTAL',
@@ -138,7 +135,7 @@ export class BoundWitnessTable extends Table {
             this.logError(err)
             reject(err)
           }
-          this.cache.del(shortHash.toString())
+          this.cache.del(hash.toString())
           resolve()
         })
       } catch (ex) {
@@ -158,8 +155,8 @@ export class BoundWitnessTable extends Table {
         }
         if (offsetHash) {
           params.ExclusiveStartKey = {
-            Hash: {
-              B: this.sha1(offsetHash)
+            BlockHash: {
+              B: offsetHash
             }
           }
         }
@@ -171,13 +168,12 @@ export class BoundWitnessTable extends Table {
           const result = []
           if (data.Items) {
             for (const item of data.Items) {
-              if (item.Hash && item.Hash.B && item.Data && item.Data.B) {
-                const payload = item.Hash.B as Buffer
-                const shortHash = this.sha1(payload)
-                this.cache.set(shortHash.toString(), payload)
+              if (item.BlockHash && item.BlockHash.B && item.Data && item.Data.B) {
+                const payload = item.Data.B as Buffer
+                this.cache.set(item.BlockHash.B.toString(), payload)
                 result.push(payload)
               } else {
-                this.logError(`Result with Missing Hash or Data: ${item}`)
+                this.logError(`Result with Missing BlockHash or Data: ${item}`)
               }
             }
           }
