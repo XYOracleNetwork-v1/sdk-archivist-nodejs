@@ -4,7 +4,7 @@
  * File Created: Thursday, 18th April 2019 1:55:31 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Monday, 22nd April 2019 1:08:20 pm
+ * Last Modified: Tuesday, 23rd April 2019 11:49:29 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -65,7 +65,7 @@ export const DEFAULT_NODE_OPTIONS: IXyoNodeOptions = {
       boundWitnessServerPort: 11000,
       graphqlPort: 11001,
       version: '0.23.0',
-      name: "Ryan's Node"
+      name: 'Test Node'
     },
     graphql: {
       port: 11001,
