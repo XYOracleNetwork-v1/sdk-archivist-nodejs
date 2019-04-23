@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 2:04:07 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Monday, 22nd April 2019 6:32:27 pm
+ * Last Modified: Tuesday, 23rd April 2019 8:54:01 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -27,24 +27,27 @@ import { DynamoDB } from 'aws-sdk'
 import { IXyoHash } from '@xyo-network/hashing'
 import { IOriginBlockQueryResult } from '@xyo-network/origin-block-repository'
 import { XyoError } from '@xyo-network/errors'
+import { BoundWitnessTable } from './table/boundwitness'
+import { PublicKeyTable } from './table/publickey'
 
 export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivistRepository {
 
-  private dynamodb: DynamoDB
-  private tableInfo: any
+  private boundWitnessTable: BoundWitnessTable
+  private publicKeyTable: PublicKeyTable
 
   constructor(
     private readonly serializationService: IXyoSerializationService,
-    private readonly tableName: string = 'xyo-archivist-data'
+    private readonly tablePrefix: string = 'xyo-archivist',
+    region: string = 'us-east-1'
   ) {
     super()
-    this.dynamodb = new DynamoDB({
-      region: 'us-east-1'
-    })
+    this.boundWitnessTable = new BoundWitnessTable(`${tablePrefix}-boundwitness`, region)
+    this.publicKeyTable = new PublicKeyTable(`${tablePrefix}-publickey`, region)
   }
 
   public async initialize() {
-    this.tableInfo = await this.getTableInfo()
+    this.boundWitnessTable.initialize()
+    this.publicKeyTable.initialize()
     return true
   }
 
@@ -82,43 +85,11 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   }
 
   public async removeOriginBlock(hash: Buffer): Promise<void> {
-    return new Promise<void>((resolve: any, reject: any) => {
-      const params: DynamoDB.Types.DeleteItemInput = {
-        Key: {
-          Hash: {
-            B: hash
-          }
-        },
-        ReturnConsumedCapacity: 'TOTAL',
-        TableName: this.tableName
-      }
-      this.dynamodb.deleteItem(params, (err: any, data: DynamoDB.Types.DeleteItemOutput) => {
-        if (err) {
-          reject(err)
-        }
-        resolve()
-      })
-    })
+    return this.boundWitnessTable.deleteItem(hash)
   }
 
   public async containsOriginBlock(hash: Buffer): Promise<boolean> {
-    return new Promise<boolean>((resolve: any, reject: any) => {
-      const params: DynamoDB.Types.GetItemInput = {
-        Key: {
-          Hash: {
-            B: hash
-          }
-        },
-        ReturnConsumedCapacity: 'TOTAL',
-        TableName: this.tableName
-      }
-      this.dynamodb.getItem(params, (err: any, data: DynamoDB.Types.GetItemOutput) => {
-        if (err) {
-          reject(err)
-        }
-        resolve(true)
-      })
-    })
+    return this.boundWitnessTable.getItem(hash)
   }
 
   public async getAllOriginBlockHashes(): Promise<Buffer[]> {
@@ -131,49 +102,11 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     originBlock: IXyoBoundWitness,
     bridgedFromOriginBlockHash?: IXyoHash
   ): Promise<void> {
-    return new Promise<void>((resolve: any, reject: any) => {
-      const params: DynamoDB.Types.PutItemInput = {
-        Item: {
-          Hash: {
-            B: hash.serialize()
-          },
-          Data: {
-            B: originBlock.serialize()
-          }
-        },
-        ReturnConsumedCapacity: 'TOTAL',
-        TableName: this.tableName
-      }
-      this.dynamodb.putItem(params, (err: any, data: DynamoDB.Types.PutItemOutput) => {
-        if (err) {
-          reject(err)
-        }
-        resolve()
-      })
-    })
+    return this.boundWitnessTable.putItem(hash.serialize(), originBlock.serialize())
   }
 
   public async getOriginBlockByHash(hash: Buffer): Promise < IXyoBoundWitness | undefined > {
-    return new Promise<IXyoBoundWitness | undefined>((resolve: any, reject: any) => {
-      const params: DynamoDB.Types.GetItemInput = {
-        Key: {
-          Hash: {
-            B: hash
-          }
-        },
-        AttributesToGet: [
-          'Data'
-        ],
-        ReturnConsumedCapacity: 'TOTAL',
-        TableName: this.tableName
-      }
-      this.dynamodb.getItem(params, (err: any, data: DynamoDB.Types.GetItemOutput) => {
-        if (err) {
-          reject(err)
-        }
-        resolve(data.Item)
-      })
-    })
+    return this.boundWitnessTable.getItem(hash)
   }
 
   public async getBlocksThatProviderAttribution(hash: Buffer): Promise < { [h: string]: IXyoBoundWitness } > {
@@ -184,109 +117,15 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   }
 
   public async getOriginBlocks(limit: number, offsetHash ?: Buffer | undefined): Promise < IOriginBlockQueryResult > {
-    return new Promise<IOriginBlockQueryResult>((resolve: any, reject: any) => {
-      const params: DynamoDB.Types.ScanInput = {
-        Limit: 100,
-        ReturnConsumedCapacity: 'TOTAL',
-        TableName: this.tableName
-      }
-      if (offsetHash) {
-        params.ExclusiveStartKey = {
-          Hash: {
-            B: offsetHash
-          }
-        }
-      }
-      this.dynamodb.scan(params, (err: any, data: DynamoDB.Types.ScanOutput) => {
-        if (err) {
-          reject(err)
-        }
-        const result: IOriginBlockQueryResult = {
-          list: [],
-          totalSize: data.Count || -1,
-          hasNextPage: true
-        }
-        if (data.Items) {
-          for (const item of data.Items) {
-            result.list.push(XyoBoundWitness.deserializer.deserialize(item.Data.B as Buffer, this.serializationService))
-          }
-        }
-        resolve(data.Items)
-      })
-    })
-  }
-
-  private async getTableInfo() {
-    if (!this .tableInfo) {
-      this.tableInfo = await this.createTableIfNeeded()
+    const items = await this.boundWitnessTable.scan(limit, offsetHash)
+    const result: IOriginBlockQueryResult = {
+      list: [],
+      totalSize: items.length || -1,
+      hasNextPage: true
     }
-    return this.tableInfo
-  }
-
-  private async createTable(tableName: string) {
-    return new Promise((resolve, reject) => {
-      const createParams: DynamoDB.Types.CreateTableInput = {
-        AttributeDefinitions: [
-          {
-            AttributeName: 'Hash',
-            AttributeType: 'B'
-          }
-        ],
-        KeySchema: [
-          {
-            AttributeName: 'Hash',
-            KeyType: 'HASH'
-          }
-        ],
-        ProvisionedThroughput: {
-          ReadCapacityUnits: 5,
-          WriteCapacityUnits: 5
-        },
-        TableName: tableName
-      }
-      this.dynamodb.createTable(createParams, (createErr: any, tableData: DynamoDB.Types.CreateTableOutput) => {
-        if (createErr) {
-          reject(createErr)
-          return
-        }
-        resolve(tableData)
-      })
-    })
-  }
-
-  private async readTableDescription(tableName: string) {
-    return new Promise((resolve, reject) => {
-      this.dynamodb.describeTable({ TableName: tableName }, ((describeErr: any, describeData: DynamoDB.Types.DescribeTableOutput) => {
-        if (describeErr) {
-          reject(describeErr)
-          return
-        }
-        resolve(describeData)
-      }))
-    })
-  }
-
-  private async createTableIfNeeded() {
-    return new Promise((resolve, reject) => {
-      this.dynamodb.listTables(async (listErr, listData) => {
-        if (listErr) {
-          reject(listErr)
-          return
-        }
-        let found = false
-        if (listData.TableNames) {
-          for (const table of listData.TableNames) {
-            if (table === this.tableName) {
-              found = true
-            }
-          }
-        }
-        if (!found) {
-          resolve(await this.createTable(this.tableName))
-        } else {
-          resolve(await this.readTableDescription(this.tableName))
-        }
-      })
-    })
+    for (const item of items) {
+      result.list.push(XyoBoundWitness.deserializer.deserialize(item.Data.B as Buffer, this.serializationService))
+    }
+    return result
   }
 }
