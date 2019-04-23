@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 1:46:59 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 16th April 2019 6:07:01 pm
+ * Last Modified: Monday, 22nd April 2019 1:40:28 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -21,6 +21,8 @@ import { IXyoConfig } from '@xyo-network/base'
  */
 
 export interface IXyoArchivistRepository extends IXyoOriginBlockRepository {
+
+  initialize(): Promise<boolean>
 
   /**
    * Will return all the origin-blocks for a particular public-key

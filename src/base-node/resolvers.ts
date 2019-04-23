@@ -444,27 +444,34 @@ const aboutMe: IXyoProvider<XyoAboutMeService, IXyoAboutMeConfig> = {
 
 const archivistRepository: IXyoProvider<IXyoArchivistRepository, IArchivistRepositoryConfig> = {
   async get(container, config) {
+    let repository
     switch (config.platform) {
       case 'mysql': {
         const sqlConfig = config as ISqlArchivistRepositoryConfig
         if (sqlConfig && sqlConfig.database && sqlConfig.user && sqlConfig.password && sqlConfig.port && sqlConfig.host) {
           const serialization = await container.get<IXyoSerializationService>(IResolvers.SERIALIZATION_SERVICE)
-          return createArchivistSqlRepository(sqlConfig, serialization)
+          repository = await createArchivistSqlRepository(sqlConfig, serialization)
+        } else {
+          throw new XyoError('Archivist repository lacks sql config, can not instantiate')
         }
-        throw new XyoError('Archivist repository lacks sql config, can not instantiate')
+        break
       }
       case 'dynamodb': {
         const dynamoConfig = config as IDynamoDBArchivistRepositoryConfig
         if (dynamoConfig) {
           const serialization = await container.get<IXyoSerializationService>(IResolvers.SERIALIZATION_SERVICE)
-          return createArchivistDynamoDBRepository(dynamoConfig, serialization)
+          repository = await createArchivistDynamoDBRepository(dynamoConfig, serialization)
+        } else {
+          throw new XyoError('Archivist repository lacks sql config, can not instantiate')
         }
-        throw new XyoError('Archivist repository lacks sql config, can not instantiate')
+        break
       }
       default: {
         throw new XyoError(`Unsupported repository type: ${config.platform}`)
       }
     }
+    repository.initialize()
+    return repository
   }
 }
 
