@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Monday, 22nd April 2019 1:42:51 pm
+ * Last Modified: Wednesday, 24th April 2019 10:43:58 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -18,18 +18,12 @@ import {
 } from '..'
 
 import { XyoBase } from '@xyo-network/base'
-import { IXyoPublicKey, IXyoSignature } from '@xyo-network/signing'
-import { IXyoBoundWitness } from '@xyo-network/bound-witness'
-import { IXyoSerializationService, IXyoSerializableObject } from '@xyo-network/serialization'
 
 import _ from 'lodash'
-import { IXyoHash } from '@xyo-network/hashing'
-import { IOriginBlockQueryResult } from '@xyo-network/origin-block-repository'
 
 export class XyoArchivistNeo4jRepository extends XyoBase implements IXyoArchivistRepository {
 
   constructor(
-    private readonly serializationService: IXyoSerializationService
   ) {
     super()
   }
@@ -38,34 +32,12 @@ export class XyoArchivistNeo4jRepository extends XyoBase implements IXyoArchivis
     return true
   }
 
-  public async getOriginBlocksByPublicKey(publicKey: IXyoPublicKey): Promise<IXyoOriginBlocksByPublicKeyResult> {
-    return {
-      publicKeys: [],
-      boundWitnesses: []
-    }
+  public async getOriginBlocksByPublicKey(publicKey: Buffer): Promise<Buffer[]> {
+    return []
   }
 
-  public async getIntersections(
-    publicKeyA: string,
-    publicKeyB: string,
-    limit: number,
-    cursor: string | undefined
-  ): Promise<IXyoIntersectionsList> {
-    return {
-      list: [],
-      hasNextPage: false,
-      totalSize: 0,
-      cursor: undefined
-    }
-  }
-
-  public async getEntities(limit: number, offsetCursor?: string | undefined): Promise<IXyoEntitiesList> {
-    return {
-      list: [],
-      hasNextPage: false,
-      totalSize: 0,
-      cursor: undefined
-    }
+  public async getEntities(limit: number, offsetCursor?: Buffer | undefined): Promise<Buffer[]> {
+    return []
   }
 
   public async removeOriginBlock(hash: Buffer): Promise<void> {
@@ -81,28 +53,23 @@ export class XyoArchivistNeo4jRepository extends XyoBase implements IXyoArchivis
   }
 
   public async addOriginBlock(
-    hash: IXyoHash,
-    originBlock: IXyoBoundWitness,
-    bridgedFromOriginBlockHash?: IXyoHash
+    hash: Buffer,
+    originBlock: Buffer
   ): Promise<void> {
     return
   }
 
-  public async getOriginBlockByHash(hash: Buffer): Promise<IXyoBoundWitness | undefined> {
+  public async getOriginBlock(hash: Buffer): Promise<Buffer | undefined> {
     return undefined
   }
 
-  public async getBlocksThatProviderAttribution(hash: Buffer): Promise<{[h: string]: IXyoBoundWitness}> {
+  public async getBlocksThatProviderAttribution(hash: Buffer): Promise<{[h: string]: Buffer}> {
     return {
 
     }
   }
 
-  public async getOriginBlocks(limit: number, offsetHash?: Buffer | undefined): Promise<IOriginBlockQueryResult> {
-    return {
-      list: [],
-      hasNextPage: false,
-      totalSize: 0
-    }
+  public async getOriginBlocks(limit: number, offsetHash?: Buffer | undefined): Promise<Buffer[]> {
+    return []
   }
 }

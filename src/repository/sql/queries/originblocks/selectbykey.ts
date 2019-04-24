@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Sunday, 21st April 2019 1:54:23 pm
+ * Last Modified: Wednesday, 24th April 2019 10:52:40 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -12,14 +12,12 @@
 
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
-import { IXyoBoundWitness } from '@xyo-network/bound-witness'
 import _ from 'lodash'
-import { IXyoPublicKey } from '@xyo-network/signing'
+import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 
 export class SelectOriginBlocksByKeyQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       SELECT
         CONCAT(pk2.key) as publicKeysForBlock,
@@ -32,41 +30,35 @@ export class SelectOriginBlocksByKeyQuery extends SqlQuery {
       WHERE pk.key = ?
       GROUP BY ob.id
       ORDER BY obp.blockIndex;
-    `,
-          serialization)
+    `)
   }
 
-  public async send({ publicKey }: {publicKey: IXyoPublicKey}):
-    Promise<{ publicKeys: IXyoPublicKey[]; boundWitnesses: IXyoBoundWitness[]; }> {
+  public async send({ publicKey }: {publicKey: Buffer}):
+    Promise<{ publicKeys: Buffer[]; boundWitnesses: Buffer[]; }> {
 
     const results = await this.sql.query<Array<{publicKeysForBlock: string, originBlockBytes: Buffer}>>(
-        this.query, [publicKey.serializeHex()]
+        this.query, [publicKey.toString('hex')]
       )
 
     const reducer: {
       publicKeys: {
-        [s: string]: IXyoPublicKey
+        [s: string]: Buffer
       },
-      originBlocks: IXyoBoundWitness[]
+      originBlocks: Buffer[]
     } = { publicKeys: {}, originBlocks: [] }
 
     const reducedValue = _.reduce(
       results,
       (memo, result) => {
-        const boundWitness = this.serialization
-          .deserialize(Buffer.from(result.originBlockBytes))
-          .hydrate<IXyoBoundWitness>()
+        const boundWitness = result.originBlockBytes
 
         _.chain(result.publicKeysForBlock).split(',').map(str => str.trim()).each((pk) => {
           if (!memo.publicKeys.hasOwnProperty(pk)) {
-            memo.publicKeys[pk] =
-                this.serialization.deserialize(
-                  Buffer.from(pk, 'hex')
-                ).hydrate<IXyoPublicKey>()
+            memo.publicKeys[pk] = Buffer.from(pk, 'hex')
           }
         }).value()
 
-        memo.originBlocks.push(boundWitness as IXyoBoundWitness)
+        memo.originBlocks.push(boundWitness)
         return memo
       },
       reducer

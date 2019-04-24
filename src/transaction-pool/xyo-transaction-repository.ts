@@ -42,7 +42,7 @@ export class XyoTransactionRepository extends XyoBase implements IXyoTransaction
   }
 
   public async list(limit: number, cursor: string | undefined) {
-    const keySpace = (await this.storage.getAllKeys()).map(k => k.toString())
+    const keySpace = (await this.storage.getAllKeys()).map((k: any) => k.toString())
     const totalCount = keySpace.length
 
     const startingIndex = cursor ? keySpace.indexOf(cursor) : 0

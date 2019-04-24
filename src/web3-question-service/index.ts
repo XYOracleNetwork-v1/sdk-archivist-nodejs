@@ -18,8 +18,8 @@ import {
   IIntersectionRequest,
   IProofOfIntersection,
 } from '../questions'
-import { IConsensusProvider } from '@xyo-network/consensus'
-import { IXyoContentAddressableService } from '@xyo-network/content-addressable-service'
+import { IConsensusProvider } from '../consensus'
+import { IXyoContentAddressableService } from '../content-addressable-service'
 
 export class Web3QuestionService extends XyoBase implements IQuestionsProvider {
   private readonly alreadyFetchedQuestions: {

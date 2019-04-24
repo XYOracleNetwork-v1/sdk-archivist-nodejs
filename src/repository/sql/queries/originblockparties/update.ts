@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 9:48:55 am
+ * Last Modified: Wednesday, 24th April 2019 10:53:21 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -12,13 +12,11 @@
 
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
-import { IXyoSignature, IXyoPublicKey } from '@xyo-network/signing'
 
 export class UpdateOriginBlockPartiesQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       UPDATE OriginBlockParties
       SET previousOriginBlockPartyId = ?
@@ -45,8 +43,7 @@ export class UpdateOriginBlockPartiesQuery extends SqlQuery {
           GROUP BY obp2.id
         ) as OriginBlockPartyIdsToUpdate
       );
-    `,
-          serialization)
+    `)
   }
 
   public async send(

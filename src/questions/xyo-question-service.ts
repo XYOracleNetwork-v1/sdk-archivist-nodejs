@@ -11,19 +11,15 @@
 
 import { IXyoHasIntersectedQuestion, IXyoQuestionService, IXyoBlockTransfer, IProofOfIntersection } from './@types'
 import { XyoBase } from '@xyo-network/base'
-import { IXyoHash } from '@xyo-network/hashing'
-import { IXyoOriginBlockRepository } from '@xyo-network/origin-block-repository'
-import { IXyoOriginChainRepository, XyoBridgeHashSet } from '@xyo-network/origin-chain'
-import { IXyoBoundWitness } from '@xyo-network/bound-witness'
-import { IXyoPublicKey } from '@xyo-network/signing'
-import { IBlockPermissionRequestResolver } from '@xyo-network/attribution-request'
 import { IXyoArchivistNetwork } from '../network'
+import { IXyoOriginBlockRepository, IXyoOriginStateRepository, XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
+import { IBlockPermissionRequestResolver } from '../attribution-request'
 
 export class XyoQuestionService extends XyoBase implements IXyoQuestionService {
 
   constructor (
     private readonly originBlocksRepository: IXyoOriginBlockRepository,
-    private readonly originChainRepository: IXyoOriginChainRepository,
+    private readonly originChainRepository: IXyoOriginStateRepository,
     private readonly archivistNetwork: IXyoArchivistNetwork,
     private readonly blockPermissionRequestResolver: IBlockPermissionRequestResolver
   ) {
@@ -32,7 +28,7 @@ export class XyoQuestionService extends XyoBase implements IXyoQuestionService {
 
   public async buildProofOfIntersection(
     question: IXyoHasIntersectedQuestion,
-    forHashes: IXyoHash[]
+    forHashes: Buffer[]
   ): Promise<IProofOfIntersection | undefined> {
     if (forHashes.length === 0) return undefined
 
@@ -108,20 +104,21 @@ export class XyoQuestionService extends XyoBase implements IXyoQuestionService {
   }
 
   public async resolveProofForOutOfOriginChainBlock(
-    block: IXyoBoundWitness,
-    hash: IXyoHash,
+    block: Buffer,
+    hash: Buffer,
     question: IXyoHasIntersectedQuestion,
     continueFn: () => Promise<IProofOfIntersection | undefined>
   ): Promise<IProofOfIntersection | undefined> {
-    this.logInfo(`Attempting to resolve proof for out of origin-chain block ${hash.serializeHex()}`)
+    this.logInfo(`Attempting to resolve proof for out of origin-chain block ${hash.toString('hex')}`)
 
-    const result = await this.blockPermissionRequestResolver.requestPermissionForBlock(hash, 10000)
+    /*const result = await this.blockPermissionRequestResolver.requestPermissionForBlock(hash, 10000)
     if (!result) {
       this.logInfo(
         `Unable to resolve proof for out of origin-chain block ${hash.serializeHex()}, no attribution request responses`
       )
       return continueFn()
     }
+    const bw = new XyoBoundWitness(block)
     let publicKeysToFind = block.publicKeys.reduce(
       (acc, pks) => {
         acc.push(...pks.keys)
@@ -221,10 +218,11 @@ export class XyoQuestionService extends XyoBase implements IXyoQuestionService {
         hash: hash.serializeHex(),
         proofOfIdentities: [[], []] as string[][],
       }
-    }
+    }*/
+    return undefined
   }
 
-  public async getIntersections(question: IXyoHasIntersectedQuestion): Promise<IXyoHash[]> {
+  public async getIntersections(question: IXyoHasIntersectedQuestion): Promise<Buffer[]> {
     return this.archivistNetwork.getIntersections(
       question.partyOne,
       question.partyTwo,
@@ -233,13 +231,13 @@ export class XyoQuestionService extends XyoBase implements IXyoQuestionService {
     )
   }
 
-  private async getBlockFromArchivistNetwork(hash: IXyoHash): Promise<IXyoBoundWitness | undefined> {
+  private async getBlockFromArchivistNetwork(hash: Buffer): Promise<Buffer | undefined> {
     return undefined // TODO
   }
 
-  private async resolveBlockByHash(hash: IXyoHash) {
-    const block = await this.originBlocksRepository.getOriginBlockByHash(hash.serialize())
-    if (block) return block
+  private async resolveBlockByHash(hash: Buffer) {
+    /*const block = await this.originBlocksRepository.getOriginBlockByHash(hash.serialize())
+    if (block) return block*/
     return this.getBlockFromArchivistNetwork(hash)
   }
 }

@@ -4,32 +4,24 @@
  * File Created: Tuesday, 16th April 2019 2:04:07 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 12:34:39 pm
+ * Last Modified: Wednesday, 24th April 2019 11:15:14 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
 import {
-  IXyoArchivistRepository,
-  IXyoOriginBlocksByPublicKeyResult,
-  IXyoEntitiesList,
-  IXyoIntersectionsList
+  IXyoArchivistRepository
 } from '..'
 
 import { XyoBase } from '@xyo-network/base'
-import { IXyoPublicKey, IXyoSignature } from '@xyo-network/signing'
-import { IXyoBoundWitness, XyoBoundWitness } from '@xyo-network/bound-witness'
-import { IXyoSerializationService, IXyoSerializableObject } from '@xyo-network/serialization'
 
 import _ from 'lodash'
-import { DynamoDB } from 'aws-sdk'
-import { IXyoHash } from '@xyo-network/hashing'
-import { IOriginBlockQueryResult } from '@xyo-network/origin-block-repository'
 import { XyoError } from '@xyo-network/errors'
 import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
 import crypto from 'crypto'
+import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
@@ -40,8 +32,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   private publicKeyTable: PublicKeyTable
 
   constructor(
-    private readonly serializationService: IXyoSerializationService,
-    private readonly tablePrefix: string = 'xyo-archivist',
+    tablePrefix: string = 'xyo-archivist',
     region: string = 'us-east-1'
   ) {
     super()
@@ -55,50 +46,32 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     return true
   }
 
-  public async getOriginBlocksByPublicKey(publicKey: IXyoPublicKey): Promise<IXyoOriginBlocksByPublicKeyResult> {
-    const shortKey = this.sha1(publicKey.serialize())
-    const hashes = await this.publicKeyTable.scanByKey(shortKey, 100)
+  public async getOriginBlocksByPublicKey(publicKey: Buffer): Promise<{items: Buffer[], total: number}> {
+    const shortKey = this.sha1(publicKey)
+    const scanResult = await this.publicKeyTable.scanByKey(shortKey, 100)
 
-    const result: {
-      publicKeys: IXyoPublicKey[],
-      boundWitnesses: IXyoBoundWitness[]
-    } = {
-      publicKeys: [],
-      boundWitnesses: []
-    }
+    const result: Buffer[] = []
 
-    for (const hash of hashes) {
+    for (const hash of scanResult.items) {
       const data = await this.boundWitnessTable.getItem(hash)
-      const bw = XyoBoundWitness.deserializer.deserialize(data, this.serializationService)
-      result.boundWitnesses.push(bw)
-      result.publicKeys.push(publicKey)
+      result.push(data)
     }
-    return result
+    return { items: result, total:scanResult.total }
   }
 
   public async getIntersections(
-    publicKeyA: string,
-    publicKeyB: string,
+    publicKeyA: Buffer,
+    publicKeyB: Buffer,
     limit: number,
-    cursor: string | undefined
-  ): Promise<IXyoIntersectionsList> {
+    cursor: Buffer | undefined
+  ): Promise<Buffer[]> {
     throw new XyoError('getIntersections: Not Implemented')
-    return {
-      list: [],
-      hasNextPage: false,
-      totalSize: 0,
-      cursor: undefined
-    }
+    return []
   }
 
-  public async getEntities(limit: number, offsetCursor?: string | undefined): Promise<IXyoEntitiesList> {
+  public async getEntities(limit: number, offsetCursor?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
     throw new XyoError('getEntities: Not Implemented')
-    return {
-      list: [],
-      hasNextPage: false,
-      totalSize: 0,
-      cursor: undefined
-    }
+    return { items: [], total: 0 }
   }
 
   public async removeOriginBlock(hash: Buffer): Promise<void> {
@@ -117,50 +90,39 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   }
 
   public async addOriginBlock(
-    hash: IXyoHash,
-    originBlock: IXyoBoundWitness,
-    bridgedFromOriginBlockHash?: IXyoHash
+    hash: Buffer,
+    originBlock: Buffer
   ): Promise<void> {
     try {
-      const shortHash = this.sha1(hash.serialize())
-      for (const pks of originBlock.publicKeys) {
-        for (const pk of pks.keys) {
-          const shortKey = this.sha1(pk.serialize())
+      const shortHash = this.sha1(hash)
+      const bw = new XyoBoundWitness(originBlock)
+      for (const pks of bw.getPublicKeys()) {
+        for (const pk of pks) {
+          const shortKey = this.sha1(pk.getValue().getContentsCopy())
           await this.publicKeyTable.putItem(shortKey, shortHash)
         }
       }
-      return await this.boundWitnessTable.putItem(shortHash, originBlock.serialize())
+      return await this.boundWitnessTable.putItem(shortHash, originBlock)
     } catch (ex) {
       this.logError(ex)
       throw ex
     }
   }
 
-  public async getOriginBlockByHash(hash: Buffer): Promise < IXyoBoundWitness | undefined > {
+  public async getOriginBlock(hash: Buffer): Promise < Buffer | undefined > {
     const shortHash = this.sha1(hash)
     const data = await this.boundWitnessTable.getItem(shortHash)
     if (data) {
-      return XyoBoundWitness.deserializer.deserialize(data, this.serializationService)
+      return data
     }
   }
 
-  public async getBlocksThatProviderAttribution(hash: Buffer): Promise < { [h: string]: IXyoBoundWitness } > {
-    throw new XyoError('getBlocksThatProviderAttribution: Not Implemented')
-    return {
-
-    }
-  }
-
-  public async getOriginBlocks(limit: number, offsetHash ?: Buffer | undefined): Promise < IOriginBlockQueryResult > {
+  public async getOriginBlocks(limit: number, offsetHash ?: Buffer | undefined): Promise < Buffer[] > {
     const shortOffsetHash = offsetHash ? this.sha1(offsetHash) : undefined
     const items = await this.boundWitnessTable.scan(limit, shortOffsetHash)
-    const result: IOriginBlockQueryResult = {
-      list: [],
-      totalSize: items.length || -1,
-      hasNextPage: true
-    }
+    const result: Buffer[] = []
     for (const item of items) {
-      result.list.push(XyoBoundWitness.deserializer.deserialize(item, this.serializationService))
+      result.push(item)
     }
     return result
   }

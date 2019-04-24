@@ -4,7 +4,7 @@
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 11:18:58 am
+ * Last Modified: Wednesday, 24th April 2019 11:14:17 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -33,6 +33,23 @@ export class Table extends XyoBase {
     return true
   }
 
+  protected async readTableDescription(): Promise<DynamoDB.Types.TableDescription> {
+    return new Promise((resolve, reject) => {
+      try {
+        this.dynamodb.describeTable({ TableName: this.tableName }, ((describeErr: any, describeData: DynamoDB.Types.DescribeTableOutput) => {
+          if (describeErr) {
+            reject(describeErr)
+            return
+          }
+          resolve(describeData.Table)
+        }))
+      } catch (ex) {
+        this.logError(ex)
+        reject(ex)
+      }
+    })
+  }
+
   private async createTable() {
     return new Promise((resolve, reject) => {
       try {
@@ -47,23 +64,6 @@ export class Table extends XyoBase {
         } else {
           reject('createTableInput Required')
         }
-      } catch (ex) {
-        this.logError(ex)
-        reject(ex)
-      }
-    })
-  }
-
-  private async readTableDescription(tableName: string) {
-    return new Promise((resolve, reject) => {
-      try {
-        this.dynamodb.describeTable({ TableName: tableName }, ((describeErr: any, describeData: DynamoDB.Types.DescribeTableOutput) => {
-          if (describeErr) {
-            reject(describeErr)
-            return
-          }
-          resolve(describeData)
-        }))
       } catch (ex) {
         this.logError(ex)
         reject(ex)
@@ -90,7 +90,7 @@ export class Table extends XyoBase {
           if (!found) {
             resolve(await this.createTable())
           } else {
-            resolve(await this.readTableDescription(this.tableName))
+            resolve(await this.readTableDescription())
           }
         })
       } catch (ex) {

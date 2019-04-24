@@ -16,7 +16,7 @@ export {
 
 import Web3 from 'web3'
 import { IContractData, ISignedTxParams } from './@types'
-import { IXyoContentAddressableService } from '@xyo-network/content-addressable-service'
+import { IXyoContentAddressableService } from '../content-addressable-service'
 import { XyoBase } from '@xyo-network/base'
 import { XyoError } from '@xyo-network/errors'
 import { WebsocketProvider } from 'web3-providers'
