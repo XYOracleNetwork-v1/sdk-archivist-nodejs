@@ -9,8 +9,6 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-// tslint:disable-next-line:no-reference
-/// <reference path="./@types/ipfs-http-client.d.ts" />
 import {
   default as ipfsClient,
   IIpfsInitializationOptions,
@@ -23,7 +21,7 @@ import {
   IXyoContentAddressableService,
   IContentAddress,
   contentAddressableToString,
-} from '@xyo-network/content-addressable-service'
+} from '../content-addressable-service'
 import { IXyoSerializableObject } from '@xyo-network/serialization'
 
 export type XyoIpfsClientCtorOptions = IIpfsInitializationOptions
