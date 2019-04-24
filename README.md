@@ -17,7 +17,7 @@
 - [Project Overview](#project-overview)
 - [Scope of features](#scope-of-features)
 - [Install](#install)
-- [Usage])(#usage)
+- [Usage](#usage)
 - [Maintainers](#maintainers)
 - [Contributing](#contributing)
 - [License](#license)
