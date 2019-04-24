@@ -11,7 +11,7 @@
 
 import { XyoBase } from '@xyo-network/base'
 import { IXyoRunnable, providerFn } from '@xyo-network/utils'
-import { XyoBlockWitness } from '@xyo-network/block-witness'
+import { XyoBlockWitness } from '../../block-witness'
 
 export class XyoBlockWitnessRunnable extends XyoBase implements IXyoRunnable {
 

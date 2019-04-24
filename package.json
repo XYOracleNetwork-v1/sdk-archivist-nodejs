@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.2.60",
+  "version": "0.2.61",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -49,12 +49,8 @@
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "@xyo-network/attribution-request": "^0.55.9-alpha.0",
-    "@xyo-network/attribution-request.node-network": "^0.55.9-alpha.0",
     "@xyo-network/base": "^0.55.9-alpha.0",
-    "@xyo-network/block-witness": "^0.55.9-alpha.0",
     "@xyo-network/bound-witness": "^0.55.9-alpha.0",
-    "@xyo-network/content-addressable-service": "^0.55.9-alpha.0",
     "@xyo-network/errors": "^0.55.9-alpha.0",
     "@xyo-network/hashing": "^0.55.9-alpha.0",
     "@xyo-network/heuristics-common": "^0.55.9-alpha.0",
@@ -77,7 +73,6 @@
     "@xyo-network/signing.ecdsa": "^0.55.9-alpha.0",
     "@xyo-network/storage": "^0.55.9-alpha.0",
     "@xyo-network/storage.leveldb": "^0.60.2",
-    "@xyo-network/transaction-pool": "^0.55.9-alpha.0",
     "@xyo-network/utils": "^0.55.9-alpha.0",
     "abstract-leveldown": "^6.0.2",
     "apollo-cache-inmemory": "^1.5.1",

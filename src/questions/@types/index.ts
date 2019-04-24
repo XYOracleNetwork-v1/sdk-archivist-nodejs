@@ -10,7 +10,7 @@
  */
 
 import { IXyoHash } from '@xyo-network/hashing'
-import { IXyoRequestResponseTransaction } from '@xyo-network/transaction-pool'
+import { IXyoRequestResponseTransaction } from '../../transaction-pool'
 
 export interface IXyoAnswerProvider<Q, A> {
   resolve(question: Q): Promise<A>

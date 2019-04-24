@@ -13,20 +13,20 @@
 
 import { XyoError } from '@xyo-network/errors'
 import { IXyoHashProvider } from '@xyo-network/hashing'
-import { IXyoTransactionRepository } from '@xyo-network/transaction-pool'
+import { IXyoTransactionRepository } from '../transaction-pool'
 import { XyoDaemon, unsubscribeFn, BN } from '@xyo-network/utils'
 import {
   IConsensusProvider,
   ISignatureComponents,
-} from '@xyo-network/consensus'
+} from '../consensus'
 import { IXyoIntersectionTransaction } from '../questions'
 import {
   IXyoNodeNetwork,
   IBlockWitnessRequestDTO,
 } from '@xyo-network/node-network'
 import { XyoBase } from '@xyo-network/base'
-import { IXyoContentAddressableService } from '@xyo-network/content-addressable-service'
-import { XyoBlockWitnessValidator } from '@xyo-network/block-witness'
+import { IXyoContentAddressableService } from '../content-addressable-service'
+import { XyoBlockWitnessValidator } from '../block-witness'
 
 const MAX_TRANSACTIONS = 10
 const MIN_TRANSACTIONS = 1
