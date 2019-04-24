@@ -1,11 +1,15 @@
 {
   "extends": ["tslint:latest", "@xyo-network/config-tslint"],
+  "linterOptions": {
+    "project": "tsconfig.json"
+  },
   "rules": {
     "prefer-array-literal": false,
     "import-name": [
       true, {
         "lodash": "_",
-        "web3": "Web3"
+        "web3": "Web3",
+        "graphqlTag": "gql"
       }
     ]
   }
