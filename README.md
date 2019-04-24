@@ -5,6 +5,8 @@
 # XYO ARCHIVIST SDK (sdk-archivist-nodejs)
 
 [![NPM](https://nodei.co/npm/@xyo-network/sdk-archivist-nodejs.png)](https://nodei.co/npm/@xyo-network/sdk-archivist-nodejs/) 
+
+![node](https://img.shields.io/node/v/@xyo-network/sdk-archivist-nodejs.svg)
  
 [![Build Status](https://travis-ci.com/XYOracleNetwork/sdk-archivist-nodejs.svg?branch=develop)](https://travis-ci.com/XYOracleNetwork/sdk-archivist-nodejs) [![Maintainability](https://api.codeclimate.com/v1/badges/f3dd4f4d35e1bd9eeabc/maintainability)](https://codeclimate.com/github/XYOracleNetwork/sdk-archivist-nodejs/maintainability) [![BCH compliance](https://bettercodehub.com/edge/badge/XYOracleNetwork/sdk-archivist-nodejs?branch=master)](https://bettercodehub.com/results/XYOracleNetwork/sdk-archivist-nodejs) [![DepShield Badge](https://depshield.sonatype.org/badges/XYOracleNetwork/sdk-archivist-nodejs/depshield.svg)](https://depshield.github.io) [![David Badge](https://david-dm.org/xyoraclenetwork/sdk-archivist-nodejs/status.svg)](https://david-dm.org/xyoraclenetwork/sdk-archivist-nodejs) [![David Badge](https://david-dm.org/xyoraclenetwork/sdk-archivist-nodejs/dev-status.svg)](https://david-dm.org/xyoraclenetwork/sdk-archivist-nodejs)
 
@@ -15,6 +17,7 @@
 - [Project Overview](#project-overview)
 - [Scope of features](#scope-of-features)
 - [Install](#install)
+- [Usage])(#usage)
 - [Maintainers](#maintainers)
 - [Contributing](#contributing)
 - [License](#license)
@@ -57,6 +60,8 @@ Core functionality for the XYO NodeJS archivist. This repository implements the 
 ```sh
  yarn test
 ```
+
+#
 
 # Contributing
 
