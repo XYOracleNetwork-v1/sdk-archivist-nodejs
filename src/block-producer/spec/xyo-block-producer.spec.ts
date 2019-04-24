@@ -13,11 +13,11 @@ import { XyoBlockProducer } from '../xyo-block-producer'
 import { IConsensusProvider, ISignatureComponents } from '../../consensus'
 import { BN } from '@xyo-network/utils'
 import { getHashingProvider } from '@xyo-network/hashing'
-import { IXyoTransaction, IXyoTransactionRepository } from '@xyo-network/transaction-pool'
+import { IXyoTransaction, IXyoTransactionRepository } from '../../transaction-pool'
 import { IXyoNodeNetwork } from '@xyo-network/node-network'
 import { IXyoMetaList } from '@xyo-network/meta-list'
 import { XyoIpfsClient } from '../../ipfs-client'
-import { XyoBlockWitnessValidator } from '@xyo-network/block-witness'
+import { XyoBlockWitnessValidator } from '../../block-witness'
 
 jest.setTimeout(1000000)
 

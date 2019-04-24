@@ -308,18 +308,6 @@
   resolved "https://registry.yarnpkg.com/@types/zen-observable/-/zen-observable-0.8.0.tgz#8b63ab7f1aa5321248aad5ac890a485656dcea4d"
   integrity sha512-te5lMAWii1uEJ4FwLjzdlbw3+n0FZNOvFXHxQDKeT0dilh7HOzdMzV2TrJVUzq8ep7J4Na8OUYPRLSQkJHAlrg==
 
-"@xyo-network/attribution-request.node-network@^0.55.9-alpha.0":
-  version "0.55.9-alpha.0"
-  resolved "https://registry.yarnpkg.com/@xyo-network/attribution-request.node-network/-/attribution-request.node-network-0.55.9-alpha.0.tgz#b76fdf664d3f88c53e7902fe10832541fad7ba1b"
-  integrity sha512-TfaxoLHcOOrKqi0LSDm9ZkuAUcjU0zAs7w1XVaB2NAc1MHOlGEETCC9kFbIJnGB3XKSVtryJcilhVfQnrw/y5w==
-  dependencies:
-    "@xyo-network/attribution-request" "^0.55.9-alpha.0"
-    "@xyo-network/base" "^0.55.9-alpha.0"
-    "@xyo-network/bound-witness" "^0.55.9-alpha.0"
-    "@xyo-network/hashing" "^0.55.9-alpha.0"
-    "@xyo-network/node-network" "^0.55.9-alpha.0"
-    "@xyo-network/signing" "^0.55.9-alpha.0"
-
 "@xyo-network/attribution-request@^0.55.9-alpha.0":
   version "0.55.9-alpha.0"
   resolved "https://registry.yarnpkg.com/@xyo-network/attribution-request/-/attribution-request-0.55.9-alpha.0.tgz#04dee2c8cbc0aa838dd10abfc5a4ac46b1371882"
@@ -336,27 +324,6 @@
   dependencies:
     "@xyo-network/logger" "^0.55.9-alpha.0"
     fast-safe-stringify "^2.0.6"
-
-"@xyo-network/block-witness@^0.55.9-alpha.0":
-  version "0.55.9-alpha.0"
-  resolved "https://registry.yarnpkg.com/@xyo-network/block-witness/-/block-witness-0.55.9-alpha.0.tgz#a27030f322ee12370fb44935f81e2524d09bdb08"
-  integrity sha512-6vByofp8TGB3rz7lDRe3Zfg7bKXsK5CU91Un5jXwu2o9gYrl4rrp6QBlJMOEUHRcrHR8ce2Ea0glrLimdL+n+g==
-  dependencies:
-    "@xyo-network/base" "^0.55.9-alpha.0"
-    "@xyo-network/bound-witness" "^0.55.9-alpha.0"
-    "@xyo-network/consensus" "^0.55.9-alpha.0"
-    "@xyo-network/content-addressable-service" "^0.55.9-alpha.0"
-    "@xyo-network/errors" "^0.55.9-alpha.0"
-    "@xyo-network/hashing" "^0.55.9-alpha.0"
-    "@xyo-network/node-network" "^0.55.9-alpha.0"
-    "@xyo-network/origin-chain" "^0.55.9-alpha.0"
-    "@xyo-network/serialization" "^0.55.9-alpha.0"
-    "@xyo-network/serialization-schema" "^0.55.9-alpha.0"
-    "@xyo-network/serializer" "^0.55.9-alpha.0"
-    "@xyo-network/signing" "^0.55.9-alpha.0"
-    "@xyo-network/signing.ecdsa" "^0.55.9-alpha.0"
-    "@xyo-network/storage" "^0.55.9-alpha.0"
-    "@xyo-network/utils" "^0.55.9-alpha.0"
 
 "@xyo-network/bound-witness@^0.55.9-alpha.0":
   version "0.55.9-alpha.0"
