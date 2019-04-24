@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Monday, 22nd April 2019 8:29:11 am
+ * Last Modified: Tuesday, 23rd April 2019 6:08:23 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -35,6 +35,10 @@ export async function createArchivistRepository(
     }
   }
 }
+
+export { createArchivistLevelDBRepository, ILevelDBArchivistRepositoryConfig } from './leveldb '
+export { createArchivistNeo4jRepository, INeo4jArchivistRepositoryConfig } from './neo4j'
+export { createArchivistSqlRepository, ISqlArchivistRepositoryConfig } from './sql'
 
 export {
   IXyoArchivistRepository,

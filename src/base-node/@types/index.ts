@@ -9,13 +9,11 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-// tslint:disable:max-line-length
 import { IResolvers } from '../xyo-resolvers-enum'
-import { IXyoSigner, IXyoPublicKey } from '@xyo-network/signing'
+import { IXyoSigner } from '@xyo-network/signing'
 import { IXyoSerializationService } from '@xyo-network/serialization'
-import { IXyoHashProvider, IXyoHash } from '@xyo-network/hashing'
+import { IXyoHashProvider } from '@xyo-network/hashing'
 import { IXyoOriginChainRepository } from '@xyo-network/origin-chain'
-import { IXyoOriginBlockRepository } from '@xyo-network/origin-block-repository'
 import {
   IXyoBoundWitnessPayloadProvider,
   IXyoBoundWitnessSuccessListener,
@@ -41,9 +39,8 @@ import {
 } from '@xyo-network/p2p'
 import { IXyoProvider, IXyoRunnable } from '@xyo-network/utils'
 import { IXyoTransactionRepository } from '@xyo-network/transaction-pool'
-import { XyoAboutMeService } from '@xyo-network/about-me'
-import { IContractData } from '@xyo-network/web3-service'
-import { IArchivistRepositoryConfig } from '../../repository'
+import { XyoAboutMeService } from '../../about-me'
+import { IContractData } from '../../web3-service'
 
 export interface IXyoResolvers {
   [key: string]: IXyoProvider<any, any>

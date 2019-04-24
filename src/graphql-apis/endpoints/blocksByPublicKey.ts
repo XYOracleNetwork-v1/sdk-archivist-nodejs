@@ -10,7 +10,7 @@
  */
 
 import { IXyoHashProvider } from '@xyo-network/hashing'
-import { IXyoDataResolver } from '@xyo-network/graphql-server'
+import { IXyoDataResolver } from '../../graphql-server'
 import { IXyoSerializationService } from '@xyo-network/serialization'
 import { IXyoPublicKey } from '@xyo-network/signing'
 import { XyoBase } from '@xyo-network/base'

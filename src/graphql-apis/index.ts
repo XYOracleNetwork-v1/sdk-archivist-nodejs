@@ -10,7 +10,7 @@
 */
 // tslint:disable:new-parens
 
-import { XyoGraphQLServer, IXyoDataResolver } from '@xyo-network/graphql-server'
+import { XyoGraphQLServer, IXyoDataResolver } from '../graphql-server'
 import { IXyoProviderContainer } from '@xyo-network/utils'
 
 export async function buildGraphQLServer(

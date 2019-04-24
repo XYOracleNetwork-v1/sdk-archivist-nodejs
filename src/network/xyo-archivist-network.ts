@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 2:24:34 pm
+ * Last Modified: Tuesday, 23rd April 2019 4:46:10 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -14,11 +14,10 @@ import { IXyoArchivistNetwork } from './@types'
 import { IXyoHash } from '@xyo-network/hashing'
 import { XyoError, XyoErrors } from '@xyo-network/errors'
 import { XyoBase } from '@xyo-network/base'
-import { IXyoDivinerArchivistClientProvider, IXyoDivinerArchivistClient } from '@xyo-network/diviner-archivist-client'
+import { IXyoDivinerArchivistClientProvider, IXyoDivinerArchivistClient, XyoDivinerArchivistGraphQLClient } from '../diviner-archivist-client'
 import { IXyoSerializationService } from '@xyo-network/serialization'
 import { IXyoBoundWitness } from '@xyo-network/bound-witness'
 import { IXyoNodeNetwork, IXyoComponentFeatureResponse } from '@xyo-network/node-network'
-import { XyoDivinerArchivistGraphQLClient } from '@xyo-network/diviner-archivist-client.graphql'
 import { IXyoComponentArchivistFeatureDetail } from '../@types'
 
 export class XyoArchivistNetwork extends XyoBase implements IXyoArchivistNetwork, IXyoDivinerArchivistClientProvider {

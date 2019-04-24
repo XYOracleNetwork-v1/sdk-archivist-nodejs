@@ -4,7 +4,7 @@
  * File Created: Wednesday, 17th April 2019 2:51:11 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Monday, 22nd April 2019 10:10:13 am
+ * Last Modified: Tuesday, 23rd April 2019 6:15:25 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -13,23 +13,26 @@
 import { XyoNode } from './base-node'
 import { DEFAULT_NODE_OPTIONS_MYSQL, DEFAULT_NODE_OPTIONS_DYNAMODB, DEFAULT_NODE_OPTIONS } from './base-node/default-node-options'
 
-export { IXyoArchivistNetwork, XyoArchivistNetwork, CatalogueItem } from './network/'
-export { createArchivistDynamoDBRepository, IDynamoDBArchivistRepositoryConfig } from './repository/dynamodb'
-export { createArchivistLevelDBRepository, ILevelDBArchivistRepositoryConfig } from './repository/leveldb '
-export { createArchivistNeo4jRepository, INeo4jArchivistRepositoryConfig } from './repository/neo4j'
-export { createArchivistSqlRepository, ISqlArchivistRepositoryConfig } from './repository/sql'
-export {
-  IXyoArchivistRepository,
-  IXyoEntitiesList,
-  IXyoEntity,
-  IXyoEntityType,
-  IXyoOriginBlockResult,
-  IXyoOriginBlocksByPublicKeyResult,
-  IXyoIntersectionsList,
-  IArchivistRepositoryConfig
-} from './repository'
-export { IXyoComponentArchivistFeatureDetail } from './@types'
-export { XyoNode } from './base-node'
+export { default as AboutMe } from './about-me/'
+export { default as AttributionRequest } from './attribution-request/'
+export { default as AttributionRequestNodeNetwork } from './attribution-request-node-network/'
+export { default as BaseNode } from './base-node'
+export { default as BlockProducer } from './block-producer'
+export { default as BlockWitness } from './block-witness'
+export { default as Consensus } from './consensus'
+export { default as ContentAddressableService } from './content-addressable-service'
+export { default as DataGenerator } from './data-generator'
+export { default as DivinerArchivistClient } from './diviner-archivist-client'
+export { default as GraphqlApis } from './graphql-apis'
+export { default as GraphqlServer } from './graphql-server'
+export { default as IpfsClient } from './ipfs-client'
+export { default as Network } from './network/'
+export { default as Questions } from './questions'
+export { default as Repository } from './repository'
+export { default as TransactionPool } from './transaction-pool'
+export { default as Types } from './@types'
+export { default as Web3QuestionService } from './web3-question-service'
+export { default as Web3Service } from './web3-service'
 
 // function to launch for testing.  Should never be used in production
 async function main() {

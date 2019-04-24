@@ -9,8 +9,8 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { IXyoDataResolver } from '@xyo-network/graphql-server'
-import { XyoAboutMeService } from '@xyo-network/about-me'
+import { IXyoDataResolver } from '../../graphql-server'
+import { XyoAboutMeService } from '../../about-me'
 import { GraphQLResolveInfo } from 'graphql'
 
 export const serviceDependencies = ['aboutMeService']
