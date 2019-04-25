@@ -246,8 +246,7 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
   public async getOriginBlocks(limit: number, offsetHash?: Buffer | undefined): Promise<Buffer[]> {
 
     if (offsetHash) {
-      return new SelectOriginBlocksWithOffsetQuery(
-        this.sqlService, this.serializationService).send({ limit, offsetHash })
+      return new SelectOriginBlocksWithOffsetQuery(this.sqlService).send({ limit, offsetHash })
     }
     return new SelectOriginBlocksQuery(this.sqlService).send({ limit })
   }
