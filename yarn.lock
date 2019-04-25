@@ -345,10 +345,10 @@
   resolved "https://registry.yarnpkg.com/@xyo-network/object-model/-/object-model-0.5.9.tgz#4ba01dbbc89f336639a6a8ba778aabe47c7ca08e"
   integrity sha512-gERg9YmUd5LY/GgVSGhiCMd/uw551kr7nxNwOtwIQo7vO23o5y1Jmth5cB1g89cWfl/cML9tfPh6CcY4BLj6Zw==
 
-"@xyo-network/sdk-core-nodejs@^0.61.0-alpha-1":
-  version "0.61.0-alpha-1"
-  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.61.0-alpha-1.tgz#836fd20f1e174aeba1d6170efd2bd7056f91ec28"
-  integrity sha512-/WT04em2bqvEUkKF+OgQ2piaBJC94rIJB1UOqpmD5Ubl3KspqXeuF+cTrMla4gym/1/hIWDUxu7wyMMD3BZ6vw==
+"@xyo-network/sdk-core-nodejs@^0.61.0-alpha.5":
+  version "0.61.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.61.0-alpha.5.tgz#67f86e725ed8fa3357b0596e6d118613ae0c21b6"
+  integrity sha512-sxDbcmgxXjVu+USpy9HHCU3y+xlO7glwHZf+Y3c4DTu7UWalbkFHlGkqdH8PzLJI/wD6aS3N6yV3xEI68oDBVg==
   dependencies:
     "@xyo-network/object-model" "^0.5.9"
     elliptic "6.4.1"
@@ -1169,7 +1169,7 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
-"concat-stream@github:hugomrdias/concat-stream#feat/smaller":
+concat-stream@hugomrdias/concat-stream#feat/smaller:
   version "2.0.0"
   resolved "https://codeload.github.com/hugomrdias/concat-stream/tar.gz/057bc7b5d6d8df26c8cf00a3f151b6721a0a8034"
   dependencies:
@@ -3168,7 +3168,7 @@ napi-macros@~1.8.1:
   resolved "https://registry.yarnpkg.com/napi-macros/-/napi-macros-1.8.2.tgz#299265c1d8aa401351ad0675107d751228c03eda"
   integrity sha512-Tr0DNY4RzTaBG2W2m3l7ZtFuJChTH6VZhXVhkGGjF/4cZTt+i8GcM9ozD+30Lmr4mDoZ5Xx34t2o4GJqYWDGcg==
 
-"ndjson@github:hugomrdias/ndjson#feat/readable-stream3":
+ndjson@hugomrdias/ndjson#feat/readable-stream3:
   version "1.5.0"
   resolved "https://codeload.github.com/hugomrdias/ndjson/tar.gz/4db16da6b42e5b39bf300c3a7cde62abb3fa3a11"
   dependencies:

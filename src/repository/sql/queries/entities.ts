@@ -12,15 +12,13 @@
 
 import { SqlQuery } from './query'
 import { SqlService } from '../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
-import { IXyoPublicKey } from '@xyo-network/signing'
 import { CountPublicKeyGroupsQuery } from './publickeygroups'
 import { IXyoEntitiesList } from '../../@types'
 
 export class EntitiesQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       SELECT
         entities.publicKeyGroupId as publicKeyGroupId,
@@ -54,20 +52,17 @@ export class EntitiesQuery extends SqlQuery {
         JOIN OriginBlockParties obp2 on obp2.id = ks2.originBlockPartyId AND obp2.blockIndex = entities.maxBlockIndex
       GROUP BY entities.publicKeyGroupId
       ORDER BY entities.publicKeyGroupId;
-    `,
-          serialization)
+    `)
   }
 
-  public async send(
-    { limit }: {limit: number}
-  ): Promise<IXyoEntitiesList> {
+  public async send({ limit }: {limit: number}): Promise<{items: Buffer[], total: number}> {
     type QResult = Array<{publicKey: string, hash: string, allPublicKeys: string, maxIndex: number}>
     let getEntitiesQuery: Promise<QResult> | undefined
 
     getEntitiesQuery = this.sql.query<QResult>(
         this.query, [limit + 1])
 
-    const totalSizeQuery = new CountPublicKeyGroupsQuery(this.sql, this.serialization).send()
+    const totalSizeQuery = new CountPublicKeyGroupsQuery(this.sql).send()
 
     const [entitiesResults, totalSize] = await Promise.all([getEntitiesQuery, totalSizeQuery])
     const hasNextPage = entitiesResults.length === (limit + 1)
@@ -78,9 +73,7 @@ export class EntitiesQuery extends SqlQuery {
     const list = _.chain(entitiesResults)
       .map((result: any) => {
         return {
-          firstKnownPublicKey: this.serialization
-            .deserialize(result.publicKey)
-            .hydrate<IXyoPublicKey>(),
+          firstKnownPublicKey: Buffer.from(result.publicKey, 'base64'),
           type: {
             sentinel: parseInt(result.publicKey.substr(12, 2), 16) > 128,
             archivist: parseInt(result.publicKey.substr(14, 2), 16) > 128,
@@ -89,9 +82,7 @@ export class EntitiesQuery extends SqlQuery {
           },
           mostRecentIndex: result.maxIndex,
           allPublicKeys: _.chain(result.allPublicKeys).split(',')
-            .map((str: any) => this.serialization
-              .deserialize(str.trim())
-              .hydrate<IXyoPublicKey>())
+            .map((str: any) => str.trim())
             .value()
         }
       })

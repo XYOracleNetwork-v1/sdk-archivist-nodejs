@@ -11,7 +11,6 @@
  */
 
 import { XyoArchivistSqlRepository } from './xyo-sql-archivist-repository'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import { SqlService } from './sql-service'
 import { ISqlArchivistRepositoryConfig } from './@types'
 import path from 'path'
@@ -25,7 +24,7 @@ export async function createArchivistSqlRepository(
     path.join(__dirname, '..', 'sql', 'resources', 'schema.sql')
   )
 
-  const repo = new XyoArchivistSqlRepository(sqlService, serializationService as IXyoSerializationService)
+  const repo = new XyoArchivistSqlRepository(sqlService)
   return repo
 }
 

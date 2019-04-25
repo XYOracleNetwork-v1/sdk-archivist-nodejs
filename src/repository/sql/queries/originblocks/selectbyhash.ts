@@ -12,19 +12,19 @@
 
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
-import { IXyoBoundWitness } from '@xyo-network/bound-witness'
 import _ from 'lodash'
+import { XyoBuffer } from '@xyo-network/object-model';
+import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
+
 export class SelectOriginBlocksByHashQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       SELECT ob.bytes as bytes
       FROM OriginBlocks ob
       WHERE signedHash = ?
       LIMIT 1;
-    `,
-          serialization)
+    `)
   }
 
   public async send({ hash }: {hash: Buffer}): Promise<any> {
@@ -32,7 +32,7 @@ export class SelectOriginBlocksByHashQuery extends SqlQuery {
       this.query, [hash.toString('hex')])
 
     return _.chain(result)
-      .map(item => this.serialization.deserialize(item.bytes).hydrate<IXyoBoundWitness>())
+      .map(item => new XyoBoundWitness(new XyoBuffer(item.bytes)))
       .first()
       .value()
   }

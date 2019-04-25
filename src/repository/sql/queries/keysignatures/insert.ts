@@ -12,13 +12,11 @@
 
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
-import { IXyoSignature } from '@xyo-network/signing'
 
 export class InsertKeySignaturesQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       INSERT INTO KeySignatures(
         publicKeyId,
@@ -27,8 +25,7 @@ export class InsertKeySignaturesQuery extends SqlQuery {
         positionalIndex
       )
       VALUES(?, ?, ?, ?)
-    `,
-          serialization)
+    `)
   }
 
   public async send(
@@ -37,7 +34,7 @@ export class InsertKeySignaturesQuery extends SqlQuery {
       signatures}: {
         publicKeyIds: number[],
         originBlockPartyId: number,
-        signatures: IXyoSignature[]
+        signatures: Buffer[]
       }
   ): Promise<number[]> {
     return publicKeyIds.reduce(async (promiseChain, publicKeyId, currentIndex) => {
@@ -46,7 +43,7 @@ export class InsertKeySignaturesQuery extends SqlQuery {
         this.query, [
         publicKeyId,
         originBlockPartyId,
-        this.serialization.serialize(signatures[currentIndex], 'hex') as string,
+        signatures[currentIndex],
         currentIndex
       ])).insertId
       ids.push(insertId)

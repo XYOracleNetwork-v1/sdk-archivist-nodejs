@@ -13,7 +13,6 @@
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
 import _ from 'lodash'
-import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 
 export class SelectOriginBlocksByKeyQuery extends SqlQuery {
 
@@ -33,40 +32,19 @@ export class SelectOriginBlocksByKeyQuery extends SqlQuery {
     `)
   }
 
-  public async send({ publicKey }: {publicKey: Buffer}):
-    Promise<{ publicKeys: Buffer[]; boundWitnesses: Buffer[]; }> {
+  public async send(publicKey: Buffer): Promise<{items: Buffer[], total: number}> {
 
     const results = await this.sql.query<Array<{publicKeysForBlock: string, originBlockBytes: Buffer}>>(
-        this.query, [publicKey.toString('hex')]
-      )
-
-    const reducer: {
-      publicKeys: {
-        [s: string]: Buffer
-      },
-      originBlocks: Buffer[]
-    } = { publicKeys: {}, originBlocks: [] }
-
-    const reducedValue = _.reduce(
-      results,
-      (memo, result) => {
-        const boundWitness = result.originBlockBytes
-
-        _.chain(result.publicKeysForBlock).split(',').map(str => str.trim()).each((pk) => {
-          if (!memo.publicKeys.hasOwnProperty(pk)) {
-            memo.publicKeys[pk] = Buffer.from(pk, 'hex')
-          }
-        }).value()
-
-        memo.originBlocks.push(boundWitness)
-        return memo
-      },
-      reducer
+        this.query, [publicKey.toString('base64')]
     )
 
+    const blockBytes = results.map((block) => { 
+      return block.originBlockBytes
+    })
+
     return {
-      publicKeys: _.chain(reducedValue.publicKeys).values().value(),
-      boundWitnesses: reducedValue.originBlocks
+      items: blockBytes,
+      total: blockBytes.length
     }
   }
 }

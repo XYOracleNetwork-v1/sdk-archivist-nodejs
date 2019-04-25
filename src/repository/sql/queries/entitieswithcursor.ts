@@ -12,15 +12,13 @@
 
 import { SqlQuery } from './query'
 import { SqlService } from '../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
-import { IXyoPublicKey } from '@xyo-network/signing'
 import { CountPublicKeyGroupsQuery } from './publickeygroups'
 import { IXyoEntitiesList } from '../../@types'
 
 export class EntitiesQueryWithCursor extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       SELECT
         entities.publicKeyGroupId as publicKeyGroupId,
@@ -55,20 +53,17 @@ export class EntitiesQueryWithCursor extends SqlQuery {
         JOIN OriginBlockParties obp2 on obp2.id = ks2.originBlockPartyId AND obp2.blockIndex = entities.maxBlockIndex
       GROUP BY entities.publicKeyGroupId
       ORDER BY entities.publicKeyGroupId;
-    `,
-          serialization)
+    `)
   }
 
-  public async send(
-    { limit, cursor }: {limit: number, cursor: string}
-  ): Promise<IXyoEntitiesList> {
+  public async send({ limit, cursor }: {limit: number, cursor: string}): Promise<{items: Buffer[], total: number}>  {
     type QResult = Array<{publicKey: string, hash: string, allPublicKeys: string, maxIndex: number}>
     let getEntitiesQuery: Promise<QResult> | undefined
 
     getEntitiesQuery = this.sql.query<QResult>(
       this.query, [cursor, limit + 1])
 
-    const totalSizeQuery = new CountPublicKeyGroupsQuery(this.sql, this.serialization).send()
+    const totalSizeQuery = new CountPublicKeyGroupsQuery(this.sql).send()
 
     const [entitiesResults, totalSize] = await Promise.all([getEntitiesQuery, totalSizeQuery])
     const hasNextPage = entitiesResults.length === (limit + 1)
@@ -79,9 +74,7 @@ export class EntitiesQueryWithCursor extends SqlQuery {
     const list = _.chain(entitiesResults)
       .map((result) => {
         return {
-          firstKnownPublicKey: this.serialization
-            .deserialize(result.publicKey)
-            .hydrate<IXyoPublicKey>(),
+          firstKnownPublicKey: Buffer.from(result.publicKey, 'base64'),
           type: {
             sentinel: parseInt(result.publicKey.substr(12, 2), 16) > 128,
             archivist: parseInt(result.publicKey.substr(14, 2), 16) > 128,
@@ -90,20 +83,20 @@ export class EntitiesQueryWithCursor extends SqlQuery {
           },
           mostRecentIndex: result.maxIndex,
           allPublicKeys: _.chain(result.allPublicKeys).split(',')
-            .map(str => this.serialization
-              .deserialize(str.trim())
-              .hydrate<IXyoPublicKey>())
-            .value()
+            .map(str => Buffer.from(str.trim(), 'base64'))
+          .value()
         }
       })
       .value()
 
     const cursorId = _.chain(entitiesResults).last().get('hash').value() as number | undefined
+
     return {
-      list,
-      hasNextPage,
-      totalSize,
-      cursor: cursorId ? String(cursorId) : undefined
+      // hasNextPage,
+      // totalSize,
+      // cursor: cursorId ? String(cursorId) : undefined,
+      items: list,
+      total: totalSize
     }
   }
 }

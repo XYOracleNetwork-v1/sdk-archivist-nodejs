@@ -12,14 +12,13 @@
 
 import { SqlQuery } from './query'
 import { SqlService } from '../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
 import { OriginChainBlockCountQuery } from './originchainblockcount'
 import { IXyoIntersectionsList } from '../../@types'
 
 export class IntersectionsWithCursorQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       SELECT
         ob1.signedHash as signedHash,
@@ -36,8 +35,7 @@ export class IntersectionsWithCursorQuery extends SqlQuery {
       WHERE pk1.key = ? AND pk2Others.key = ? AND obp1.blockIndex > ?
       ORDER BY obp1.blockIndex
       LIMIT ?
-    `,
-          serialization)
+    `)
   }
 
   public async send(
@@ -57,7 +55,7 @@ export class IntersectionsWithCursorQuery extends SqlQuery {
     getIntersectionsQuery = this.sql.query<QResult>(
         this.query, [publicKeyA, publicKeyB, parseInt(cursor, 10), limit + 1])
 
-    const totalSizeQuery = new OriginChainBlockCountQuery(this.sql, this.serialization).send({ publicKeyA, publicKeyB })
+    const totalSizeQuery = new OriginChainBlockCountQuery(this.sql).send({ publicKeyA, publicKeyB })
 
     const [intersectionResults, totalSize] = await Promise.all([getIntersectionsQuery, totalSizeQuery])
     const hasNextPage = intersectionResults.length === (limit + 1)

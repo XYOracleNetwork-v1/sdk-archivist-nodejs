@@ -12,12 +12,11 @@
 
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
 
 export class SelectPublicKeysByKeysQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       SELECT
         pk.id as id,
@@ -25,8 +24,7 @@ export class SelectPublicKeysByKeysQuery extends SqlQuery {
         pk.publicKeyGroupId as publicKeyGroupId
       FROM PublicKeys pk
       WHERE pk.key in (?)
-    `,
-          serialization)
+    `)
   }
 
   public async send(pks: string[]): Promise<Array<{id: number, key: string, publicKeyGroupId: number}>> {

@@ -53,7 +53,7 @@
     "@xyo-network/errors": "^0.55.9-alpha.0",
     "@xyo-network/meta-list": "^0.55.9-alpha.0",
     "@xyo-network/object-model": "^0.5.9",
-    "@xyo-network/sdk-core-nodejs": "^0.61.0-alpha-1",
+    "@xyo-network/sdk-core-nodejs": "^0.61.0-alpha.5",
     "@xyo-network/storage": "^0.55.9-alpha.0",
     "abstract-leveldown": "^6.0.2",
     "apollo-cache-inmemory": "^1.5.1",
