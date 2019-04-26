@@ -15,12 +15,12 @@ import { GraphQLResolveInfo } from 'graphql'
 
 export const serviceDependencies = ['aboutMeService']
 
-export default class XyoAboutMeResolver implements IXyoDataResolver<any, any, any, any> {
+export class XyoAboutMeResolver implements IXyoDataResolver<any, any, any, any> {
 
   public static query = 'about: XyoAboutMe'
   public static dependsOnTypes = ['XyoAboutMe']
 
-  constructor (private readonly aboutMeService: XyoAboutMeService) {}
+  constructor(private readonly aboutMeService: XyoAboutMeService) {}
 
   public resolve(obj: any, args: any, context: any, info: GraphQLResolveInfo): Promise<any> {
     return this.aboutMeService.getAboutMe()

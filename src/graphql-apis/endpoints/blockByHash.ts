@@ -13,6 +13,8 @@ import { GraphQLResolveInfo } from 'graphql'
 import { XyoBase } from '@xyo-network/base'
 import { IXyoOriginBlockRepository, XyoBoundWitness, XyoSha256 } from '@xyo-network/sdk-core-nodejs'
 import { XyoStructure } from '@xyo-network/object-model'
+import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
+import bs58 from 'bs58'
 
 export const serviceDependencies = [
   'originBlockRepository',
@@ -21,7 +23,7 @@ export const serviceDependencies = [
   'archivistNetwork?'
 ]
 
-export default class XyoGetBlockByHashResolver extends XyoBase implements IXyoDataResolver<any, any, any, any> {
+export class XyoGetBlockByHashResolver extends XyoBase implements IXyoDataResolver<any, any, any, any> {
 
   public static query = 'blockByHash(hash: String!): XyoBlock'
   public static dependsOnTypes = ['XyoBlock']
@@ -33,47 +35,14 @@ export default class XyoGetBlockByHashResolver extends XyoBase implements IXyoDa
   }
 
   public async resolve(obj: any, args: any, context: any, info: GraphQLResolveInfo): Promise<any> {
-    const hexHash = args.hash as string
-    const bufferHash = Buffer.from(hexHash, 'hex')
+    const stringHash = args.hash as string
+    const bufferHash = bs58.decode(stringHash)
 
     const data = await this.originBlockRepository.getOriginBlock(bufferHash)
     if (!data) {
       return undefined
     }
 
-    const bw = new XyoBoundWitness(data)
-
-    return {
-      humanReadable: bw.toString(),
-      bytes: data.toString('hex'),
-      publicKeys: bw.getPublicKeys().map((publickeyset: XyoStructure[]) => {
-        return {
-          array: publickeyset.map((publickey: XyoStructure) => {
-            return {
-              value: publickey.getValue()
-            }
-          })
-        }
-      }),
-      signatures: bw.getSignatures().map((signatureset: XyoStructure[]) => {
-        return {
-          array: signatureset.map((signature: XyoStructure) => {
-            return {
-              value: signature.getValue()
-            }
-          })
-        }
-      }),
-      heuristics: bw.getHeuristics().map((heuristicset: XyoStructure[]) => {
-        return {
-          array: heuristicset.map((heuristic: XyoStructure) => {
-            return {
-              value: heuristic.getValue()
-            }
-          })
-        }
-      }),
-      signedHash: new XyoSha256().hash(bw.getSigningData())
-    }
+    return bufferToGraphQlBlock(data)
   }
 }

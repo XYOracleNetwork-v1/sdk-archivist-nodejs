@@ -9,39 +9,8 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import {
-  CatalogueItem
-} from '@xyo-network/network'
-
-import {
-  IXyoComponentFeatureResponse,
-} from '@xyo-network/node-network'
-
-export interface IXyoDiscoveryConfig {
-  bootstrapNodes: string[]
-  publicKey: string
-  address: string
-}
-
-export interface IXyoPeerTransportConfig {
-  address: string
-}
-
-export interface IXyoNodeNetworkConfig {
-  shouldServiceBlockPermissionRequests: boolean
-  features: IXyoComponentFeatureResponse
-}
-
 export interface IXyoNetworkConfig {
   port: number
-}
-
-export interface IXyoNetworkProcedureCatalogueConfig {
-  catalogue: CatalogueItem[]
-}
-
-export interface IXyoOriginStateConfig {
-  data: string
 }
 
 export interface IXyoAboutMeConfig {
@@ -60,46 +29,26 @@ export interface IXyoGraphQLConfig {
     blockList: boolean
     entities: boolean
     blocksByPublicKey: boolean
-    intersections: boolean
-    transactionList: boolean
   }
 }
 
-export interface IXyoTCPBoundWitnessConfig {
+export interface IXyoTcpBoundWitnessConfig {
   serverPort: number
 }
 
-export interface IXyoBoundWitnessConfig {
-  catalogue: CatalogueItem[]
-  tcp: IXyoTCPBoundWitnessConfig
+export interface IXyoArchivistRepositoryConfig {
+  platform: string,
+  config?: any
 }
 
-export interface IXyoDataConfig {
-  path?: string
-}
-
-export interface IXyoNodeDelegatesConfig {
-  enableBoundWitnessServer: boolean
-  enableGraphQLServer: boolean
-  enableQuestionsWorker: boolean
+export interface IXyoOriginStateConfig {
+  path: string
 }
 
 export interface IXyoNodeConfig {
-  data?: IXyoDataConfig,
-  nodeRunnerDelegates?: any,
-  blockProducer?: any,
-  blockWitness?: any,
-  discovery?: any,
-  peerTransport?: any,
-  nodeNetworkFrom?: any,
-  network?: any,
-  originStateRepository?: any,
-  networkProcedureCatalogue?: any,
-  archivistRepository?: any,
-  boundWitnessValidator?: any,
-  aboutMeService?: any,
-  graphql?: any,
-  web3Service?: any,
-  contentAddressableService?: any,
-  transactionRepository?: any
+  tcpServerConfig?: IXyoTcpBoundWitnessConfig,
+  originStateRepository?: IXyoOriginStateConfig,
+  archivistRepository?: IXyoArchivistRepositoryConfig,
+  aboutMeService?: IXyoAboutMeConfig,
+  graphql?: IXyoGraphQLConfig,
 }

@@ -12,10 +12,12 @@
 import { IXyoDataResolver } from '../../graphql-server'
 import { GraphQLResolveInfo } from 'graphql'
 import { IXyoOriginBlockRepository, XyoSha256, XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
+import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
+import bs58 from 'bs58'
 
 export const serviceDependencies = ['originBlockRepository', 'hashProvider']
 
-export default class XyoGetBlockList implements IXyoDataResolver<any, any, any, any> {
+export class XyoGetBlockList implements IXyoDataResolver<any, any, any, any> {
 
   public static query = 'blockList(limit: Int!, cursor: String): XyoBlockList!'
   public static dependsOnTypes = ['XyoBlockList']
@@ -26,7 +28,7 @@ export default class XyoGetBlockList implements IXyoDataResolver<any, any, any, 
 
   public async resolve(obj: any, args: any, context: any, info: GraphQLResolveInfo): Promise<any> {
     const cursor = args.cursor as string | undefined
-    const cursorBuffer = cursor ? Buffer.from(cursor, 'hex') : undefined
+    const cursorBuffer = cursor ? bs58.decode(cursor) : undefined
     const result = await this.originBlockRepository.getOriginBlocks(args.limit as number, cursorBuffer)
 
     let endCursor: string | undefined
@@ -41,39 +43,8 @@ export default class XyoGetBlockList implements IXyoDataResolver<any, any, any, 
         endCursor,
         totalCount: result.total
       },
-      items: await Promise.all(result.items.map(async(block: any) => {
-        return {
-          humanReadable: block.getReadableValue(),
-          bytes: block.serializeHex(),
-          publicKeys: block.publicKeys.map((keyset: any) => {
-            return {
-              array: keyset.keys.map((key: any) => {
-                return {
-                  value: key.serializeHex()
-                }
-              })
-            }
-          }),
-          signatures: block.signatures.map((sigSet: any) => {
-            return {
-              array: sigSet.signatures.map((sig: any) => {
-                return {
-                  value: sig.serializeHex()
-                }
-              })
-            }
-          }),
-          heuristics: block.heuristics.map((heuristicSet: any) => {
-            return {
-              array: heuristicSet.map((heuristic: any) => {
-                return {
-                  value: heuristic.serializeHex()
-                }
-              })
-            }
-          }),
-          ssignedHash: new XyoSha256().hash(block.getSigningData())
-        }
+      items: await Promise.all(result.items.map(async(block: Buffer) => {
+        return bufferToGraphQlBlock(block)
       }))
     }
   }

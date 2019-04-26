@@ -15,12 +15,12 @@ import { IXyoArchivistRepository } from '../../repository'
 
 export const serviceDependencies = ['archivistRepository']
 
-export default class GetEntitiesResolver implements IXyoDataResolver<any, any, any, any> {
+export class GetEntitiesResolver implements IXyoDataResolver<any, any, any, any> {
 
   public static query = 'entities(limit: Int!, cursor: String): XyoEntitiesList!'
   public static dependsOnTypes = ['XyoEntitiesList']
 
-  constructor (private readonly archivistRepository: IXyoArchivistRepository) {}
+  constructor(private readonly archivistRepository: IXyoArchivistRepository) {}
 
   public async resolve(obj: any, args: any, context: any, info: GraphQLResolveInfo): Promise<any> {
     const result = await this.archivistRepository.getEntities(

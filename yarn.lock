@@ -121,6 +121,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/base-x@*":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/base-x/-/base-x-3.0.0.tgz#a1365259d1d3fa3ff973ab543192a6bdd4cb2f90"
+  integrity sha512-vnqSlpsv9uFX5/z8GyKWAfWHhLGJDBkrgRRsnxlsX23DHOlNyqP/eHQiv4TwnYcZULzQIxaWA/xRWU9Dyy4qzw==
+  dependencies:
+    "@types/node" "*"
+
 "@types/bn.js@*", "@types/bn.js@^4.11.4":
   version "4.11.5"
   resolved "https://registry.yarnpkg.com/@types/bn.js/-/bn.js-4.11.5.tgz#40e36197433f78f807524ec623afcf0169ac81dc"
@@ -135,6 +142,13 @@
   dependencies:
     "@types/connect" "*"
     "@types/node" "*"
+
+"@types/bs58@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@types/bs58/-/bs58-4.0.0.tgz#baec75cb007b419ede3ec6b3410d2c8f14c92fc5"
+  integrity sha512-gYX+MHD4G/R+YGYwdhG5gbJj4LsEQGr3Vg6gVDAbe7xC5Bn8dNNG2Lpo6uDX/rT5dE7VBj0rGEFuV8L0AEx4Rg==
+  dependencies:
+    "@types/base-x" "*"
 
 "@types/connect@*":
   version "3.4.32"
@@ -537,10 +551,10 @@
   dependencies:
     winston "3.2.1"
 
-"@xyo-network/sdk-core-nodejs@^0.61.0-alpha.14":
-  version "0.61.0-alpha.14"
-  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.61.0-alpha.14.tgz#90810ff0b15ee839791ddd3f8b0b386a24eb453f"
-  integrity sha512-mIG3dGzDBg+fuwmEKpOKA696UPBxD8Eb/ghLeReDiLVZocplpJvWkaUczjfP2y1D7jHiLZnV6TaiHNSXniupFw==
+"@xyo-network/sdk-core-nodejs@^0.61.0-alpha.15":
+  version "0.61.0-alpha.15"
+  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.61.0-alpha.15.tgz#6dcf5ac076662fc822d6863cebbb7e4057ad0a26"
+  integrity sha512-P7qZ3aI3vaSjtOiBg+CToCliOE/i/L0FbKBS/c0x89xFXcmkoxPEBRf8hgqK4QE4kFPqcxOu1lp1ie4lRCJExA==
   dependencies:
     "@xyo-network/object-model" "^0.5.9"
     "@xyo-network/sdk-base-nodejs" "0.2.0"
@@ -1425,7 +1439,7 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
-"concat-stream@github:hugomrdias/concat-stream#feat/smaller":
+concat-stream@hugomrdias/concat-stream#feat/smaller:
   version "2.0.0"
   resolved "https://codeload.github.com/hugomrdias/concat-stream/tar.gz/057bc7b5d6d8df26c8cf00a3f151b6721a0a8034"
   dependencies:
@@ -3445,7 +3459,7 @@ napi-macros@~1.8.1:
   resolved "https://registry.yarnpkg.com/napi-macros/-/napi-macros-1.8.2.tgz#299265c1d8aa401351ad0675107d751228c03eda"
   integrity sha512-Tr0DNY4RzTaBG2W2m3l7ZtFuJChTH6VZhXVhkGGjF/4cZTt+i8GcM9ozD+30Lmr4mDoZ5Xx34t2o4GJqYWDGcg==
 
-"ndjson@github:hugomrdias/ndjson#feat/readable-stream3":
+ndjson@hugomrdias/ndjson#feat/readable-stream3:
   version "1.5.0"
   resolved "https://codeload.github.com/hugomrdias/ndjson/tar.gz/4db16da6b42e5b39bf300c3a7cde62abb3fa3a11"
   dependencies:

@@ -9,7 +9,7 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { XyoBase } from '@xyo-network/base'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { receiveProcedureCatalog } from './xyo-recive-catalog'
 import {
     XyoServerTcpNetwork,
@@ -22,26 +22,27 @@ import {
     XyoSecp2556k1,
     XyoGenesisBlockCreator,
     XyoNetworkHandler,
-    XyoBoundWitnessInserter} from '@xyo-network/sdk-core-nodejs'
-import { IXyoNodeConfig } from './@types'
+    XyoBoundWitnessInserter,
+    IXyoOriginBlockRepository} from '@xyo-network/sdk-core-nodejs'
 import _ from 'lodash'
 
 export class XyoNode extends XyoBase {
 
   public network: XyoServerTcpNetwork
   public stateRepo: XyoFileOriginStateRepository
-  public blockRepo: XyoMemoryBlockRepository
+  public blockRepo: IXyoOriginBlockRepository
   public state: XyoOriginState
   public hasher: XyoSha256
   public inserter: XyoBoundWitnessInserter
   public payloadProvider: XyoOriginPayloadConstructor
   public handler: XyoZigZagBoundWitnessHander
 
-  constructor(config: IXyoNodeConfig) {
+  constructor(port: number, statePath: string, blockRepository: IXyoOriginBlockRepository) {
     super()
-    this.network = new XyoServerTcpNetwork(_.get(config, 'network.port', 4141))
-    this.stateRepo = new XyoFileOriginStateRepository(_.get(config, 'originStateRepository.path', './test-state.json'))
-    this.blockRepo = new XyoMemoryBlockRepository()
+    this.blockRepo = blockRepository
+    this.network = new XyoServerTcpNetwork(port)
+    this.stateRepo = new XyoFileOriginStateRepository(statePath)
+
     this.state = new XyoOriginState(this.stateRepo)
     this.hasher = new XyoSha256()
     this.inserter = new XyoBoundWitnessInserter(this.hasher, this.state, this.blockRepo)
@@ -50,28 +51,32 @@ export class XyoNode extends XyoBase {
   }
 
   public async start() {
+    await this.stateRepo.restore()
     this.state.addSigner(new XyoSecp2556k1())
 
     if (this.state.getIndexAsNumber() === 0) {
       const genesisBlock =  await XyoGenesisBlockCreator.create(this.state.getSigners(), this.payloadProvider)
-      console.log(`Created genesis block with hash: ${genesisBlock.getHash(this.hasher).getAll().getContentsCopy().toString('hex')}`)
-      this.inserter.insert(genesisBlock)
+      this.logInfo(`Created genesis block with hash: ${genesisBlock.getHash(this.hasher).getAll().getContentsCopy().toString('hex')}`)
+      await this.inserter.insert(genesisBlock)
     }
 
     this.network.onPipeCreated = async(pipe) => {
-      console.log('New request!')
+      this.network.stopListening()
+      this.logInfo('New request!')
       try {
         const networkHandle = new XyoNetworkHandler(pipe)
         const boundWitness = await this.handler.boundWitness(networkHandle, receiveProcedureCatalog, this.state.getSigners())
 
         if (boundWitness) {
-          this.inserter.insert(boundWitness)
+          await this.inserter.insert(boundWitness)
         }
 
         pipe.close()
       } catch (error) {
-        console.log(`Error creating bound witness: ${error}`)
+        this.logWarning(`Error creating bound witness: ${error}`)
       }
+
+      this.network.startListening()
     }
 
     this.network.startListening()
