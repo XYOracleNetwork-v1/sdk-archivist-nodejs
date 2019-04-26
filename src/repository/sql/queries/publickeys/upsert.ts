@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 9:49:40 am
+ * Last Modified: Thursday, 25th April 2019 12:37:27 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -56,7 +56,7 @@ export class UpsertPublicKeysQuery extends SqlQuery {
       return publicKey.id
     }
 
-    return new InsertPublicKeysQuery(this.sq).send(
+    return new InsertPublicKeysQuery(this.sql).send(
       { hexKey, publicKeyGroupId }
     )
   }

@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Wednesday, 24th April 2019 2:33:01 pm
+ * Last Modified: Thursday, 25th April 2019 3:19:20 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -34,7 +34,7 @@ import { SelectOriginBlocksByKeyQuery, SelectOriginBlocksByHashQuery, SelectOrig
 import { DeletePayloadItemsQuery } from './queries/payloaditems'
 import { XyoBase } from '@xyo-network/base'
 import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
-import { XyoBuffer } from '@xyo-network/object-model';
+import { XyoBuffer } from '@xyo-network/object-model'
 
 export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistRepository {
 
@@ -116,10 +116,8 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
     return new SelectOriginBlocksByKeyQuery(this.sqlService).send(publicKey)
   }
 
-
-
   public async getEntities(limit: number, cursor?: Buffer): Promise<{items: Buffer[], total: number}> {
-    throw new Error("stub ")
+    throw new Error('getEntities: stub')
     // if (!cursor) {
     //   return new EntitiesQuery(this.sqlService).send({ limit })
     // }
@@ -150,6 +148,10 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
     await this.sqlService.query(XyoArchivistSqlRepository.qryDeletePublicKeyGroups)
   }
 
+  public async addOriginBlocks(hashes: Buffer, blocks: Buffer): Promise<void> {
+    return
+  }
+
   public async containsOriginBlock(hash: Buffer): Promise<boolean> {
     const result = await this.sqlService.query<Array<{containsOriginBlock: number}>>(
       XyoArchivistSqlRepository.qryContainsOriginBlock, [hash.toString('base64')])
@@ -168,6 +170,8 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
     hash: Buffer,
     block: Buffer,
   ): Promise<void> {
+    throw new Error('addOriginBlock: stub')
+    /*
     try {
       const boundWitness = new XyoBoundWitness(new XyoBuffer(block))
       const originBlockId = await this.tryCreateNewOriginBlock(hash, boundWitness)
@@ -190,7 +194,7 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
       await originBlockPartyIds.reduce(async (promiseChain, originBlockPartyId) => {
         await promiseChain
         return this.linkPreviousInsertOriginBlockParties(originBlockPartyId)
-      }, Promise.resolve() as Promise<void>)
+      },                               Promise.resolve() as Promise<void>)
 
       await originBlock.parties.reduce(async (promiseChain, blockParty) => {
         await promiseChain
@@ -232,10 +236,10 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
     } catch (err) {
       this.logError('Failed to add an origin block', err)
       throw err
-    }
+    }*/
   }
 
-  public async getOriginBlockByHash(hash: Buffer): Promise<Buffer | undefined> {
+  public async getOriginBlock(hash: Buffer): Promise<Buffer | undefined> {
     return new SelectOriginBlocksByHashQuery(this.sqlService).send({ hash })
   }
 
@@ -243,17 +247,18 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
     return new BlocksTheProviderAttributionQuery(this.sqlService).send({ hash })
   }
 
-  public async getOriginBlocks(limit: number, offsetHash?: Buffer | undefined): Promise<Buffer[]> {
-
-    if (offsetHash) {
+  public async getOriginBlocks(limit: number, offsetHash?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
+    throw new Error('getOriginBlocks: stub')
+    /*if (offsetHash) {
       return new SelectOriginBlocksWithOffsetQuery(
         this.sqlService, this.serializationService).send({ limit, offsetHash })
     }
-    return new SelectOriginBlocksQuery(this.sqlService).send({ limit })
+    return new SelectOriginBlocksQuery(this.sqlService).send({ limit })*/
   }
 
   private async tryCreatePublicKeys(originBlock: XyoBoundWitness) {
-    try {
+    throw new Error('tryCreatePublicKeys: stub')
+    /*try {
       const result = await originBlock.publicKeys.reduce(async (promiseChain: any, publicKeySet: any) => {
         const aggregator = await promiseChain
         const pkSet = await this.tryCreatePublicKeyset(publicKeySet.keys)
@@ -269,12 +274,14 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
     } catch (err) {
       this.logError('Failed to create Public Keys', err)
       throw err
-    }
+    }*/
   }
 
   private async tryCreatePublicKeyset(
-    publicKeySet: IXyoPublicKey[]
+    publicKeySet: Buffer[]
   ): Promise<{publicKeyGroupId: number, publicKeyIds: number[]}> {
+    throw new Error('tryCreatePublicKeyset: stub')
+    /*
     try {
       const pks = _.chain(publicKeySet).map((key: any) => key.serializeHex()).value()
       const existingKeys = await new SelectPublicKeysByKeysQuery(this.sqlService).send(pks)
@@ -382,6 +389,7 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
       this.logError('Failed to create Public Keys', err)
       throw err
     }
+    */
   }
 
   private async tryCreateNewOriginBlock(
@@ -389,6 +397,8 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
     originBlock: XyoBoundWitness,
     bridgedFromOriginBlockHash?: Buffer
   ): Promise<number> {
+    throw new Error('tryCreateNewOriginBlock: stub')
+    /*
     try {
       const id = (await this.sqlService.query<{insertId: number}>(
         XyoArchivistSqlRepository.qryInsertOriginBlocks, [
@@ -408,9 +418,10 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
       this.logError('Failed to create new origin block', err)
       throw err
     }
+    */
   }
 
-  private async createNewPublicKeyGroup(): Promise<number> {
+  /*private async createNewPublicKeyGroup(): Promise<number> {
     return new InsertPublicKeyGroupQuery(this.sqlService).send()
   }
 
@@ -495,6 +506,7 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
       { originBlockPartyId }
     )
   }
+  */
 }
 
 interface IPublicKeySetGroup {

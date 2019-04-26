@@ -11,8 +11,7 @@
 
 import { IXyoDataResolver } from '../../graphql-server'
 import { GraphQLResolveInfo } from 'graphql'
-import { IXyoHashProvider } from '@xyo-network/hashing'
-import { IXyoOriginBlockRepository } from '@xyo-network/origin-block-repository'
+import { IXyoOriginBlockRepository, XyoSha256, XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 
 export const serviceDependencies = ['originBlockRepository', 'hashProvider']
 
@@ -21,9 +20,8 @@ export default class XyoGetBlockList implements IXyoDataResolver<any, any, any, 
   public static query = 'blockList(limit: Int!, cursor: String): XyoBlockList!'
   public static dependsOnTypes = ['XyoBlockList']
 
-  constructor (
-    private readonly originBlockRepository: IXyoOriginBlockRepository,
-    protected readonly hashProvider: IXyoHashProvider
+  constructor(
+    private readonly originBlockRepository: IXyoOriginBlockRepository
   ) {}
 
   public async resolve(obj: any, args: any, context: any, info: GraphQLResolveInfo): Promise<any> {
@@ -32,51 +30,49 @@ export default class XyoGetBlockList implements IXyoDataResolver<any, any, any, 
     const result = await this.originBlockRepository.getOriginBlocks(args.limit as number, cursorBuffer)
 
     let endCursor: string | undefined
-    if (result.list.length) {
-      endCursor = (await this.hashProvider
-          .createHash(
-            result.list[result.list.length - 1].getSigningData())
-          ).serializeHex()
+    if (result.items.length) {
+      const hasher = new XyoSha256()
+      const signingData = new XyoBoundWitness(result.items[result.items.length - 1]).getSigningData()
+      endCursor = hasher.hash(signingData).getAll().getContentsCopy().toString()
     }
 
     return {
       meta: {
         endCursor,
-        totalCount: result.totalSize,
-        hasNextPage: result.hasNextPage,
+        totalCount: result.total
       },
-      items: await Promise.all(result.list.map(async (block) => {
+      items: await Promise.all(result.items.map(async(block: any) => {
         return {
           humanReadable: block.getReadableValue(),
           bytes: block.serializeHex(),
-          publicKeys: block.publicKeys.map((keyset) => {
+          publicKeys: block.publicKeys.map((keyset: any) => {
             return {
-              array: keyset.keys.map((key) => {
+              array: keyset.keys.map((key: any) => {
                 return {
                   value: key.serializeHex()
                 }
               })
             }
           }),
-          signatures: block.signatures.map((sigSet) => {
+          signatures: block.signatures.map((sigSet: any) => {
             return {
-              array: sigSet.signatures.map((sig) => {
+              array: sigSet.signatures.map((sig: any) => {
                 return {
                   value: sig.serializeHex()
                 }
               })
             }
           }),
-          heuristics: block.heuristics.map((heuristicSet) => {
+          heuristics: block.heuristics.map((heuristicSet: any) => {
             return {
-              array: heuristicSet.map((heuristic) => {
+              array: heuristicSet.map((heuristic: any) => {
                 return {
                   value: heuristic.serializeHex()
                 }
               })
             }
           }),
-          signedHash: (await this.hashProvider.createHash(block.getSigningData())).serializeHex()
+          ssignedHash: new XyoSha256().hash(block.getSigningData())
         }
       }))
     }

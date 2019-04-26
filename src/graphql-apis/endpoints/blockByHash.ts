@@ -10,12 +10,9 @@
  */
 import { IXyoDataResolver } from '../../graphql-server'
 import { GraphQLResolveInfo } from 'graphql'
-import { IXyoHashProvider, IXyoHash } from '@xyo-network/hashing'
-import { IXyoOriginBlockRepository } from '@xyo-network/origin-block-repository'
-import { IXyoBoundWitness } from '@xyo-network/bound-witness'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import { XyoBase } from '@xyo-network/base'
-import { IXyoArchivistNetwork } from '../../network'
+import { IXyoOriginBlockRepository, XyoBoundWitness, XyoSha256 } from '@xyo-network/sdk-core-nodejs'
+import { XyoStructure } from '@xyo-network/object-model'
 
 export const serviceDependencies = [
   'originBlockRepository',
@@ -29,11 +26,8 @@ export default class XyoGetBlockByHashResolver extends XyoBase implements IXyoDa
   public static query = 'blockByHash(hash: String!): XyoBlock'
   public static dependsOnTypes = ['XyoBlock']
 
-  constructor (
-    private readonly originBlockRepository: IXyoOriginBlockRepository,
-    private readonly hashProvider: IXyoHashProvider,
-    private readonly serializationService: IXyoSerializationService,
-    private readonly archivistNetwork?: IXyoArchivistNetwork,
+  constructor(
+    private readonly originBlockRepository: IXyoOriginBlockRepository
   ) {
     super()
   }
@@ -41,59 +35,45 @@ export default class XyoGetBlockByHashResolver extends XyoBase implements IXyoDa
   public async resolve(obj: any, args: any, context: any, info: GraphQLResolveInfo): Promise<any> {
     const hexHash = args.hash as string
     const bufferHash = Buffer.from(hexHash, 'hex')
-    let block: IXyoBoundWitness | undefined
 
-    try {
-      block = await this.originBlockRepository.getOriginBlockByHash(bufferHash)
-    } catch (e) {
-      // swallow error
+    const data = await this.originBlockRepository.getOriginBlock(bufferHash)
+    if (!data) {
+      return undefined
     }
 
-    if (!block) {
-      if (this.archivistNetwork) {
-        const archivists = this.archivistNetwork
-        try {
-          const hash = this.serializationService.deserialize(bufferHash).hydrate<IXyoHash>()
-          block = await archivists.getBlock(hash)
-        } catch (e) {
-          this.logError('There was an error deserializing the hash', e)
-        }
-      }
-    }
-
-    if (!block) return undefined
+    const bw = new XyoBoundWitness(data)
 
     return {
-      humanReadable: block.getReadableValue(),
-      bytes: block.serializeHex(),
-      publicKeys: block.publicKeys.map((keyset: any) => {
+      humanReadable: bw.toString(),
+      bytes: data.toString('hex'),
+      publicKeys: bw.getPublicKeys().map((publickeyset: XyoStructure[]) => {
         return {
-          array: keyset.keys.map((key: any) => {
+          array: publickeyset.map((publickey: XyoStructure) => {
             return {
-              value: key.serializeHex(),
+              value: publickey.getValue()
             }
           })
         }
       }),
-      signatures: block.signatures.map((sigSet: any) => {
+      signatures: bw.getSignatures().map((signatureset: XyoStructure[]) => {
         return {
-          array: sigSet.signatures.map((sig: any) => {
+          array: signatureset.map((signature: XyoStructure) => {
             return {
-              value: sig.serializeHex()
+              value: signature.getValue()
             }
           })
         }
       }),
-      heuristics: block.heuristics.map((heuristicSet: any) => {
+      heuristics: bw.getHeuristics().map((heuristicset: XyoStructure[]) => {
         return {
-          array: heuristicSet.map((heuristic: any) => {
+          array: heuristicset.map((heuristic: XyoStructure) => {
             return {
-              value: heuristic.serializeHex()
+              value: heuristic.getValue()
             }
           })
         }
       }),
-      signedHash: (await this.hashProvider.createHash(block.getSigningData())).serializeHex()
+      signedHash: new XyoSha256().hash(bw.getSigningData())
     }
   }
 }

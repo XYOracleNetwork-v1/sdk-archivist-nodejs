@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 2:04:07 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Wednesday, 24th April 2019 11:15:14 am
+ * Last Modified: Thursday, 25th April 2019 3:25:39 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -109,6 +109,10 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     }
   }
 
+  public async addOriginBlocks(hashes: Buffer, blocks: Buffer): Promise<void> {
+    return
+  }
+
   public async getOriginBlock(hash: Buffer): Promise < Buffer | undefined > {
     const shortHash = this.sha1(hash)
     const data = await this.boundWitnessTable.getItem(shortHash)
@@ -117,14 +121,14 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     }
   }
 
-  public async getOriginBlocks(limit: number, offsetHash ?: Buffer | undefined): Promise < Buffer[] > {
+  public async getOriginBlocks(limit: number, offsetHash ?: Buffer | undefined): Promise < {items: Buffer[], total: number} > {
     const shortOffsetHash = offsetHash ? this.sha1(offsetHash) : undefined
     const items = await this.boundWitnessTable.scan(limit, shortOffsetHash)
     const result: Buffer[] = []
     for (const item of items) {
       result.push(item)
     }
-    return result
+    return { items: result, total: (await this.boundWitnessTable.getRecordCount()) || -1 }
   }
 
   private sha1(data: Buffer) {

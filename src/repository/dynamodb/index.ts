@@ -4,21 +4,19 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Monday, 22nd April 2019 8:28:42 am
+ * Last Modified: Thursday, 25th April 2019 12:44:05 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
 import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import { IDynamoDBArchivistRepositoryConfig } from './@types'
 
 export async function createArchivistDynamoDBRepository(
-  config: IDynamoDBArchivistRepositoryConfig,
-  serializationService: IXyoSerializationService
+  config: IDynamoDBArchivistRepositoryConfig
 ) {
-  const repo = new XyoArchivistDynamoRepository(serializationService, config.tableName)
+  const repo = new XyoArchivistDynamoRepository(config.tableName)
   return repo
 }
 

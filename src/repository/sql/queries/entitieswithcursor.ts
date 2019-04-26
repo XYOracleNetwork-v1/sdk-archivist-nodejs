@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 9:49:50 am
+ * Last Modified: Thursday, 25th April 2019 12:38:29 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -57,6 +57,8 @@ export class EntitiesQueryWithCursor extends SqlQuery {
   }
 
   public async send({ limit, cursor }: {limit: number, cursor: string}): Promise<{items: Buffer[], total: number}>  {
+    throw new Error('send: stub')
+    /*
     type QResult = Array<{publicKey: string, hash: string, allPublicKeys: string, maxIndex: number}>
     let getEntitiesQuery: Promise<QResult> | undefined
 
@@ -98,5 +100,6 @@ export class EntitiesQueryWithCursor extends SqlQuery {
       items: list,
       total: totalSize
     }
+    */
   }
 }

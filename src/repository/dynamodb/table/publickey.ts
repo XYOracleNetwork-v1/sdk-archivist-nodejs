@@ -4,7 +4,7 @@
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Wednesday, 24th April 2019 11:12:11 am
+ * Last Modified: Thursday, 25th April 2019 3:24:48 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -80,11 +80,6 @@ export class PublicKeyTable extends Table {
     })
   }
 
-  public async getRecordCount() {
-    const description = await this.readTableDescription()
-    return description.ItemCount
-  }
-
   public async scanByKey(key: Buffer, limit: number, offsetHash?: Buffer | undefined): Promise <{items: any[], total: number}> {
     return new Promise<{items: any[], total: number}>((resolve: any, reject: any) => {
       try {
@@ -105,7 +100,7 @@ export class PublicKeyTable extends Table {
             }
           }
         }
-        this.dynamodb.scan(params, async (err: any, data: DynamoDB.Types.ScanOutput) => {
+        this.dynamodb.scan(params, async(err: any, data: DynamoDB.Types.ScanOutput) => {
           if (err) {
             this.logError(err)
             reject(err)

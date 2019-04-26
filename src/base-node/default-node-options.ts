@@ -4,20 +4,17 @@
  * File Created: Thursday, 18th April 2019 1:55:31 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 11:49:29 am
+ * Last Modified: Thursday, 25th April 2019 4:49:21 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
 import { IXyoNodeOptions } from './@types'
-import { resolvers } from './resolvers'
 
 import path from 'path'
-import { CatalogueItem } from '../network'
 
 export const DEFAULT_NODE_OPTIONS: IXyoNodeOptions = {
-  modules: resolvers,
   config: {
     nodeRunnerDelegates: {
       enableBoundWitnessServer: true,
@@ -43,15 +40,6 @@ export const DEFAULT_NODE_OPTIONS: IXyoNodeOptions = {
     },
     originChainRepository: {
       data: './node-db/origin-chain'
-    },
-    networkProcedureCatalogue: {
-      catalogue: [
-        CatalogueItem.BOUND_WITNESS,
-        CatalogueItem.TAKE_ORIGIN_CHAIN,
-        CatalogueItem.GIVE_ORIGIN_CHAIN,
-        CatalogueItem.TAKE_REQUESTED_BLOCKS,
-        CatalogueItem.GIVE_REQUESTED_BLOCKS
-      ]
     },
     boundWitnessValidator: {
       checkPartyLengths: true,
@@ -91,7 +79,6 @@ export const DEFAULT_NODE_OPTIONS: IXyoNodeOptions = {
 }
 
 export const DEFAULT_NODE_OPTIONS_DIVINER: IXyoNodeOptions = {
-  modules: resolvers,
   config: {
     nodeRunnerDelegates: {
       enableBlockProducer: true,

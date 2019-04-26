@@ -30,11 +30,11 @@ export default class GetEntitiesResolver implements IXyoDataResolver<any, any, a
 
     return {
       meta: {
-        totalCount: result.totalSize,
-        hasNextPage: result.hasNextPage,
-        endCursor: result.cursor ? result.cursor : undefined
+        totalCount: result.total,
+        hasNextPage: result.items.length === args.limit,
+        endCursor: result.items.length > 0 ? result.items[result.items.length - 1] : undefined
       },
-      items: result.list.map((listItem: any) => {
+      items: result.items.map((listItem: any) => {
         return {
           firstKnownPublicKey: listItem.firstKnownPublicKey.serializeHex(),
           allPublicKeys: (listItem.allPublicKeys || []).map((pk: any) => pk.serializeHex()),

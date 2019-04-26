@@ -12,7 +12,8 @@
 import { IXyoDataResolver } from '../../graphql-server'
 import { XyoBase } from '@xyo-network/base'
 import { IXyoArchivistRepository } from '../../repository'
-import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
+import { XyoBoundWitness, XyoSha256 } from '@xyo-network/sdk-core-nodejs'
+import { XyoStructure } from '@xyo-network/object-model'
 
 export const serviceDependencies = ['archivistRepository', 'hashProvider', 'serializationService']
 
@@ -55,34 +56,39 @@ export default class XyoGetBlocksByPublicKeyResolver extends XyoBase implements 
         return {
           humanReadable: bw.toString(),
           bytes: block.toString('hex'),
-          publicKeys: bw.getPublicKeys().map((keyset: any) => {
+          publicKeys: bw.getPublicKeys().map((publickeyset: XyoStructure[]) => {
             return {
-              array: keyset.keys.map((key: any) => {
+              array: publickeyset.map((publickey: XyoStructure) => {
                 return {
-                  value: key.serializeHex()
+                  value: publickey.getValue()
                 }
               })
             }
           }),
-          signatures: bw.getSigningData().toString('hex'),
-          heuristics: new IXyoHeuristicGetter(bw.getValue()).map((heuristicSet: any) => {
+          signatures: bw.getSignatures().map((signatureset: XyoStructure[]) => {
             return {
-              array: heuristicSet.map((heuristic: any) => {
+              array: signatureset.map((signature: XyoStructure) => {
                 return {
-                  value: heuristic.serializeHex()
+                  value: signature.getValue()
                 }
               })
             }
           }),
-          signedHash: (await this.hashProvider.createHash(block.getSigningData())).serializeHex()
+          heuristics: bw.getHeuristics().map((heuristicset: XyoStructure[]) => {
+            return {
+              array: heuristicset.map((heuristic: XyoStructure) => {
+                return {
+                  value: heuristic.getValue()
+                }
+              })
+            }
+          }),
+          signedHash: new XyoSha256().hash(bw.getSigningData())
         }
       }))
 
       return {
-        blocks: serializedBoundWitnesses,
-        keySet: blocksByPublicKeySet.publicKeys.map((publicKeyItem: any) => {
-          return publicKeyItem.serializeHex()
-        })
+        blocks: serializedBoundWitnesses
       }
 
     } catch (e) {

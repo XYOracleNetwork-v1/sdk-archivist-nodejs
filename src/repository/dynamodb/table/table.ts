@@ -4,7 +4,7 @@
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Wednesday, 24th April 2019 11:14:17 am
+ * Last Modified: Thursday, 25th April 2019 3:24:51 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -31,6 +31,11 @@ export class Table extends XyoBase {
   public async initialize() {
     this.tableInfo = await this.getTableInfo()
     return true
+  }
+
+  public async getRecordCount() {
+    const description = await this.readTableDescription()
+    return description.ItemCount
   }
 
   protected async readTableDescription(): Promise<DynamoDB.Types.TableDescription> {
@@ -74,7 +79,7 @@ export class Table extends XyoBase {
   private async createTableIfNeeded() {
     return new Promise((resolve, reject) => {
       try {
-        this.dynamodb.listTables(async (listErr, listData) => {
+        this.dynamodb.listTables(async(listErr, listData) => {
           if (listErr) {
             reject(listErr)
             return

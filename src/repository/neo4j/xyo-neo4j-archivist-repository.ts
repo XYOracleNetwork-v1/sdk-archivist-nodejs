@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Wednesday, 24th April 2019 10:43:58 am
+ * Last Modified: Thursday, 25th April 2019 3:21:52 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -32,12 +32,16 @@ export class XyoArchivistNeo4jRepository extends XyoBase implements IXyoArchivis
     return true
   }
 
-  public async getOriginBlocksByPublicKey(publicKey: Buffer): Promise<Buffer[]> {
-    return []
+  public async getOriginBlocksByPublicKey(publicKey: Buffer): Promise<{items: Buffer[], total: number}> {
+    return { items:[], total: 0 }
   }
 
-  public async getEntities(limit: number, offsetCursor?: Buffer | undefined): Promise<Buffer[]> {
-    return []
+  public async getEntities(limit: number, offsetCursor?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
+    return { items:[], total: 0 }
+  }
+
+  public async addOriginBlocks(hashes: Buffer, blocks: Buffer): Promise<void> {
+    return
   }
 
   public async removeOriginBlock(hash: Buffer): Promise<void> {
@@ -69,7 +73,7 @@ export class XyoArchivistNeo4jRepository extends XyoBase implements IXyoArchivis
     }
   }
 
-  public async getOriginBlocks(limit: number, offsetHash?: Buffer | undefined): Promise<Buffer[]> {
-    return []
+  public async getOriginBlocks(limit: number, offsetHash?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
+    return { items: [], total: 0 }
   }
 }

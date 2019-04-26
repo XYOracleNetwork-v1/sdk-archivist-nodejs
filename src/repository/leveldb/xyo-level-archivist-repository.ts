@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Wednesday, 24th April 2019 10:42:56 am
+ * Last Modified: Thursday, 25th April 2019 3:22:06 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -39,8 +39,9 @@ export class XyoArchivistLevelRepository extends XyoBase implements IXyoArchivis
     return true
   }
 
-  public async getOriginBlocksByPublicKey(publicKey: Buffer): Promise<Buffer[]> {
-    return []
+  public async getOriginBlocksByPublicKey(publicKey: Buffer): Promise<{items: Buffer[], total: number}> {
+    this.logError('getEntities: Not Implemented')
+    return { items: [], total: 0 }
   }
 
   public async removeOriginBlock(hash: Buffer): Promise<void> {
@@ -51,9 +52,9 @@ export class XyoArchivistLevelRepository extends XyoBase implements IXyoArchivis
     return false
   }
 
-  public async getEntities(limit: number, offsetCursor?: Buffer | undefined): Promise<Buffer[]> {
+  public async getEntities(limit: number, offsetCursor?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
     this.logError('getEntities: Not Implemented')
-    return []
+    return { items: [], total: 0 }
   }
 
   public async getAllOriginBlockHashes(): Promise<Buffer[]> {
@@ -67,6 +68,10 @@ export class XyoArchivistLevelRepository extends XyoBase implements IXyoArchivis
     return this.db.put(hash, originBlock)
   }
 
+  public async addOriginBlocks(hashes: Buffer, blocks: Buffer): Promise<void> {
+    return
+  }
+
   public async getOriginBlock(hash: Buffer): Promise<Buffer | undefined> {
     return this.db.get(hash)
   }
@@ -77,7 +82,7 @@ export class XyoArchivistLevelRepository extends XyoBase implements IXyoArchivis
     }
   }
 
-  public async getOriginBlocks(limit: number, offsetHash?: Buffer | undefined): Promise<Buffer[]> {
+  public async getOriginBlocks(limit: number, offsetHash?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
     const options: AbstractIteratorOptions = {
       limit
     }
@@ -98,6 +103,6 @@ export class XyoArchivistLevelRepository extends XyoBase implements IXyoArchivis
       }).on('end', () => {
         console.log('Stream ended')
       })
-    return []
+    return { items: [], total: 0 }
   }
 }
