@@ -21,7 +21,9 @@ import { XyoError } from '@xyo-network/errors'
 import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
 import crypto from 'crypto'
+import bs58 from 'bs58'
 import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
+import { XyoIterableStructure } from '@xyo-network/object-model';
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
@@ -110,7 +112,17 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   }
 
   public async addOriginBlocks(hashes: Buffer, blocks: Buffer): Promise<void> {
-    return
+    const blockStructure = new XyoIterableStructure(blocks)
+    const hashesStructure = new XyoIterableStructure(hashes)
+    const blockIt = blockStructure.newIterator()
+    const hashIt = hashesStructure.newIterator()
+
+    while (blockIt.hasNext()) {
+      const block = blockIt.next().value
+      const hash = hashIt.next().value
+      this.logInfo(`Found nested block with hash: ${bs58.encode(hash.getAll().getContentsCopy())}`)
+      this.addOriginBlock(hash.getAll().getContentsCopy(), block.getAll().getContentsCopy())
+    }
   }
 
   public async getOriginBlock(hash: Buffer): Promise < Buffer | undefined > {
