@@ -1,14 +1,15 @@
-import { XyoStructure } from '@xyo-network/object-model'
-import { XyoBoundWitness, XyoSha256 } from '@xyo-network/sdk-core-nodejs'
+import { XyoStructure, XyoSchema } from '@xyo-network/object-model'
+import { XyoBoundWitness, XyoSha256, XyoHumanHeuristicResolver } from '@xyo-network/sdk-core-nodejs'
 import bs58 from 'bs58'
 
 const hasher = new XyoSha256()
 
 export function bufferToGraphQlBlock(buffer: Buffer): any {
+
   const boundWitness = new XyoBoundWitness(buffer)
   return {
     // todo get human readable
-    humanReadable: JSON.stringify({}),
+    humanReadable: XyoHumanHeuristicResolver.resolve(buffer),
     bytes: buffer.toString('base64'),
     publicKeys: boundWitness.getPublicKeys().map((keyset: XyoStructure[]) => {
       return {

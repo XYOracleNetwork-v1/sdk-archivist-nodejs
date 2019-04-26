@@ -23,6 +23,7 @@ import {
     XyoGenesisBlockCreator,
     XyoNetworkHandler,
     XyoBoundWitnessInserter,
+    addAllDefaults,
     IXyoOriginBlockRepository} from '@xyo-network/sdk-core-nodejs'
 import _ from 'lodash'
 import bs58 from 'bs58'
@@ -49,6 +50,8 @@ export class XyoNode extends XyoBase {
     this.inserter = new XyoBoundWitnessInserter(this.hasher, this.state, this.blockRepo)
     this.payloadProvider = new XyoOriginPayloadConstructor(this.state)
     this.handler = new XyoZigZagBoundWitnessHander(this.payloadProvider)
+
+    addAllDefaults()
   }
 
   public async start() {
@@ -76,11 +79,11 @@ export class XyoNode extends XyoBase {
           await this.inserter.insert(boundWitness)
         }
 
-        pipe.close()
       } catch (error) {
         this.logWarning(`Error creating bound witness: ${error}`)
       }
 
+      pipe.close()
       this.network.startListening()
     }
 
