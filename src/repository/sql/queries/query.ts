@@ -11,7 +11,7 @@
  */
 
 import { SqlService } from '../sql-service'
-import { XyoBase } from '@xyo-network/base'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
 export class SqlQuery extends XyoBase {
 

@@ -87,7 +87,7 @@ export class CreateOriginBlockPartiesQuery extends SqlQuery {
       this.logInfo(`Succeeded in creating origin block parties with ids ${insertIds.join(', ')}`)
       return insertIds
     } catch (err) {
-      this.logError('Failed to create origin block parties', err)
+      this.logError(`Failed to create origin block parties ${err}`)
       throw err
     }
   }

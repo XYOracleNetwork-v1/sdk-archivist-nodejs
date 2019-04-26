@@ -14,7 +14,7 @@ import {
   IXyoArchivistRepository
 } from '..'
 
-import { XyoBase } from '@xyo-network/base'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
 import _ from 'lodash'
 import { XyoError } from '@xyo-network/errors'

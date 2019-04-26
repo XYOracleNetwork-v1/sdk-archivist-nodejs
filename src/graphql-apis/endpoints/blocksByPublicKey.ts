@@ -10,7 +10,7 @@
  */
 
 import { IXyoDataResolver } from '../../graphql-server'
-import { XyoBase } from '@xyo-network/base'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { IXyoArchivistRepository } from '../../repository'
 import bs58 from 'bs58'
 import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
@@ -60,7 +60,7 @@ export class XyoGetBlocksByPublicKeyResolver extends XyoBase implements IXyoData
       }
 
     } catch (e) {
-      this.logError('There was an error getting block-collection from public-key', e)
+      this.logError(`There was an error getting block-collection from public-key ${e}`)
       return {
         blocks: [],
         keySet: [publicKey]

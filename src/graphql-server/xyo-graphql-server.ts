@@ -10,7 +10,7 @@
  */
 
 import { ApolloServer, gql, IResolvers } from 'apollo-server'
-import { XyoBase } from '@xyo-network/base'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { IXyoDataResolver } from './@types'
 import { XyoError, XyoErrors } from '@xyo-network/errors'
 import graphqlTypeJson from 'graphql-type-json'

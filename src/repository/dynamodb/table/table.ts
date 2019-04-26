@@ -11,7 +11,7 @@
  */
 
 import { DynamoDB } from 'aws-sdk'
-import { XyoBase } from '@xyo-network/base'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
 export class Table extends XyoBase {
   protected createTableInput?: DynamoDB.Types.CreateTableInput

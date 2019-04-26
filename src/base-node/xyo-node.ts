@@ -25,6 +25,7 @@ import {
     XyoBoundWitnessInserter,
     IXyoOriginBlockRepository} from '@xyo-network/sdk-core-nodejs'
 import _ from 'lodash'
+import bs58 from 'bs58'
 
 export class XyoNode extends XyoBase {
 
@@ -51,14 +52,18 @@ export class XyoNode extends XyoBase {
   }
 
   public async start() {
-    await this.stateRepo.restore()
-    this.state.addSigner(new XyoSecp2556k1())
+    await this.stateRepo.restore((privateKey: Buffer) => {
+      return new XyoSecp2556k1(privateKey)
+    })
 
     if (this.state.getIndexAsNumber() === 0) {
+      this.state.addSigner(new XyoSecp2556k1())
       const genesisBlock =  await XyoGenesisBlockCreator.create(this.state.getSigners(), this.payloadProvider)
-      this.logInfo(`Created genesis block with hash: ${genesisBlock.getHash(this.hasher).getAll().getContentsCopy().toString('hex')}`)
+      this.logInfo(`Created genesis block with hash: ${bs58.encode(genesisBlock.getHash(this.hasher).getAll().getContentsCopy())}`)
       await this.inserter.insert(genesisBlock)
     }
+
+    this.logInfo(`Using public key: ${bs58.encode(this.state.getSigners()[0].getPublicKey().getAll().getContentsCopy())}`)
 
     this.network.onPipeCreated = async(pipe) => {
       this.network.stopListening()

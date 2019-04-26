@@ -14,7 +14,7 @@
 import { IBlockPermissionRequestResolver, IRequestPermissionForBlockResult } from '@xyo-network/attribution-request'
 import { IXyoHash } from '@xyo-network/hashing'
 import { IXyoNodeNetwork } from '@xyo-network/node-network'
-import { XyoBase } from '@xyo-network/base'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
 export class XyoBlockPermissionRequestResolver extends XyoBase implements IBlockPermissionRequestResolver {
 
@@ -28,13 +28,13 @@ export class XyoBlockPermissionRequestResolver extends XyoBase implements IBlock
   ): Promise<IRequestPermissionForBlockResult | undefined> {
     let resolved = false
     return new Promise((resolve, reject) => {
-      XyoBase.timeout(() => {
+      setTimeout(() => {
         if (!resolved) {
           resolved = true
           resolve(undefined)
           unsubscribeFn()
         }
-      },              timeout)
+      },timeout)
 
       const unsubscribeFn = this.nodeNetwork.requestPermissionForBlock(hash, (pk, permission) => {
         if (resolved) {

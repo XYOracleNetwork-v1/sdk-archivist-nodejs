@@ -32,7 +32,7 @@ import { InsertPublicKeyGroupQuery } from './queries/publickeygroups'
 import { UpdateOriginBlockPartiesQuery, UnlinkOriginBlockPartiesQuery, DeleteOriginBlockPartiesQuery } from './queries/originblockparties'
 import { SelectOriginBlocksByKeyQuery, SelectOriginBlocksByHashQuery, SelectOriginBlocksWithOffsetQuery, SelectOriginBlocksQuery } from './queries/originblocks'
 import { DeletePayloadItemsQuery } from './queries/payloaditems'
-import { XyoBase } from '@xyo-network/base'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 import { XyoBuffer } from '@xyo-network/object-model'
 
