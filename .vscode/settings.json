@@ -1,5 +1,6 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
+  "tslint.autoFixOnSave": true,
   "psi-header.changes-tracking": {
     "isActive": true,
     "autoHeader": "manualSave"

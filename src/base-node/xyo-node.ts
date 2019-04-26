@@ -10,6 +10,7 @@
  */
 
 import { XyoBase } from '@xyo-network/base'
+import { receiveProcedureCatalogue } from './xyo-recive-catalog'
 import {
     XyoServerTcpNetwork,
     XyoFileOriginStateRepository,
@@ -21,22 +22,9 @@ import {
     XyoSecp2556k1,
     XyoGenesisBlockCreator,
     XyoNetworkHandler,
-    IXyoProcedureCatalogue,
     XyoBoundWitnessInserter} from '@xyo-network/sdk-core-nodejs'
 
 export class XyoNode extends XyoBase {
-
-  private static testProcedureCatalog: IXyoProcedureCatalogue = {
-    getEncodedCanDo: () => {
-      return Buffer.from('01', 'hex')
-    },
-    choose: () => {
-      return Buffer.from('01', 'hex')
-    },
-    canDo: (buffer: Buffer) => {
-      return true
-    }
-  }
 
   public network = new XyoServerTcpNetwork(4141)
   public stateRepo = new XyoFileOriginStateRepository('./test-state.json')
@@ -59,12 +47,13 @@ export class XyoNode extends XyoBase {
       console.log('New request!')
       try {
         const networkHandle = new XyoNetworkHandler(pipe)
-        const boundWitness = await this.handler.boundWitness(networkHandle, XyoNode.testProcedureCatalog, this.state.getSigners())
+        const boundWitness = await this.handler.boundWitness(networkHandle, receiveProcedureCatalogue, this.state.getSigners())
 
         if (boundWitness) {
-          console.log(`Created bound witness with hash: ${boundWitness.getHash(this.hasher).getAll().getContentsCopy().toString('hex')}`)
           this.inserter.insert(boundWitness)
         }
+
+        pipe.close()
       } catch (error) {
         console.log(`Error creating bound witness: ${error}`)
       }
