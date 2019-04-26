@@ -537,10 +537,10 @@
   dependencies:
     winston "3.2.1"
 
-"@xyo-network/sdk-core-nodejs@^0.61.0-alpha.10":
-  version "0.61.0-alpha.10"
-  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.61.0-alpha.10.tgz#55f1f71ce5717c5e15846435cd43b098e38b729e"
-  integrity sha512-iz+VH5UXdWjMfpboyXmLSmzGx2bNIc2GRH4ZEusyBQvTwLmCcPRKbyeJ3chCjcWGMcBOIR1Y6HxLvf/L7LP2Qw==
+"@xyo-network/sdk-core-nodejs@^0.61.0-alpha.12":
+  version "0.61.0-alpha.12"
+  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.61.0-alpha.12.tgz#b958171ae9043baee89822d97f685642a23f997f"
+  integrity sha512-xtWSYEwn+tMcWkcKzlZc1nIXOmLeQzeKhkfdwQcP86lqsD8izWqu2Pc6UgMQ82aMW5FDaX0j3hOufCiyA3dUpg==
   dependencies:
     "@xyo-network/object-model" "^0.5.9"
     "@xyo-network/sdk-base-nodejs" "0.2.0"

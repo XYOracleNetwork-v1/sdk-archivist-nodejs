@@ -59,7 +59,7 @@
     "@xyo-network/p2p": "^0.55.9-alpha.0",
     "@xyo-network/peer-connections": "^0.55.9-alpha.0",
     "@xyo-network/peer-interaction": "^0.55.9-alpha.0",
-    "@xyo-network/sdk-core-nodejs": "^0.61.0-alpha.10",
+    "@xyo-network/sdk-core-nodejs": "^0.61.0-alpha.12",
     "@xyo-network/storage": "^0.55.9-alpha.0",
     "@xyo-network/utils": "^0.55.9-alpha.0",
     "abstract-leveldown": "^6.0.2",
