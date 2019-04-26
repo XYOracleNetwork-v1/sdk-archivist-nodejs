@@ -28,18 +28,6 @@ import _ from 'lodash'
 
 export class XyoNode extends XyoBase {
 
-  private static testProcedureCatalog: IXyoProcedureCatalogue = {
-    getEncodedCanDo: () => {
-      return Buffer.from('01', 'hex')
-    },
-    choose: () => {
-      return Buffer.from('01', 'hex')
-    },
-    canDo: (buffer: Buffer) => {
-      return true
-    }
-  }
-
   public network: XyoServerTcpNetwork
   public stateRepo: XyoFileOriginStateRepository
   public blockRepo: XyoMemoryBlockRepository
