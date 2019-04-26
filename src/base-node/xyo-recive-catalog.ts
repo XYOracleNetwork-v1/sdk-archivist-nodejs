@@ -1,21 +1,21 @@
-import { IXyoProcedureCatalogue, XyoCatalogueFlags } from '@xyo-network/sdk-core-nodejs'
+import { IXyoProcedureCatalog, XyoCatalogFlags } from '@xyo-network/sdk-core-nodejs'
 
-export const receiveProcedureCatalogue: IXyoProcedureCatalogue = {
+export const receiveProcedureCatalog: IXyoProcedureCatalog = {
   getEncodedCanDo: () => {
-    return Buffer.from([XyoCatalogueFlags.TAKE_ORIGIN_CHAIN | XyoCatalogueFlags.BOUND_WITNESS])
+    return Buffer.from([XyoCatalogFlags.TAKE_ORIGIN_CHAIN | XyoCatalogFlags.BOUND_WITNESS])
   },
-  choose: (catalogue: Buffer): Buffer => {
-    if (catalogue.length < 1) {
+  choose: (catalog: Buffer): Buffer => {
+    if (catalog.length < 1) {
       throw new Error('Catalogue must have at least a byte')
     }
 
-    const catalogueInt = catalogue.readUInt8(catalogue.length - 1)
+    const catalogueInt = catalog.readUInt8(catalog.length - 1)
 
-    if ((catalogueInt & XyoCatalogueFlags.GIVE_ORIGIN_CHAIN) !== 0) {
-      return new Buffer([XyoCatalogueFlags.TAKE_ORIGIN_CHAIN])
+    if ((catalogueInt & XyoCatalogFlags.GIVE_ORIGIN_CHAIN) !== 0) {
+      return new Buffer([XyoCatalogFlags.TAKE_ORIGIN_CHAIN])
     }
 
-    return new Buffer([XyoCatalogueFlags.BOUND_WITNESS])
+    return new Buffer([XyoCatalogFlags.BOUND_WITNESS])
   },
 
   canDo: (buffer: Buffer): boolean => {
@@ -24,6 +24,6 @@ export const receiveProcedureCatalogue: IXyoProcedureCatalogue = {
     }
 
     const catalogueInt = buffer.readUInt8(0)
-    return (catalogueInt & (XyoCatalogueFlags.GIVE_ORIGIN_CHAIN | XyoCatalogueFlags.BOUND_WITNESS)) !== 0
+    return (catalogueInt & (XyoCatalogFlags.GIVE_ORIGIN_CHAIN | XyoCatalogFlags.BOUND_WITNESS)) !== 0
   }
 }

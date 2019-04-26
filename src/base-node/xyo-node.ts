@@ -10,7 +10,7 @@
  */
 
 import { XyoBase } from '@xyo-network/base'
-import { receiveProcedureCatalogue } from './xyo-recive-catalog'
+import { receiveProcedureCatalog } from './xyo-recive-catalog'
 import {
     XyoServerTcpNetwork,
     XyoFileOriginStateRepository,
@@ -62,7 +62,7 @@ export class XyoNode extends XyoBase {
       console.log('New request!')
       try {
         const networkHandle = new XyoNetworkHandler(pipe)
-        const boundWitness = await this.handler.boundWitness(networkHandle, receiveProcedureCatalogue, this.state.getSigners())
+        const boundWitness = await this.handler.boundWitness(networkHandle, receiveProcedureCatalog, this.state.getSigners())
 
         if (boundWitness) {
           this.inserter.insert(boundWitness)
