@@ -93,7 +93,7 @@ export interface IXyoNodeConfig {
   peerTransport?: any,
   nodeNetworkFrom?: any,
   network?: any,
-  originChainRepository?: any,
+  originStateRepository?: any,
   networkProcedureCatalogue?: any,
   archivistRepository?: any,
   boundWitnessValidator?: any,
@@ -103,9 +103,3 @@ export interface IXyoNodeConfig {
   contentAddressableService?: any,
   transactionRepository?: any
 }
-
-export interface IXyoNodeOptions {
-  config?: IXyoNodeConfig
-}
-
-export type PartialNodeOptions = Partial<IXyoNodeOptions>

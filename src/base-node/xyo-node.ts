@@ -23,6 +23,8 @@ import {
     XyoNetworkHandler,
     IXyoProcedureCatalogue,
     XyoBoundWitnessInserter} from '@xyo-network/sdk-core-nodejs'
+import { IXyoNodeConfig } from './@types'
+import _ from 'lodash'
 
 export class XyoNode extends XyoBase {
 
@@ -38,14 +40,27 @@ export class XyoNode extends XyoBase {
     }
   }
 
-  public network = new XyoServerTcpNetwork(4141)
-  public stateRepo = new XyoFileOriginStateRepository('./test-state.json')
-  public blockRepo = new XyoMemoryBlockRepository()
-  public state = new XyoOriginState(this.stateRepo)
-  public hasher = new XyoSha256()
-  public inserter = new XyoBoundWitnessInserter(this.hasher, this.state, this.blockRepo)
-  public payloadProvider = new XyoOriginPayloadConstructor(this.state)
-  public handler = new XyoZigZagBoundWitnessHander(this.payloadProvider)
+  public network: XyoServerTcpNetwork
+  public stateRepo: XyoFileOriginStateRepository
+  public blockRepo: XyoMemoryBlockRepository
+  public state: XyoOriginState
+  public hasher: XyoSha256
+  public inserter: XyoBoundWitnessInserter
+  public payloadProvider: XyoOriginPayloadConstructor
+  public handler: XyoZigZagBoundWitnessHander
+
+  constructor(config: IXyoNodeConfig) {
+    super()
+    this.network = new XyoServerTcpNetwork(_.get(config, 'network.port', 4141))
+    this.stateRepo = new XyoFileOriginStateRepository(_.get(config, 'originStateRepository.path', './test-state.json'))
+    this.blockRepo = new XyoMemoryBlockRepository()
+    this.state = new XyoOriginState(this.stateRepo)
+    this.hasher = new XyoSha256()
+    this.inserter = new XyoBoundWitnessInserter(this.hasher, this.state, this.blockRepo)
+    this.payloadProvider = new XyoOriginPayloadConstructor(this.state)
+    this.handler = new XyoZigZagBoundWitnessHander(this.payloadProvider)
+  }
+
   public async start() {
     this.state.addSigner(new XyoSecp2556k1())
 

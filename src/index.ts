@@ -4,14 +4,14 @@
  * File Created: Wednesday, 17th April 2019 2:51:11 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 25th April 2019 4:59:52 pm
+ * Last Modified: Thursday, 25th April 2019 7:41:23 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { XyoNode } from './base-node'
-import { DEFAULT_NODE_OPTIONS_MYSQL, DEFAULT_NODE_OPTIONS_DYNAMODB, DEFAULT_NODE_OPTIONS } from './base-node/default-node-options'
+import { XyoNode, DEFAULT_NODE_CONFIG_MYSQL, DEFAULT_NODE_CONFIG_DYNAMODB, DEFAULT_NODE_ARCHIVIST_CONFIG } from './base-node'
+import _ from 'lodash'
 
 export * from './about-me/'
 export * from './attribution-request/'
@@ -29,19 +29,19 @@ async function main() {
   const db = process.argv.length > 2 ? process.argv[2] : 'unknown'
   switch (db) {
     case 'mysql': {
-      node = new XyoNode()
+      node = new XyoNode(_.merge({}, DEFAULT_NODE_ARCHIVIST_CONFIG, DEFAULT_NODE_CONFIG_MYSQL))
       break
     }
     case 'dynamodb': {
-      node = new XyoNode()
+      node = new XyoNode(_.merge({}, DEFAULT_NODE_ARCHIVIST_CONFIG, DEFAULT_NODE_CONFIG_DYNAMODB))
       break
     }
     default: {
-      node = new XyoNode()
+      node = new XyoNode(DEFAULT_NODE_ARCHIVIST_CONFIG)
       break
     }
   }
-  await node.start()
+  node.start()
 }
 
 if (require.main === module) {
