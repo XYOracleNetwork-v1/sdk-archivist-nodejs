@@ -34,13 +34,16 @@ async function main() {
   const port = config.tcpServerConfig && config.tcpServerConfig.serverPort || 11000
   const path = config.originStateRepository && config.originStateRepository.path || './test-state.json'
   const db = config.archivistRepository && instantiateBlockRepository(config.archivistRepository) || (() => { throw new Error('No archivist repository') })()
-  const about = config.aboutMeService && instantiateAboutMe(config.aboutMeService) || (() => { throw new Error('No about me') })()
-  const graphql = config.graphql && instantiateGraphql(config.graphql, about, db) || (() => { throw new Error('No graphql') })()
 
   const node = new XyoNode(port, path, db)
+  await node.start()
+
+  const about = config.aboutMeService && instantiateAboutMe(
+    config.aboutMeService, node.stateRepo.getSigners()[0].getPublicKey().getAll().getContentsCopy()) || (() => { throw new Error('No about me') })()
+  const graphql = config.graphql && instantiateGraphql(config.graphql, about, db) || (() => { throw new Error('No graphql') })()
 
   await graphql.start()
-  node.start()
+
 }
 
 const resolveConfig = (): IXyoNodeConfig => {

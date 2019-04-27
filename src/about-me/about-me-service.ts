@@ -10,6 +10,7 @@
  */
 
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
+import bs58 from 'bs58'
 
 export class XyoAboutMeService extends XyoBase {
 
@@ -31,7 +32,7 @@ export class XyoAboutMeService extends XyoBase {
       ip: this.ip,
       graphqlPort: this.graphqlPort,
       boundWitnessServerPort: this.boundWitnessServerPort,
-      address:  this.genesisPublicKey.toString('hex'),
+      address: bs58.encode(this.genesisPublicKey),
     }
 
     return me
