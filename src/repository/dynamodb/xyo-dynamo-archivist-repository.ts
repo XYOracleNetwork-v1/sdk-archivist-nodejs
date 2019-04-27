@@ -23,7 +23,7 @@ import { PublicKeyTable } from './table/publickey'
 import crypto from 'crypto'
 import bs58 from 'bs58'
 import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
-import { XyoIterableStructure } from '@xyo-network/object-model';
+import { XyoIterableStructure } from '@xyo-network/object-model'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
@@ -53,7 +53,6 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     const scanResult = await this.publicKeyTable.scanByKey(shortKey, 100)
 
     const result: Buffer[] = []
-
     for (const hash of scanResult.items) {
       const data = await this.boundWitnessTable.getItem(hash)
       result.push(data)
@@ -100,7 +99,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
       const bw = new XyoBoundWitness(originBlock)
       for (const pks of bw.getPublicKeys()) {
         for (const pk of pks) {
-          const shortKey = this.sha1(pk.getValue().getContentsCopy())
+          const shortKey = this.sha1(pk.getAll().getContentsCopy())
           await this.publicKeyTable.putItem(shortKey, shortHash)
         }
       }

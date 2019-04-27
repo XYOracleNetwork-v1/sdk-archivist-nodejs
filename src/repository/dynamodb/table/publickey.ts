@@ -83,14 +83,12 @@ export class PublicKeyTable extends Table {
   public async scanByKey(key: Buffer, limit: number, offsetHash?: Buffer | undefined): Promise <{items: any[], total: number}> {
     return new Promise<{items: any[], total: number}>((resolve: any, reject: any) => {
       try {
-        const params: DynamoDB.Types.ScanInput = {
+        const params: DynamoDB.Types.QueryInput = {
           Limit: limit,
-          ProjectionExpression: 'PublicKey, BlockHash',
-          FilterExpression: 'contains (PublicKey, :key)',
+          KeyConditionExpression: 'PublicKey = :key',
           ExpressionAttributeValues: {
             ':key': { B: key }
           },
-          ReturnConsumedCapacity: 'TOTAL',
           TableName: this.tableName
         }
         if (offsetHash) {
@@ -100,7 +98,7 @@ export class PublicKeyTable extends Table {
             }
           }
         }
-        this.dynamodb.scan(params, async(err: any, data: DynamoDB.Types.ScanOutput) => {
+        this.dynamodb.query(params, async(err: any, data: DynamoDB.Types.ScanOutput) => {
           if (err) {
             this.logError(err)
             reject(err)
