@@ -17,14 +17,13 @@ import _ from 'lodash'
 
 export class DeletePayloadItemsQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       DELETE p FROM PayloadItems p
         JOIN OriginBlockParties obp on obp.id = p.originBlockPartyId
         JOIN OriginBlocks ob on ob.id = obp.originBlockId
       WHERE ob.signedHash = ?;
-    `,
-          serialization)
+    `)
   }
 
   public async send(

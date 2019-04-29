@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:00 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 18th April 2019 9:49:40 am
+ * Last Modified: Thursday, 25th April 2019 12:37:27 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -12,29 +12,27 @@
 
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
-import { IXyoPublicKey } from '@xyo-network/signing'
 import { RelinkPublicKeysQuery } from './relinkall'
 import { InsertPublicKeysQuery } from './insert'
 import { SelectPublicKeyGroupsByKeyQuery, DeletePublicKeyGroupQuery } from '../publickeygroups'
 
 export class UpsertPublicKeysQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
-    super(sql, '', // this is a meta query, so no sql
-          serialization)
+  constructor(sql: SqlService) {
+    // this is a meta query, so no sql
+    super(sql, '')
   }
 
   public async send(
     { key,
       publicKeyGroupId }: {
-        key: IXyoPublicKey | string,
+        key: string,
         publicKeyGroupId: number}
   ) {
-    const hexKey = typeof key === 'string' ? key : key.serializeHex()
+    const hexKey = key
 
-    const publicKeyMatches = await new SelectPublicKeyGroupsByKeyQuery(this.sql, this.serialization).send(
+    const publicKeyMatches = await new SelectPublicKeyGroupsByKeyQuery(this.sql).send(
       { hexKey }
     )
 
@@ -45,20 +43,20 @@ export class UpsertPublicKeysQuery extends SqlQuery {
       }
 
       // Self heal out of turn blocks
-      await new RelinkPublicKeysQuery(this.sql, this.serialization).send(
+      await new RelinkPublicKeysQuery(this.sql).send(
         { publicKeyGroupIdNew: publicKeyGroupId,
           publicKeyGroupIdOld: publicKey.publicKeyGroupId
         }
       )
 
-      await new DeletePublicKeyGroupQuery(this.sql, this.serialization).send(
+      await new DeletePublicKeyGroupQuery(this.sql).send(
         { publicKeyGroupId: publicKey.publicKeyGroupId }
       )
 
       return publicKey.id
     }
 
-    return new InsertPublicKeysQuery(this.sql, this.serialization).send(
+    return new InsertPublicKeysQuery(this.sql).send(
       { hexKey, publicKeyGroupId }
     )
   }

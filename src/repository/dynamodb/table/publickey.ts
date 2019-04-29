@@ -4,7 +4,7 @@
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 12:26:57 pm
+ * Last Modified: Thursday, 25th April 2019 3:24:48 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -80,17 +80,15 @@ export class PublicKeyTable extends Table {
     })
   }
 
-  public async scanByKey(key: Buffer, limit: number, offsetHash?: Buffer | undefined): Promise <any[]> {
-    return new Promise<[]>((resolve: any, reject: any) => {
+  public async scanByKey(key: Buffer, limit: number, offsetHash?: Buffer | undefined): Promise <{items: any[], total: number}> {
+    return new Promise<{items: any[], total: number}>((resolve: any, reject: any) => {
       try {
-        const params: DynamoDB.Types.ScanInput = {
+        const params: DynamoDB.Types.QueryInput = {
           Limit: limit,
-          ProjectionExpression: 'PublicKey, BlockHash',
-          FilterExpression: 'contains (PublicKey, :key)',
+          KeyConditionExpression: 'PublicKey = :key',
           ExpressionAttributeValues: {
             ':key': { B: key }
           },
-          ReturnConsumedCapacity: 'TOTAL',
           TableName: this.tableName
         }
         if (offsetHash) {
@@ -100,7 +98,7 @@ export class PublicKeyTable extends Table {
             }
           }
         }
-        this.dynamodb.scan(params, (err: any, data: DynamoDB.Types.ScanOutput) => {
+        this.dynamodb.query(params, async(err: any, data: DynamoDB.Types.ScanOutput) => {
           if (err) {
             this.logError(err)
             reject(err)
@@ -115,7 +113,7 @@ export class PublicKeyTable extends Table {
               }
             }
           }
-          resolve(result)
+          resolve({ items: result, total: await this.getRecordCount() })
         })
       } catch (ex) {
         this.logError(ex)

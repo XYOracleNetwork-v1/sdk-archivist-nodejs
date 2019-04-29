@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 6:08:23 pm
+ * Last Modified: Thursday, 25th April 2019 12:57:12 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -12,7 +12,7 @@
 
 import { IArchivistRepositoryConfig } from './@types'
 import { createArchivistSqlRepository, ISqlArchivistRepositoryConfig } from './sql'
-import { createArchivistLevelDBRepository, ILevelDBArchivistRepositoryConfig } from './leveldb '
+import { createArchivistLevelDBRepository, ILevelDBArchivistRepositoryConfig } from './leveldb'
 import { createArchivistDynamoDBRepository, IDynamoDBArchivistRepositoryConfig } from './dynamodb'
 import { createArchivistNeo4jRepository, INeo4jArchivistRepositoryConfig } from './neo4j'
 
@@ -22,21 +22,21 @@ export async function createArchivistRepository(
 ) {
   switch (config.platform) {
     case 'mysql': {
-      return createArchivistSqlRepository(config as ISqlArchivistRepositoryConfig, serializationService)
+      return createArchivistSqlRepository(config as ISqlArchivistRepositoryConfig)
     }
     case 'dynamodb': {
-      return createArchivistDynamoDBRepository(config as IDynamoDBArchivistRepositoryConfig, serializationService)
+      return createArchivistDynamoDBRepository(config as IDynamoDBArchivistRepositoryConfig)
     }
     case 'leveldb': {
-      return createArchivistLevelDBRepository(config as ILevelDBArchivistRepositoryConfig, serializationService)
+      return createArchivistLevelDBRepository(config as ILevelDBArchivistRepositoryConfig)
     }
     case 'neo4j': {
-      return createArchivistNeo4jRepository(config as INeo4jArchivistRepositoryConfig, serializationService)
+      return createArchivistNeo4jRepository(config as INeo4jArchivistRepositoryConfig)
     }
   }
 }
 
-export { createArchivistLevelDBRepository, ILevelDBArchivistRepositoryConfig } from './leveldb '
+export { createArchivistLevelDBRepository, ILevelDBArchivistRepositoryConfig } from './leveldb'
 export { createArchivistNeo4jRepository, INeo4jArchivistRepositoryConfig } from './neo4j'
 export { createArchivistSqlRepository, ISqlArchivistRepositoryConfig } from './sql'
 

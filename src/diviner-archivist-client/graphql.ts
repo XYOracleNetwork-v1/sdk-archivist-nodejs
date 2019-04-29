@@ -9,7 +9,7 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { XyoBase } from '@xyo-network/base'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { IXyoMetaList } from '@xyo-network/meta-list'
 import { IXyoDivinerArchivistClient } from '../diviner-archivist-client'
 import gql from 'graphql-tag'
@@ -79,7 +79,7 @@ export class XyoDivinerArchivistGraphQLClient extends XyoBase implements IXyoDiv
 
       return result.data.intersections
     } catch (ex) {
-      this.logError('There was an error getting intersections from archivist client', ex)
+      this.logError(`There was an error getting intersections from archivist client ${ex}`)
       throw ex
     }
   }
@@ -96,7 +96,7 @@ export class XyoDivinerArchivistGraphQLClient extends XyoBase implements IXyoDiv
 
       return result && result.data && result.data.blockByHash && result.data.blockByHash.bytes
     } catch (ex) {
-      this.logError('There was an error getting block by hash from archivist client', ex)
+      this.logError(`There was an error getting block by hash from archivist client: ${ex}`)
       throw ex
     }
   }

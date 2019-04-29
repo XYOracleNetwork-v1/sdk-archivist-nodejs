@@ -10,7 +10,7 @@
  */
 
 import { ApolloServer, gql, IResolvers } from 'apollo-server'
-import { XyoBase } from '@xyo-network/base'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { IXyoDataResolver } from './@types'
 import { XyoError, XyoErrors } from '@xyo-network/errors'
 import graphqlTypeJson from 'graphql-type-json'
@@ -34,7 +34,7 @@ export class XyoGraphQLServer extends XyoBase {
     this.graphqlResolvers[route] = resolver
   }
 
-  public async start (): Promise<void> {
+  public async start(): Promise<void> {
     const { typeDefs, resolvers } = this.initialize()
     this.server = new ApolloServer({
       typeDefs,
@@ -45,7 +45,7 @@ export class XyoGraphQLServer extends XyoBase {
     this.logInfo(`Graphql server ready at url: ${url}`)
   }
 
-  public async stop (): Promise<void> {
+  public async stop(): Promise<void> {
     this.logInfo('Stopping Graphql server')
     if (this.server) {
       await this.server.stop()
@@ -53,7 +53,7 @@ export class XyoGraphQLServer extends XyoBase {
     this.logInfo('Stopped Graphql server')
   }
 
-  private initialize () {
+  private initialize() {
     // Build Router
     const compiledRouter = Object.keys(this.graphqlResolvers as object).reduce((router, route) => {
       // @ts-ignore

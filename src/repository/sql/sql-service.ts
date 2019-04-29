@@ -11,7 +11,7 @@
  */
 
 import { default as mysql, Connection, MysqlError } from 'mysql'
-import { XyoBase } from '@xyo-network/base'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import fs from 'fs'
 import { ISqlArchivistRepositoryConfig } from './@types'
 
@@ -93,7 +93,7 @@ export class SqlService extends XyoBase {
             return reject(err)
           }
 
-          return XyoBase.timeout(() => {
+          return setTimeout(() => {
             return this.getOrCreateConnection(maxTries, tryNumber + 1).then(resolve).catch(reject)
           },                     1000 * Math.pow(2, tryNumber)) // exponential back-off
         }
@@ -159,16 +159,17 @@ async function tryCreateSqlService(
       [connectionDetails.database]
     )
   } catch (err) {
+    const base = new XyoBase()
     if (err.code === 'ER_BAD_DB_ERROR') {
       if (schema) {
-        XyoBase.logger.info(`Database ${connectionDetails.database} does not exist. Will try to create`)
+        console.log(`Database ${connectionDetails.database} does not exist. Will try to create`)
         await createDatabaseWithSchema(connectionDetails, `${schema}`)
       } else {
-        XyoBase.logger.error('Bad database error, could not resolve without schema')
+        console.log('Bad database error, could not resolve without schema')
         throw err
       }
     } else {
-      XyoBase.logger.error('An unknown error occurred connecting to the database', err)
+      console.log('An unknown error occurred connecting to the database', err)
       throw err
     }
   }
@@ -179,7 +180,7 @@ async function tryCreateSqlService(
     if (schema) {
       await createDatabaseWithSchema(connectionDetails, `${schema}`)
     } else {
-      XyoBase.logger.error('Bad schema error, could not resolve without schema')
+      console.log('Bad schema error, could not resolve without schema')
       throw new Error('Could not initialize database schema')
     }
   }

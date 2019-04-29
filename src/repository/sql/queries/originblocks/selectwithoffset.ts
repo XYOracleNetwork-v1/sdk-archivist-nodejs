@@ -12,14 +12,14 @@
 
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
-import { IXyoBoundWitness } from '@xyo-network/bound-witness'
+import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 import _ from 'lodash'
 import { CountOriginBlocksQuery } from './count'
+import { XyoBuffer } from '@xyo-network/object-model';
 
 export class SelectOriginBlocksWithOffsetQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       SELECT
         ob.bytes as bytes
@@ -28,8 +28,7 @@ export class SelectOriginBlocksWithOffsetQuery extends SqlQuery {
       WHERE ob.id > ob2.id
       ORDER BY ob.id
       LIMIT ?
-    `,
-          serialization)
+    `)
   }
 
   public async send({ limit, offsetHash }: {limit: number, offsetHash: Buffer}): Promise<any> {
@@ -37,7 +36,7 @@ export class SelectOriginBlocksWithOffsetQuery extends SqlQuery {
       this.query, [offsetHash.toString('hex'), limit + 1])
 
     const [originBlockResults, totalSize] =
-      await Promise.all([originBlockQuery, new CountOriginBlocksQuery(this.sql, this.serialization).send()])
+      await Promise.all([originBlockQuery, new CountOriginBlocksQuery(this.sql).send()])
 
     const hasNextPage = originBlockResults.length === (limit + 1)
 
@@ -46,10 +45,7 @@ export class SelectOriginBlocksWithOffsetQuery extends SqlQuery {
     }
 
     const list = _.chain(originBlockResults)
-      .map(result => this.serialization
-            .deserialize(Buffer.from(result.bytes))
-            .hydrate<IXyoBoundWitness>()
-      )
+      .map(result => new XyoBoundWitness(new XyoBuffer(result.bytes)))
       .value()
 
     return {

@@ -12,18 +12,16 @@
 
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
 
 export class DeleteOriginBlockPartiesQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       DELETE obp FROM OriginBlockParties obp
         JOIN OriginBlocks ob on ob.id = obp.originBlockId
       WHERE ob.signedHash = ?;
-    `,
-          serialization)
+    `)
   }
 
   public async send(

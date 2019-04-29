@@ -9,34 +9,31 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { IXyoHashProvider } from '@xyo-network/hashing'
 import { IXyoDataResolver } from '../../graphql-server'
-import { IXyoSerializationService } from '@xyo-network/serialization'
-import { IXyoPublicKey } from '@xyo-network/signing'
-import { XyoBase } from '@xyo-network/base'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { IXyoArchivistRepository } from '../../repository'
+import bs58 from 'bs58'
+import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
 
 export const serviceDependencies = ['archivistRepository', 'hashProvider', 'serializationService']
 
-export default class XyoGetBlocksByPublicKeyResolver extends XyoBase implements IXyoDataResolver<any, any, any, any> {
+export class XyoGetBlocksByPublicKeyResolver extends XyoBase implements IXyoDataResolver<any, any, any, any> {
 
   public static query = 'blocksByPublicKey(publicKeys: [String!]): [XyoBlockCollection]'
   public static dependsOnTypes = ['XyoBlockCollection']
 
   constructor(
-    private readonly archivistRepository: IXyoArchivistRepository,
-    protected readonly hashProvider: IXyoHashProvider,
-    protected readonly serializationService: IXyoSerializationService
+    private readonly archivistRepository: IXyoArchivistRepository
   ) {
     super()
   }
 
-  public async resolve (obj: any, args: any, context: any, info: any): Promise<any> {
+  public async resolve(obj: any, args: any, context: any, info: any): Promise<any> {
     if (!args || !args.publicKeys || !args.publicKeys.length) {
       return []
     }
 
-    const blocks = await Promise.all((args.publicKeys as string[]).map(async (publicKey) => {
+    const blocks = await Promise.all((args.publicKeys as string[]).map(async(publicKey) => {
       const innerBlocks = await this.getBlockCollectionForPublicKey(publicKey)
       return {
         publicKey,
@@ -51,53 +48,19 @@ export default class XyoGetBlocksByPublicKeyResolver extends XyoBase implements 
   private async getBlockCollectionForPublicKey(publicKey: string) {
     try {
       const blocksByPublicKeySet = await this.archivistRepository.getOriginBlocksByPublicKey(
-        this.serializationService.deserialize(Buffer.from(publicKey, 'hex')).hydrate<IXyoPublicKey>()
+        bs58.decode(publicKey)
       )
 
-      const serializedBoundWitnesses = await Promise.all(blocksByPublicKeySet.boundWitnesses.map(async (block: any) => {
-        return {
-          humanReadable: block.getReadableValue(),
-          bytes: block.serializeHex(),
-          publicKeys: block.publicKeys.map((keyset: any) => {
-            return {
-              array: keyset.keys.map((key: any) => {
-                return {
-                  value: key.serializeHex()
-                }
-              })
-            }
-          }),
-          signatures: block.signatures.map((sigSet: any) => {
-            return {
-              array: sigSet.signatures.map((sig: any) => {
-                return {
-                  value: sig.serializeHex()
-                }
-              })
-            }
-          }),
-          heuristics: block.heuristics.map((heuristicSet: any) => {
-            return {
-              array: heuristicSet.map((heuristic: any) => {
-                return {
-                  value: heuristic.serializeHex()
-                }
-              })
-            }
-          }),
-          signedHash: (await this.hashProvider.createHash(block.getSigningData())).serializeHex()
-        }
+      const serializedBoundWitnesses = await Promise.all(blocksByPublicKeySet.items.map(async(block: Buffer) => {
+        return bufferToGraphQlBlock(block)
       }))
 
       return {
-        blocks: serializedBoundWitnesses,
-        keySet: blocksByPublicKeySet.publicKeys.map((publicKeyItem: any) => {
-          return publicKeyItem.serializeHex()
-        })
+        blocks: serializedBoundWitnesses
       }
 
     } catch (e) {
-      this.logError('There was an error getting block-collection from public-key', e)
+      this.logError(`There was an error getting block-collection from public-key ${e}`)
       return {
         blocks: [],
         keySet: [publicKey]

@@ -4,14 +4,14 @@
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 11:18:58 am
+ * Last Modified: Thursday, 25th April 2019 3:24:51 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
 import { DynamoDB } from 'aws-sdk'
-import { XyoBase } from '@xyo-network/base'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
 export class Table extends XyoBase {
   protected createTableInput?: DynamoDB.Types.CreateTableInput
@@ -31,6 +31,28 @@ export class Table extends XyoBase {
   public async initialize() {
     this.tableInfo = await this.getTableInfo()
     return true
+  }
+
+  public async getRecordCount() {
+    const description = await this.readTableDescription()
+    return description.ItemCount
+  }
+
+  protected async readTableDescription(): Promise<DynamoDB.Types.TableDescription> {
+    return new Promise((resolve, reject) => {
+      try {
+        this.dynamodb.describeTable({ TableName: this.tableName }, ((describeErr: any, describeData: DynamoDB.Types.DescribeTableOutput) => {
+          if (describeErr) {
+            reject(describeErr)
+            return
+          }
+          resolve(describeData.Table)
+        }))
+      } catch (ex) {
+        this.logError(ex)
+        reject(ex)
+      }
+    })
   }
 
   private async createTable() {
@@ -54,27 +76,10 @@ export class Table extends XyoBase {
     })
   }
 
-  private async readTableDescription(tableName: string) {
-    return new Promise((resolve, reject) => {
-      try {
-        this.dynamodb.describeTable({ TableName: tableName }, ((describeErr: any, describeData: DynamoDB.Types.DescribeTableOutput) => {
-          if (describeErr) {
-            reject(describeErr)
-            return
-          }
-          resolve(describeData)
-        }))
-      } catch (ex) {
-        this.logError(ex)
-        reject(ex)
-      }
-    })
-  }
-
   private async createTableIfNeeded() {
     return new Promise((resolve, reject) => {
       try {
-        this.dynamodb.listTables(async (listErr, listData) => {
+        this.dynamodb.listTables(async(listErr, listData) => {
           if (listErr) {
             reject(listErr)
             return
@@ -90,7 +95,7 @@ export class Table extends XyoBase {
           if (!found) {
             resolve(await this.createTable())
           } else {
-            resolve(await this.readTableDescription(this.tableName))
+            resolve(await this.readTableDescription())
           }
         })
       } catch (ex) {

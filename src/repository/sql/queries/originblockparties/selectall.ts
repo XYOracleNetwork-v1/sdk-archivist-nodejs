@@ -12,18 +12,16 @@
 
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
 
 export class SelectAllOriginBlockPartyIdsQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       SELECT
         obp.id
       FROM OriginBlockParties obp
-      `,
-          serialization)
+      `)
   }
 
   public async send(): Promise<string[]> {
