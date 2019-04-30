@@ -14,8 +14,10 @@ script:
 - yarn build
 - sonar-scanner
 deploy:
-  provider: npm
-  email: support@xy.company
-  api_key: $NPM_TOKEN
+  provider: script
+  skip_cleanup: true
+  script:
+    echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+    yarn publish
   on:
     branch: master
