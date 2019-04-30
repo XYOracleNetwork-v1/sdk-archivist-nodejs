@@ -13,17 +13,14 @@
 import { XyoGraphQLServer, IXyoDataResolver } from '../graphql-server'
 import { IXyoProviderContainer } from '@xyo-network/utils'
 
-export async function buildGraphQLServer(
-  config: IXyoGraphQLAPIs,
-  container: IXyoProviderContainer
-): Promise<XyoGraphQLServer> {
+export async function buildGraphQLServer(config: IXyoGraphQLAPIs, container: IXyoProviderContainer): Promise<XyoGraphQLServer> {
   const { queries, types, resolvers } = await Object.keys(config.apis)
-    .reduce(async (promiseChain: Promise<IQueryBuilder>, api) => {
+    .reduce(async(promiseChain: Promise<IQueryBuilder>, api) => {
       const memo = await promiseChain
       // @ts-ignore
       if (!config.apis[api]) return memo
       const { default: resolver, serviceDependencies } = (await import(`./endpoints/${api}`)) as IEndpointModule
-      const deps = await Promise.all(serviceDependencies.map(async (serviceDependency) => {
+      const deps = await Promise.all(serviceDependencies.map(async(serviceDependency) => {
         let optionalDep = false
         let dep = serviceDependency
         if (serviceDependency.charAt(serviceDependency.length - 1) === '?') {
@@ -46,7 +43,7 @@ export async function buildGraphQLServer(
     },      Promise.resolve({ queries: [], types: [], resolvers: {} })
   )
 
-  const typesByName = await types.reduce(async (promiseChain: Promise<{[s: string]: string}>, type) => {
+  const typesByName = await types.reduce(async(promiseChain: Promise<{[s: string]: string}>, type) => {
     const memo = await promiseChain
     await recursivelyResolveTypes(type, memo)
     return memo

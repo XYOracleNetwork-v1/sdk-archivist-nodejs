@@ -15,12 +15,12 @@ import { IXyoArchivistRepository } from '../../repository'
 
 export const serviceDependencies = ['archivistRepository']
 
-export default class GetEntitiesResolver implements IXyoDataResolver<any, any, any, any> {
+export class GetEntitiesResolver implements IXyoDataResolver<any, any, any, any> {
 
   public static query = 'entities(limit: Int!, cursor: String): XyoEntitiesList!'
   public static dependsOnTypes = ['XyoEntitiesList']
 
-  constructor (private readonly archivistRepository: IXyoArchivistRepository) {}
+  constructor(private readonly archivistRepository: IXyoArchivistRepository) {}
 
   public async resolve(obj: any, args: any, context: any, info: GraphQLResolveInfo): Promise<any> {
     const result = await this.archivistRepository.getEntities(
@@ -30,11 +30,11 @@ export default class GetEntitiesResolver implements IXyoDataResolver<any, any, a
 
     return {
       meta: {
-        totalCount: result.totalSize,
-        hasNextPage: result.hasNextPage,
-        endCursor: result.cursor ? result.cursor : undefined
+        totalCount: result.total,
+        hasNextPage: result.items.length === args.limit,
+        endCursor: result.items.length > 0 ? result.items[result.items.length - 1] : undefined
       },
-      items: result.list.map((listItem: any) => {
+      items: result.items.map((listItem: any) => {
         return {
           firstKnownPublicKey: listItem.firstKnownPublicKey.serializeHex(),
           allPublicKeys: (listItem.allPublicKeys || []).map((pk: any) => pk.serializeHex()),

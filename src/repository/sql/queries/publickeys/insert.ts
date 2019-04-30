@@ -12,17 +12,15 @@
 
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
 
 export class InsertPublicKeysQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       INSERT INTO PublicKeys(\`key\`, publicKeyGroupId)
       VALUES(?, ?)
-    `,
-          serialization)
+    `)
   }
 
   public async send(

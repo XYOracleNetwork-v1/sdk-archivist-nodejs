@@ -12,13 +12,11 @@
 
 import { SqlQuery } from './query'
 import { SqlService } from '../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
-import { IXyoPublicKey } from '@xyo-network/signing'
 
 export class OriginChainBlockCountQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
     SELECT
       COUNT(ob1.id) as totalSize
@@ -33,8 +31,7 @@ export class OriginChainBlockCountQuery extends SqlQuery {
       JOIN OriginBlocks ob1 on ob1.id = obp1.originBlockId
     WHERE pk1.key = ? AND pk2Others.key = ?
     ORDER BY obp1.blockIndex
-    `,
-          serialization)
+    `)
   }
 
   public async send(

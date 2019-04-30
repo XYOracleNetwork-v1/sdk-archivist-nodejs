@@ -4,51 +4,22 @@
  * File Created: Tuesday, 16th April 2019 1:46:59 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Monday, 22nd April 2019 1:40:28 pm
+ * Last Modified: Wednesday, 24th April 2019 11:03:57 am
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { IXyoPublicKey } from '@xyo-network/signing'
-import { IXyoOriginBlockRepository } from '@xyo-network/origin-block-repository'
-import { IXyoBoundWitness } from '@xyo-network/bound-witness'
 import { IXyoConfig } from '@xyo-network/base'
-
-/**
- * A persistance abstraction for an XyoArchivist. This interface powers
- * the graphql api
- */
+import { IXyoOriginBlockRepository } from '@xyo-network/sdk-core-nodejs'
 
 export interface IXyoArchivistRepository extends IXyoOriginBlockRepository {
 
   initialize(): Promise<boolean>
 
-  /**
-   * Will return all the origin-blocks for a particular public-key
-   * and any other public-keys determined to be equivalent to the public-key passed in
-   */
-  getOriginBlocksByPublicKey(publicKey: IXyoPublicKey): Promise<IXyoOriginBlocksByPublicKeyResult>
+  getOriginBlocksByPublicKey(publicKey: Buffer): Promise<{items: Buffer[], total: number}>
 
-  /**
-   * Given a limit, and optionally a cursor, returns an a list of the
-   * known entities in the system.
-   *
-   * An entity is defined by an owner of a particular origin-chain
-   *
-   * @param {number} limit
-   * @param {(string | undefined)} cursor
-   * @returns {Promise<IXyoEntitiesList>}
-   * @memberof IXyoArchivistRepository
-   */
-  getEntities(limit: number, cursor: string | undefined): Promise<IXyoEntitiesList>
-
-  getIntersections(
-    publicKeyA: string,
-    publicKeyB: string,
-    limit: number,
-    cursor: string | undefined
-  ): Promise<IXyoIntersectionsList>
+  getEntities(limit: number, cursor: Buffer | undefined): Promise<{items: Buffer[], total: number}>
 }
 
 export interface IXyoIntersectionsList {
@@ -66,8 +37,8 @@ export interface IXyoEntityType {
 }
 
 export interface IXyoEntity {
-  firstKnownPublicKey: IXyoPublicKey
-  allPublicKeys?: IXyoPublicKey[]
+  firstKnownPublicKey: Buffer
+  allPublicKeys?: Buffer[]
   type: IXyoEntityType
   mostRecentIndex?: number
 }
@@ -80,12 +51,12 @@ export interface IXyoEntitiesList {
 }
 
 export interface IXyoOriginBlockResult {
-  publicKeys: IXyoPublicKey[]
+  publicKeys: Buffer[]
 }
 
 export interface IXyoOriginBlocksByPublicKeyResult {
-  publicKeys: IXyoPublicKey[]
-  boundWitnesses: IXyoBoundWitness[]
+  publicKeys: Buffer[]
+  boundWitnesses: Buffer[]
 }
 
 export interface IArchivistRepositoryConfig extends IXyoConfig {

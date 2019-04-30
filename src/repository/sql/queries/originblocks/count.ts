@@ -12,18 +12,16 @@
 
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
-import { IXyoSerializationService } from '@xyo-network/serialization'
 import _ from 'lodash'
 
 export class CountOriginBlocksQuery extends SqlQuery {
 
-  constructor(sql: SqlService, serialization: IXyoSerializationService) {
+  constructor(sql: SqlService) {
     super(sql, `
       SELECT
         COUNT(ob.id) as totalSize
       FROM OriginBlocks ob;
-    `,
-          serialization)
+    `)
   }
 
   public async send(): Promise<number> {

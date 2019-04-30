@@ -1,5 +1,6 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
+  "tslint.autoFixOnSave": true,
   "psi-header.changes-tracking": {
     "isActive": true,
     "autoHeader": "manualSave"
@@ -29,5 +30,9 @@
         "Copyright <<projectCreationYear>> - <<year>> <<copyrightholder>>"
       ]
     }
+  ],
+  "cSpell.words": [
+    "dynamodb",
+    "hasher"
   ]
 }
