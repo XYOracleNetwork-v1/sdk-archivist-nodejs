@@ -13,3 +13,9 @@ install:
 script:
 - yarn build
 - sonar-scanner
+deploy:
+  provider: npm
+  email: support@xy.company
+  api_key: $NPM_TOKEN
+  on:
+    branch: master
