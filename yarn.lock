@@ -474,10 +474,10 @@
     "@xyo-network/transaction-pool" "^0.55.9-alpha.0"
     "@xyo-network/utils" "^0.55.9-alpha.0"
 
-"@xyo-network/object-model@^0.5.9":
-  version "0.5.9"
-  resolved "https://registry.yarnpkg.com/@xyo-network/object-model/-/object-model-0.5.9.tgz#4ba01dbbc89f336639a6a8ba778aabe47c7ca08e"
-  integrity sha512-gERg9YmUd5LY/GgVSGhiCMd/uw551kr7nxNwOtwIQo7vO23o5y1Jmth5cB1g89cWfl/cML9tfPh6CcY4BLj6Zw==
+"@xyo-network/object-model@^0.5.10", "@xyo-network/object-model@^0.5.11":
+  version "0.5.11"
+  resolved "https://registry.yarnpkg.com/@xyo-network/object-model/-/object-model-0.5.11.tgz#83fa7a7596ffdb5bac622d42b418e19b7ea1a119"
+  integrity sha512-3DiKSOquRYInJKggO1nsESkbIgqcGWzoqF0bfZaiJVEF4JwQEICIk9Qcvsd0KJCyDfuYsMNNoUeEIxz4EtP5gw==
 
 "@xyo-network/origin-block-repository@^0.55.9-alpha.0":
   version "0.55.9-alpha.0"
@@ -551,12 +551,12 @@
   dependencies:
     winston "3.2.1"
 
-"@xyo-network/sdk-core-nodejs@^0.61.0-alpha.18":
-  version "0.61.0-alpha.18"
-  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.61.0-alpha.18.tgz#c25c535d666db2e7c7450452562d8f5456859d68"
-  integrity sha512-KgdtFaHD+VakoIQl16+sNPbWErMm5/xx/7WH5u/2pIDvMbYpoYT0ZF7Q0PiHddx1cntwrwzTlt04QUJntpM//A==
+"@xyo-network/sdk-core-nodejs@^0.61.0-alpha.22":
+  version "0.61.0-alpha.22"
+  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.61.0-alpha.22.tgz#bd544366d88985e45bb01af1686b58973413973c"
+  integrity sha512-a0c4dClGR1vjTjLjlPsNqOJBD7W8zNae8jseWmZToUzRWp2VkTzPPQZIYkOijRbb3h8zoA0EJrJpkNiy0vLS7w==
   dependencies:
-    "@xyo-network/object-model" "^0.5.9"
+    "@xyo-network/object-model" "^0.5.11"
     "@xyo-network/sdk-base-nodejs" "0.2.0"
     bs58 "4.0.1"
     elliptic "6.4.1"
