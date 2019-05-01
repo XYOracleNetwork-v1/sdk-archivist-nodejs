@@ -9,7 +9,7 @@ export function bufferToGraphQlBlock(buffer: Buffer): any {
   const boundWitness = new XyoBoundWitness(buffer)
   return {
     // todo get human readable
-    humanReadable: XyoHumanHeuristicResolver.resolve(buffer),
+    humanReadable: XyoHumanHeuristicResolver.resolve(buffer).value,
     bytes: buffer.toString('base64'),
     publicKeys: boundWitness.getPublicKeys().map((keyset: XyoStructure[]) => {
       return {
