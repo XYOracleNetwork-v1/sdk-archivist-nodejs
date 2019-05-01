@@ -27,6 +27,7 @@ import {
     IXyoOriginBlockRepository} from '@xyo-network/sdk-core-nodejs'
 import _ from 'lodash'
 import bs58 from 'bs58'
+import { XyoArchivistLevelRepository } from '../repository/leveldb/xyo-level-archivist-repository'
 
 export class XyoNode extends XyoBase {
 
@@ -39,7 +40,7 @@ export class XyoNode extends XyoBase {
   public payloadProvider: XyoOriginPayloadConstructor
   public handler: XyoZigZagBoundWitnessHander
 
-  constructor(port: number, statePath: string, blockRepository: IXyoOriginBlockRepository) {
+  constructor(port: number, statePath: string = './state-data', blockRepository: IXyoOriginBlockRepository = new XyoArchivistLevelRepository()) {
     super()
     this.blockRepo = blockRepository
     this.network = new XyoServerTcpNetwork(port)
