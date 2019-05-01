@@ -13,7 +13,7 @@
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
 import _ from 'lodash'
-import { XyoStructure } from '@xyo-network/object-model';
+import { XyoStructure } from '@xyo-network/object-model'
 
 export class InsertPayloadItemsQuery extends SqlQuery {
 

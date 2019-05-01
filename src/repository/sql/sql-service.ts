@@ -54,7 +54,7 @@ export class SqlService extends XyoBase {
 
         const commit = (): Promise<void> => {
           return new Promise((res, rej) => {
-            connection.commit(async (err: any) => {
+            connection.commit(async(err: any) => {
               this.logInfo('Callback for commit called')
               if (err) {
                 await rollback()
@@ -95,7 +95,7 @@ export class SqlService extends XyoBase {
 
           return setTimeout(() => {
             return this.getOrCreateConnection(maxTries, tryNumber + 1).then(resolve).catch(reject)
-          },                     1000 * Math.pow(2, tryNumber)) // exponential back-off
+          },                1000 * Math.pow(2, tryNumber)) // exponential back-off
         }
 
         this.connection = c
