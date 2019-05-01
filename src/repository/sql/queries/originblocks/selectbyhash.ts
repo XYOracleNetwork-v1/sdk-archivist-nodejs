@@ -13,7 +13,7 @@
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
 import _ from 'lodash'
-import { XyoBuffer } from '@xyo-network/object-model';
+import { XyoBuffer } from '@xyo-network/object-model'
 import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 
 export class SelectOriginBlocksByHashQuery extends SqlQuery {

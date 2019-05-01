@@ -12,7 +12,6 @@
 import { ApolloServer, gql, IResolvers } from 'apollo-server'
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { IXyoDataResolver } from './@types'
-import { XyoError, XyoErrors } from '@xyo-network/errors'
 import graphqlTypeJson from 'graphql-type-json'
 
 export class XyoGraphQLServer extends XyoBase {
@@ -28,7 +27,7 @@ export class XyoGraphQLServer extends XyoBase {
     resolver: IXyoDataResolver<TSource, TArgs, TContext, TResult>
   ) {
     if (this.graphqlResolvers[route]) {
-      throw new XyoError(`Route ${route} already exists. Will not add`)
+      throw new Error(`Route ${route} already exists. Will not add`)
     }
 
     this.graphqlResolvers[route] = resolver

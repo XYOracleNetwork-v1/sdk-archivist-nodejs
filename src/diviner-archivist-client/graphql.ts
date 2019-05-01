@@ -42,7 +42,7 @@ export class XyoDivinerArchivistGraphQLClient extends XyoBase implements IXyoDiv
 
   private readonly client: ApolloClient<any>
 
-  constructor (private readonly archivistUrl: string) {
+  constructor(private readonly archivistUrl: string) {
     super()
     const httpLink = createHttpLink({
       fetch,

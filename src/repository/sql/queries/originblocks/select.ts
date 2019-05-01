@@ -44,7 +44,7 @@ export class SelectOriginBlocksQuery extends SqlQuery {
     }
 
     const list = _.chain(originBlockResults)
-      .map(result => 
+      .map(result =>
         new XyoBoundWitness(new XyoBuffer(result.bytes))
       )
       .value()

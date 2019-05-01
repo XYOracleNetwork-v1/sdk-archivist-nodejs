@@ -13,8 +13,8 @@
 import { SqlQuery } from '../query'
 import { SqlService } from '../../sql-service'
 import _ from 'lodash'
-import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs';
-import { XyoBuffer } from '@xyo-network/object-model';
+import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
+import { XyoBuffer } from '@xyo-network/object-model'
 
 export class BlocksTheProviderAttributionQuery extends SqlQuery {
 

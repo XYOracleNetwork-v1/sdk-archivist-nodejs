@@ -15,7 +15,7 @@ import { SqlService } from '../../sql-service'
 import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 import _ from 'lodash'
 import { CountOriginBlocksQuery } from './count'
-import { XyoBuffer } from '@xyo-network/object-model';
+import { XyoBuffer } from '@xyo-network/object-model'
 
 export class SelectOriginBlocksWithOffsetQuery extends SqlQuery {
 

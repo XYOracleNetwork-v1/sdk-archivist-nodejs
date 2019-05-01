@@ -4,7 +4,7 @@
  * File Created: Tuesday, 16th April 2019 2:04:07 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 25th April 2019 3:25:39 pm
+ * Last Modified: Tuesday, 30th April 2019 10:08:59 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -17,7 +17,6 @@ import {
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
 import _ from 'lodash'
-import { XyoError } from '@xyo-network/errors'
 import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
 import crypto from 'crypto'
@@ -66,12 +65,12 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     limit: number,
     cursor: Buffer | undefined
   ): Promise<Buffer[]> {
-    throw new XyoError('getIntersections: Not Implemented')
+    throw new Error('getIntersections: Not Implemented')
     return []
   }
 
   public async getEntities(limit: number, offsetCursor?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
-    throw new XyoError('getEntities: Not Implemented')
+    throw new Error('getEntities: Not Implemented')
     return { items: [], total: 0 }
   }
 
@@ -86,7 +85,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   }
 
   public async getAllOriginBlockHashes(): Promise<Buffer[]> {
-    throw new XyoError('getAllOriginBlockHashes: Not Implemented')
+    throw new Error('getAllOriginBlockHashes: Not Implemented')
     return []
   }
 
