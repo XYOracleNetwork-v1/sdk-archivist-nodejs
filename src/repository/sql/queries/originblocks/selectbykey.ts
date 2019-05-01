@@ -38,7 +38,7 @@ export class SelectOriginBlocksByKeyQuery extends SqlQuery {
         this.query, [publicKey.toString('base64')]
     )
 
-    const blockBytes = results.map((block) => { 
+    const blockBytes = results.map((block) => {
       return block.originBlockBytes
     })
 

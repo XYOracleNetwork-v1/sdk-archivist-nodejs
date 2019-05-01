@@ -4,13 +4,12 @@
  * File Created: Tuesday, 16th April 2019 1:46:59 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Wednesday, 24th April 2019 11:03:57 am
+ * Last Modified: Tuesday, 30th April 2019 9:47:42 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { IXyoConfig } from '@xyo-network/base'
 import { IXyoOriginBlockRepository } from '@xyo-network/sdk-core-nodejs'
 
 export interface IXyoArchivistRepository extends IXyoOriginBlockRepository {
@@ -42,7 +41,9 @@ export interface IXyoEntity {
   type: IXyoEntityType
   mostRecentIndex?: number
 }
-
+export interface IXyoConfig {
+  name: string
+}
 export interface IXyoEntitiesList {
   totalSize: number
   hasNextPage: boolean

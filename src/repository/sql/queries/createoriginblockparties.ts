@@ -15,8 +15,8 @@ import { SqlService } from '../sql-service'
 import _ from 'lodash'
 import { SelectAllOriginBlockPartyIdsQuery, InsertOriginBlockPartiesQuery, SelectPreviousOriginBlockPartiesQuery } from './originblockparties'
 import { UpsertPublicKeysQuery } from './publickeys'
-import { XyoBoundWitness, XyoHumanHeuristicResolver, XyoObjectSchema } from '@xyo-network/sdk-core-nodejs';
-import { XyoIterableStructure } from '@xyo-network/object-model';
+import { XyoBoundWitness, XyoHumanHeuristicResolver, XyoObjectSchema } from '@xyo-network/sdk-core-nodejs'
+import { XyoIterableStructure } from '@xyo-network/object-model'
 
 export class CreateOriginBlockPartiesQuery extends SqlQuery {
 
@@ -92,7 +92,7 @@ export class CreateOriginBlockPartiesQuery extends SqlQuery {
     }
   }
 
-  private encodePublicKeysToSqlString (publicKeys: Buffer): string[] {
+  private encodePublicKeysToSqlString(publicKeys: Buffer): string[] {
     const stringPublicKeys: string[] = []
     const publicKeysStructure = new XyoIterableStructure(publicKeys)
     const publicKeyIt = publicKeysStructure.newIterator()
@@ -105,7 +105,7 @@ export class CreateOriginBlockPartiesQuery extends SqlQuery {
   }
 
   // todo think about moving these into a utils function
-  private getIndexFromFetter (fetter: XyoIterableStructure): number | undefined {
+  private getIndexFromFetter(fetter: XyoIterableStructure): number | undefined {
     const indexes = fetter.getId(XyoObjectSchema.INDEX.id)
 
     if (indexes.length < 1) {
@@ -116,7 +116,7 @@ export class CreateOriginBlockPartiesQuery extends SqlQuery {
     return
   }
 
-  private getFirstFetterItem (fetter: XyoIterableStructure, id: number): Buffer | undefined {
+  private getFirstFetterItem(fetter: XyoIterableStructure, id: number): Buffer | undefined {
     const hashSets = fetter.getId(id)
 
     if (hashSets.length < 1) {

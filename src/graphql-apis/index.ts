@@ -11,9 +11,8 @@
 // tslint:disable:new-parens
 
 import { XyoGraphQLServer, IXyoDataResolver } from '../graphql-server'
-import { IXyoProviderContainer } from '@xyo-network/utils'
 
-export async function buildGraphQLServer(config: IXyoGraphQLAPIs, container: IXyoProviderContainer): Promise<XyoGraphQLServer> {
+export async function buildGraphQLServer(config: IXyoGraphQLAPIs, container: any): Promise<XyoGraphQLServer> {
   const { queries, types, resolvers } = await Object.keys(config.apis)
     .reduce(async(promiseChain: Promise<IQueryBuilder>, api) => {
       const memo = await promiseChain

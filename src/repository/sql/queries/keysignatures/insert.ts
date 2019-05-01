@@ -37,7 +37,7 @@ export class InsertKeySignaturesQuery extends SqlQuery {
         signatures: Buffer[]
       }
   ): Promise<number[]> {
-    return publicKeyIds.reduce(async (promiseChain, publicKeyId, currentIndex) => {
+    return publicKeyIds.reduce(async(promiseChain, publicKeyId, currentIndex) => {
       const ids = await promiseChain
       const insertId = (await this.sql.query<{insertId: number}>(
         this.query, [

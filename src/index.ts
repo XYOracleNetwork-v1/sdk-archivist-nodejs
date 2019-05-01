@@ -4,7 +4,7 @@
  * File Created: Wednesday, 17th April 2019 2:51:11 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 25th April 2019 7:41:23 pm
+ * Last Modified: Tuesday, 30th April 2019 9:34:32 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -20,7 +20,6 @@ import { instantiateAboutMe } from './base-node/instantiators/xyo-aboutme-instan
 
 export * from './about-me'
 export * from './attribution-request'
-export * from './attribution-request-node-network'
 export * from './base-node'
 export * from './diviner-archivist-client'
 export * from './graphql-apis'
