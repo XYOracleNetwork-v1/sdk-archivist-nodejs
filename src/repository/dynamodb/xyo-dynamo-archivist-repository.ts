@@ -21,7 +21,7 @@ import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
 import crypto from 'crypto'
 import bs58 from 'bs58'
-import { XyoBoundWitness, XyoObjectSchema, XyoSha256 } from '@xyo-network/sdk-core-nodejs'
+import { XyoBoundWitness, XyoObjectSchema, XyoSha256, indexResolver, IXyoBoundWitnessOrigin, XyoBoundWitnessOriginGetter } from '@xyo-network/sdk-core-nodejs'
 import { XyoIterableStructure, XyoStructure, XyoSchema } from '@xyo-network/object-model'
 import { ChainTable, IChainRow } from './table/chain'
 
@@ -149,81 +149,66 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
 
   private async createSegments(boundWitness: XyoBoundWitness): Promise<void> {
     const allPublicKeys = boundWitness.getPublicKeys()
-    const allHeuristics = boundWitness.getHeuristics()
+    const allOrigins = XyoBoundWitnessOriginGetter.getOriginInformation(boundWitness)
     const hash = boundWitness.getHash(new XyoSha256())
 
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < allPublicKeys.length; i++) {
       const publicKeysOfParty = allPublicKeys[i].map((item) => {
-        return item.getAll().getContentsCopy()
+        return this.sha1(item.getAll().getContentsCopy())
       })
 
-      const heuristicsOfParty = allHeuristics[i]
-      const row = await this.findOrCreateChainRow(heuristicsOfParty, publicKeysOfParty, hash.getAll().getContentsCopy())
+      const row = await this.findOrCreateChainRow(allOrigins[i], publicKeysOfParty, this.sha1(hash.getAll().getContentsCopy()))
       await this.chainsTable.putItem(row)
     }
   }
 
-  // todo move into the core
-  private async findOrCreateChainRow(fetterHeuristics: XyoStructure[], publicKeys: Buffer[], hash: Buffer): Promise < IChainRow > {
-    let nextPublicKey: Buffer | undefined
-    let previousHash: Buffer | undefined
+  // todo move into the
+  private async findOrCreateChainRow(origin: IXyoBoundWitnessOrigin, publicKeys: Buffer[], hash: Buffer): Promise < IChainRow > {
+    const minPreviousHash = origin.previousHash && this.sha1(origin.previousHash)
+    const minNextPublicKey =  origin.nextPublicKey && this.sha1(origin.nextPublicKey)
+    const segmentIdTop = await this.traverseBlockUp(hash, publicKeys, minNextPublicKey)
+    let segmentIdBelow: Buffer | undefined
 
-    for (const heuristic of fetterHeuristics) {
-      if (heuristic.getSchema().id === XyoObjectSchema.NEXT_PUBLIC_KEY.id) {
-        const nextPublicKeyArray = (heuristic as XyoIterableStructure)
-
-        if (nextPublicKeyArray.getCount() !== 1) {
-          throw new Error('1 next public key expected')
-        }
-
-        nextPublicKey = nextPublicKeyArray.get(0).getAll().getContentsCopy()
-      }
-
-      if (heuristic.getSchema().id === XyoObjectSchema.PREVIOUS_HASH.id) {
-        const previousHashArray = (heuristic as XyoIterableStructure)
-
-        if (previousHashArray.getCount() !== 1) {
-          throw new Error('1 hash expected in previous hash')
-        }
-
-        previousHash = previousHashArray.get(0).getAll().getContentsCopy()
-      }
+    if (minPreviousHash) {
+      segmentIdBelow = await this.traverseBlockDown(minPreviousHash, publicKeys)
     }
 
-    if (previousHash) {
-      const segmentIdBelow = await this.traverseBlockDown(previousHash, publicKeys)
-
-      if (segmentIdBelow) {
-        return {
-          hash,
-          nextPublicKey,
-          previousHash,
-          publicKeys,
-          segmentId: segmentIdBelow,
-        }
-      }
-    }
-
-    const segmentIdTop = await this.traverseBlockUp(hash, publicKeys, nextPublicKey)
-
-    if (segmentIdTop) {
+    if (segmentIdTop && segmentIdBelow && segmentIdTop.blockHash && segmentIdTop.id) {
+      // do merge here
+      this.logInfo(`Merging block segments: ${segmentIdTop.id.toString('base64')}, ${segmentIdBelow.toString('base64')}`)
+      await this.chainsTable.updateBottomSegment(segmentIdBelow, segmentIdTop.blockHash, segmentIdTop.id)
+      // need to update top segment bottom row to have a bottomSegment of segmentIdBelow
       return {
         hash,
-        nextPublicKey,
-        previousHash,
         publicKeys,
-        segmentId: segmentIdTop,
+        nextPublicKey: minNextPublicKey,
+        previousHash: minPreviousHash,
+        index: origin.index,
+        segmentId: segmentIdBelow,
+        bottomSegment: undefined,
+        topSegment: segmentIdTop.id
       }
+    }
+
+    if (segmentIdTop.id) {
+      this.logInfo(`Adding block with hash ${bs58.encode(hash)} below ${segmentIdTop.id.toString('base64')}`)
+    } else if (segmentIdBelow) {
+      this.logInfo(`Adding block with hash ${bs58.encode(hash)} on top of ${segmentIdBelow.toString('base64')}`)
+    } else {
+      this.logInfo(`Adding block with hash ${bs58.encode(hash)} to new segment`)
     }
 
     // if no segment is found, create a new segment
     return {
       hash,
-      nextPublicKey,
-      previousHash,
       publicKeys,
-      segmentId: this.createNewSegmentId(),
+      nextPublicKey: minNextPublicKey,
+      previousHash: minPreviousHash,
+      index: origin.index,
+      segmentId: (segmentIdBelow || segmentIdTop.id) || this.createNewSegmentId(),
+      bottomSegment: undefined,
+      topSegment: undefined
     }
   }
 
@@ -239,13 +224,13 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
       // check to see if the public keys are equal, if so it is the correct party
       for (const publicKey of publicKeys) {
         for (const partyPublicKey of party.publicKeys) {
-          if (!!publicKey.compare(partyPublicKey)) {
+          if (publicKey.equals(partyPublicKey)) {
             return party.segmentId
           }
         }
 
         // check to see if the next public key is the public key, if so it is the correct party
-        if (party.nextPublicKey && !!publicKey.compare(party.nextPublicKey)) {
+        if (party.nextPublicKey && publicKey.equals(party.nextPublicKey)) {
           return party.segmentId
         }
       }
@@ -254,7 +239,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     return undefined
   }
 
-  private async traverseBlockUp(hash: Buffer, publicKeys: Buffer[], nextPublicKey: Buffer | undefined): Promise < Buffer | undefined > {
+  private async traverseBlockUp(hash: Buffer, publicKeys: Buffer[], nextPublicKey: Buffer | undefined): Promise < {id: Buffer | undefined, blockHash: Buffer | undefined }> {
     const blockParties = await this.chainsTable.getByPreviousHash(hash)
 
     for (const party of blockParties) {
@@ -264,13 +249,13 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
         for (const partyPublicKey of party.publicKeys) {
 
           // check to see if it is also the next public key
-          if (!!publicKey.compare(partyPublicKey) || nextPublicKey && !!publicKey.compare(nextPublicKey)) {
-            return party.segmentId
+          if (publicKey.equals(partyPublicKey) || (nextPublicKey && publicKey.equals(nextPublicKey))) {
+            return { id: party.segmentId, blockHash: party.hash }
           }
         }
       }
     }
 
-    return undefined
+    return { id: undefined, blockHash: undefined }
   }
 }

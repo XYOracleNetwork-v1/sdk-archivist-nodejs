@@ -321,13 +321,6 @@
   resolved "https://registry.yarnpkg.com/@xyo-network/object-model/-/object-model-0.5.11.tgz#83fa7a7596ffdb5bac622d42b418e19b7ea1a119"
   integrity sha512-3DiKSOquRYInJKggO1nsESkbIgqcGWzoqF0bfZaiJVEF4JwQEICIk9Qcvsd0KJCyDfuYsMNNoUeEIxz4EtP5gw==
 
-"@xyo-network/sdk-base-nodejs@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-base-nodejs/-/sdk-base-nodejs-0.2.0.tgz#2ac5bff5aa3007cf3062d676a6ce972b35d4f6fa"
-  integrity sha512-OA5zLOUPPk+5WocqlCioScL8ugW+RYkOdZUsz6yCGkd9Y4QBBIJOD1sdnzGbX9gKbScXcZQNbzJ66ScB8vi1cg==
-  dependencies:
-    winston "3.2.1"
-
 "@xyo-network/sdk-base-nodejs@0.2.23":
   version "0.2.23"
   resolved "https://registry.yarnpkg.com/@xyo-network/sdk-base-nodejs/-/sdk-base-nodejs-0.2.23.tgz#337b3f3321975e65d96081896621bc3e1c2766e0"
@@ -335,13 +328,13 @@
   dependencies:
     winston "3.2.1"
 
-"@xyo-network/sdk-core-nodejs@^0.61.0-alpha.22":
-  version "0.61.0-alpha.22"
-  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.61.0-alpha.22.tgz#bd544366d88985e45bb01af1686b58973413973c"
-  integrity sha512-a0c4dClGR1vjTjLjlPsNqOJBD7W8zNae8jseWmZToUzRWp2VkTzPPQZIYkOijRbb3h8zoA0EJrJpkNiy0vLS7w==
+"@xyo-network/sdk-core-nodejs@^0.62.0":
+  version "0.62.0"
+  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.62.0.tgz#fefde7676179cf1e2b091a3e2ded8479825be042"
+  integrity sha512-nBIO6GZs7If+w8DVJwh0cwrpbn/Jsx3mrRndA3o9C2rYlJVh1ocopiqQ41LivM9BSywYgF8TVuKLjaRrTxVlPA==
   dependencies:
     "@xyo-network/object-model" "^0.5.11"
-    "@xyo-network/sdk-base-nodejs" "0.2.0"
+    "@xyo-network/sdk-base-nodejs" "0.2.23"
     bs58 "4.0.1"
     elliptic "6.4.1"
 

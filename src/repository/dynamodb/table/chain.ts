@@ -5,9 +5,12 @@ import { DynamoDB } from 'aws-sdk'
 export interface IChainRow {
   segmentId: Buffer
   hash: Buffer
+  index: number
   nextPublicKey: Buffer | undefined
   previousHash: Buffer | undefined
-  publicKeys: Buffer[]
+  publicKeys: Buffer[],
+  topSegment: Buffer | undefined,
+  bottomSegment: Buffer | undefined
 }
 
 export class ChainTable extends Table {
@@ -58,26 +61,21 @@ export class ChainTable extends Table {
             BlockHash: {
               B: row.hash
             },
-
             PublicKeys: {
               BS: row.publicKeys
+            },
+            Index: {
+              N: row.index.toString(),
             },
           },
           ReturnConsumedCapacity: 'TOTAL',
           TableName: this.tableName
         }
 
-        if (row.nextPublicKey) {
-          params.Item.NextPublicKey = {
-            B: row.nextPublicKey
-          }
-        }
-
-        if (row.previousHash) {
-          params.Item.PreviousHash = {
-            B: row.previousHash
-          }
-        }
+        if (row.nextPublicKey) { params.Item.NextPublicKey = { B: row.nextPublicKey } }
+        if (row.previousHash) { params.Item.PreviousHash = { B: row.previousHash } }
+        if (row.topSegment) { params.Item.TopSegment = {  B: row.topSegment  } }
+        if (row.bottomSegment) { params.Item.BottomSegment = { B: row.bottomSegment } }
 
         this.dynamodb.putItem(params, (err: any, data: DynamoDB.Types.PutItemOutput) => {
           if (err) {
@@ -172,6 +170,39 @@ export class ChainTable extends Table {
     })
   }
 
+  public async updateBottomSegment(newBottomSegment: Buffer, blockHash: Buffer, chainSegmentId: Buffer) {
+    return new Promise((resolve, reject) => {
+      const params: DynamoDB.Types.Update = {
+        Key: {
+          BlockHash: {
+            B: blockHash
+          },
+          ChainSegmentId: {
+            B: chainSegmentId
+          },
+        },
+        TableName: this.tableName,
+        UpdateExpression: 'set #BottomSegment = :seg',
+        ExpressionAttributeNames: {
+          '#BottomSegment': 'BottomSegment'
+        },
+        ExpressionAttributeValues: {
+          ':seg': { B: newBottomSegment }
+        }
+      }
+
+      this.dynamodb.updateItem(params, (error) => {
+        if (error) {
+          this.logError(`Error updating item: ${error}`)
+          reject(error)
+          return
+        }
+
+        resolve()
+      })
+    })
+  }
+
   public async getBySegmentId(id: Buffer): Promise<IChainRow[]> {
     this.logInfo('getBySegmentId')
     return new Promise<IChainRow[]>((resolve: any, reject: any) => {
@@ -202,13 +233,16 @@ export class ChainTable extends Table {
     const result: IChainRow[] = []
     if (data && data.Items) {
       for (const item of data.Items) {
-        if (item.BlockHash && item.BlockHash.B && item.ChainSegmentId && item.ChainSegmentId.B && item.PublicKeys && item.PublicKeys.BS) {
+        if (item.BlockHash && item.BlockHash.B && item.ChainSegmentId && item.ChainSegmentId.B && item.PublicKeys && item.PublicKeys.BS && item.Index && item.Index.N) {
           result.push({
             segmentId: item.ChainSegmentId.B as Buffer,
             hash: item.BlockHash.B as Buffer,
             nextPublicKey: item.BlockHash && item.BlockHash.B as Buffer | undefined,
             previousHash: item.NextPublicKey && item.NextPublicKey.B as Buffer | undefined,
-            publicKeys: item.PublicKeys.BS as Buffer[]
+            publicKeys: item.PublicKeys.BS as Buffer[],
+            bottomSegment: item.BottomSegment && item.BottomSegment.B as Buffer | undefined,
+            topSegment: item.TopSegment && item.TopSegment.B as Buffer | undefined,
+            index: Number.parseInt(item.Index.N, 10),
           })
         } else {
           this.logError(`Result with Missing BlochHash or ChainSegmentId or PublicKeys: ${item}`)

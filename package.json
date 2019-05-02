@@ -51,7 +51,7 @@
     "@xyo-network/meta-list": "^0.55.9-alpha.0",
     "@xyo-network/object-model": "^0.5.10",
     "@xyo-network/sdk-base-nodejs": "0.2.23",
-    "@xyo-network/sdk-core-nodejs": "^0.61.0-alpha.22",
+    "@xyo-network/sdk-core-nodejs": "^0.62.0",
     "abstract-leveldown": "^6.0.3",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.5.1",
