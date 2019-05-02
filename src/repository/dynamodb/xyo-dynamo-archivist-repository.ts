@@ -21,9 +21,9 @@ import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
 import crypto from 'crypto'
 import bs58 from 'bs58'
-import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
-import { XyoIterableStructure } from '@xyo-network/object-model'
-import { ChainTable } from './table/chain'
+import { XyoBoundWitness, XyoObjectSchema, XyoSha256 } from '@xyo-network/sdk-core-nodejs'
+import { XyoIterableStructure, XyoStructure, XyoSchema } from '@xyo-network/object-model'
+import { ChainTable, IChainRow } from './table/chain'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
@@ -35,7 +35,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   private chainsTable: ChainTable
 
   constructor(
-    tablePrefix: string = 'xyo-archivist',
+    tablePrefix: string = 'xyo-archivist-development',
     region: string = 'us-east-1'
   ) {
     super()
@@ -96,7 +96,9 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   ): Promise<void> {
     try {
       const shortHash = this.sha1(hash)
+
       const bw = new XyoBoundWitness(originBlock)
+      await this.createSegments(bw)
       for (const pks of bw.getPublicKeys()) {
         for (const pk of pks) {
           const shortKey = this.sha1(pk.getAll().getContentsCopy())
@@ -141,8 +143,133 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     }
     return { items: result, total: (await this.boundWitnessTable.getRecordCount()) || -1 }
   }
-
   private sha1(data: Buffer) {
     return crypto.createHash('sha1').update(data).digest()
+  }
+
+  private async createSegments(boundWitness: XyoBoundWitness): Promise<void> {
+    const allPublicKeys = boundWitness.getPublicKeys()
+    const allHeuristics = boundWitness.getHeuristics()
+    const hash = boundWitness.getHash(new XyoSha256())
+
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 0; i < allPublicKeys.length; i++) {
+      const publicKeysOfParty = allPublicKeys[i].map((item) => {
+        return item.getAll().getContentsCopy()
+      })
+
+      const heuristicsOfParty = allHeuristics[i]
+      const row = await this.findOrCreateChainRow(heuristicsOfParty, publicKeysOfParty, hash.getAll().getContentsCopy())
+      await this.chainsTable.putItem(row)
+    }
+  }
+
+  private async findOrCreateChainRow(fetterHeuristics: XyoStructure[], publicKeys: Buffer[], hash: Buffer): Promise < IChainRow > {
+    let nextPublicKey: Buffer | undefined
+    let previousHash: Buffer | undefined
+
+    for (const heuristic of fetterHeuristics) {
+      if (heuristic.getSchema().id === XyoObjectSchema.NEXT_PUBLIC_KEY.id) {
+        const nextPublicKeyArray = (heuristic as XyoIterableStructure)
+
+        if (nextPublicKeyArray.getCount() !== 1) {
+          throw new Error('1 next public key expected')
+        }
+
+        nextPublicKey = nextPublicKeyArray.get(0).getAll().getContentsCopy()
+      }
+
+      if (heuristic.getSchema().id === XyoObjectSchema.PREVIOUS_HASH.id) {
+        const previousHashArray = (heuristic as XyoIterableStructure)
+
+        if (previousHashArray.getCount() !== 1) {
+          throw new Error('1 hash expected in previous hash')
+        }
+
+        previousHash = previousHashArray.get(0).getAll().getContentsCopy()
+      }
+    }
+
+    if (previousHash) {
+      const segmentIdBelow = await this.traverseBlockDown(previousHash, publicKeys)
+
+      if (segmentIdBelow) {
+        return {
+          hash,
+          nextPublicKey,
+          previousHash,
+          publicKeys,
+          segmentId: segmentIdBelow,
+        }
+      }
+    }
+
+    const segmentIdTop = await this.traverseBlockUp(hash, publicKeys, nextPublicKey)
+
+    if (segmentIdTop) {
+      return {
+        hash,
+        nextPublicKey,
+        previousHash,
+        publicKeys,
+        segmentId: segmentIdTop,
+      }
+    }
+
+    // if no segment is found, create a new segment
+    return {
+      hash,
+      nextPublicKey,
+      previousHash,
+      publicKeys,
+      segmentId: this.createNewSegmentId(),
+    }
+  }
+
+  private createNewSegmentId(): Buffer {
+    return crypto.randomBytes(16)
+  }
+
+  private async traverseBlockDown(previousHash: Buffer, publicKeys: Buffer[]): Promise < Buffer | undefined > {
+    const blockParties = await this.chainsTable.getByHash(previousHash)
+
+    for (const party of blockParties) {
+
+      // check to see if the public keys are equal, if so it is the correct party
+      for (const publicKey of publicKeys) {
+        for (const partyPublicKey of party.publicKeys) {
+          if (!!publicKey.compare(partyPublicKey)) {
+            return party.segmentId
+          }
+        }
+
+        // check to see if the next public key is the public key, if so it is the correct party
+        if (party.nextPublicKey && !!publicKey.compare(party.nextPublicKey)) {
+          return party.segmentId
+        }
+      }
+    }
+
+    return undefined
+  }
+
+  private async traverseBlockUp(hash: Buffer, publicKeys: Buffer[], nextPublicKey: Buffer | undefined): Promise < Buffer | undefined > {
+    const blockParties = await this.chainsTable.getByPreviousHash(hash)
+
+    for (const party of blockParties) {
+
+      // check to see if the public keys are equal, if so it is the correct party
+      for (const publicKey of publicKeys) {
+        for (const partyPublicKey of party.publicKeys) {
+
+          // check to see if it is also the next public key
+          if (!!publicKey.compare(partyPublicKey) || nextPublicKey && !!publicKey.compare(nextPublicKey)) {
+            return party.segmentId
+          }
+        }
+      }
+    }
+
+    return undefined
   }
 }
