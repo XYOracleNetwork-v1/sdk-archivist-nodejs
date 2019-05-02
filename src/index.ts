@@ -36,9 +36,10 @@ async function main() {
 
   const node = new XyoNode(port, path, db)
   await node.start()
+  await db.initialize()
 
   const about = config.aboutMeService && instantiateAboutMe(
-    config.aboutMeService, node.stateRepo.getSigners()[0].getPublicKey().getAll().getContentsCopy()) || (() => { throw new Error('No about me') })()
+  config.aboutMeService, node.stateRepo.getSigners()[0].getPublicKey().getAll().getContentsCopy()) || (() => { throw new Error('No about me') })()
   const graphql = config.graphql && instantiateGraphql(config.graphql, about, db) || (() => { throw new Error('No graphql') })()
 
   await graphql.start()

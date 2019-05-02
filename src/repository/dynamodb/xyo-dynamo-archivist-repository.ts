@@ -23,6 +23,7 @@ import crypto from 'crypto'
 import bs58 from 'bs58'
 import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 import { XyoIterableStructure } from '@xyo-network/object-model'
+import { ChainTable } from './table/chain'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
@@ -31,6 +32,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
 
   private boundWitnessTable: BoundWitnessTable
   private publicKeyTable: PublicKeyTable
+  private chainsTable: ChainTable
 
   constructor(
     tablePrefix: string = 'xyo-archivist',
@@ -39,11 +41,13 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     super()
     this.boundWitnessTable = new BoundWitnessTable(`${tablePrefix}-boundwitness`, region)
     this.publicKeyTable = new PublicKeyTable(`${tablePrefix}-publickey`, region)
+    this.chainsTable = new ChainTable(`${tablePrefix}-chains`, region)
   }
 
   public async initialize() {
     this.boundWitnessTable.initialize()
     this.publicKeyTable.initialize()
+    this.chainsTable.initialize()
     return true
   }
 
@@ -66,12 +70,10 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     cursor: Buffer | undefined
   ): Promise<Buffer[]> {
     throw new Error('getIntersections: Not Implemented')
-    return []
   }
 
   public async getEntities(limit: number, offsetCursor?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
     throw new Error('getEntities: Not Implemented')
-    return { items: [], total: 0 }
   }
 
   public async removeOriginBlock(hash: Buffer): Promise<void> {
@@ -86,7 +88,6 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
 
   public async getAllOriginBlockHashes(): Promise<Buffer[]> {
     throw new Error('getAllOriginBlockHashes: Not Implemented')
-    return []
   }
 
   public async addOriginBlock(
