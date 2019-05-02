@@ -164,6 +164,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     }
   }
 
+  // todo move into the core
   private async findOrCreateChainRow(fetterHeuristics: XyoStructure[], publicKeys: Buffer[], hash: Buffer): Promise < IChainRow > {
     let nextPublicKey: Buffer | undefined
     let previousHash: Buffer | undefined

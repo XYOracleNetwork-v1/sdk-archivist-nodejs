@@ -92,6 +92,7 @@ export class ChainTable extends Table {
     })
   }
 
+  // todo abstract this function
   public async getByHash(hash: Buffer): Promise<IChainRow[]> {
     this.logInfo('getByHash')
     return new Promise<IChainRow[]>((resolve: any, reject: any) => {
