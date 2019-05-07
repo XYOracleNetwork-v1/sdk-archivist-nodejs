@@ -50,7 +50,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     this.boundWitnessTable.initialize()
     this.publicKeyTable.initialize()
     this.chainsTable.initialize()
-    setInterval(this.link, 5_000)
+    // setInterval(this.link, 5_000)
     return true
   }
 
@@ -96,7 +96,8 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
       const shortHash = this.sha1(hash)
 
       const bw = new XyoBoundWitness(originBlock)
-      this.linkerQueue.push(originBlock)
+      // this.linkerQueue.push(originBlock)
+      await this.createSegments(bw)
       for (const pks of bw.getPublicKeys()) {
         for (const pk of pks) {
           const shortKey = this.sha1(pk.getAll().getContentsCopy())
