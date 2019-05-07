@@ -33,6 +33,8 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   private boundWitnessTable: BoundWitnessTable
   private publicKeyTable: PublicKeyTable
   private chainsTable: ChainTable
+  private linkerQueue: Buffer[] = []
+  private isLinking = false
 
   constructor(
     tablePrefix: string = 'xyo-archivist-development',
@@ -48,6 +50,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     this.boundWitnessTable.initialize()
     this.publicKeyTable.initialize()
     this.chainsTable.initialize()
+    setInterval(this.link, 5_000)
     return true
   }
 
@@ -112,13 +115,16 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     const hashesStructure = new XyoIterableStructure(hashes)
     const blockIt = blockStructure.newIterator()
     const hashIt = hashesStructure.newIterator()
+    let i = 0
 
     while (blockIt.hasNext()) {
+      i++
       const block = blockIt.next().value
       const hash = hashIt.next().value
-      this.logInfo(`Found nested block with hash: ${bs58.encode(hash.getAll().getContentsCopy())}`)
-      this.addOriginBlock(hash.getAll().getContentsCopy(), block.getAll().getContentsCopy())
+      await this.addOriginBlock(hash.getAll().getContentsCopy(), block.getAll().getContentsCopy())
     }
+
+    this.logInfo(`Added ${i} blocks, linker queue size: ${this.linkerQueue.length}`)
   }
 
   public async getOriginBlock(hash: Buffer): Promise < Buffer | undefined > {
@@ -190,6 +196,25 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     }
 
     return toReturn
+  }
+
+  private link = async() => {
+    if (this.isLinking || this.linkerQueue.length === 0) {
+      // should not link
+      return
+    }
+
+    // show link
+
+    this.isLinking = true
+
+    while (this.linkerQueue.length !== 0) {
+      const itemToLink = this.linkerQueue[0]
+      await this.createSegments(new XyoBoundWitness(itemToLink))
+      this.linkerQueue.shift()
+    }
+
+    this.isLinking = false
   }
   private sha1(data: Buffer) {
     return crypto.createHash('sha1').update(data).digest()
