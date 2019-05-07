@@ -96,7 +96,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
       const shortHash = this.sha1(hash)
 
       const bw = new XyoBoundWitness(originBlock)
-      await this.createSegments(bw)
+      this.linkerQueue.push(originBlock)
       for (const pks of bw.getPublicKeys()) {
         for (const pk of pks) {
           const shortKey = this.sha1(pk.getAll().getContentsCopy())
