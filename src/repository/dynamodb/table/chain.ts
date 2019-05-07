@@ -1,6 +1,7 @@
 
 import { Table } from './table'
 import { DynamoDB } from 'aws-sdk'
+import lruCache from 'lru-cache'
 
 export interface IChainRow {
   segmentId: Buffer
@@ -14,6 +15,8 @@ export interface IChainRow {
 }
 
 export class ChainTable extends Table {
+  private hashCache: lruCache<string, IChainRow[]>
+  private previousHashCache: lruCache<string, IChainRow[]>
 
   constructor(
         tableName: string = 'xyo-archivist-chains',
@@ -47,10 +50,23 @@ export class ChainTable extends Table {
       },
       TableName: tableName
     }
+
+    this.hashCache = new lruCache({
+      max: 5000,
+      maxAge: 1000 * 60 * 60 // one hour
+    })
+
+    this.previousHashCache = new lruCache({
+      max: 5000,
+      maxAge: 1000 * 60 * 60 // one hour
+    })
   }
 
   public async putItem(row: IChainRow): Promise<boolean> {
     this.logDebug('putItem')
+
+    this.addRowToCache(row)
+
     return new Promise<boolean>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.PutItemInput = {
@@ -99,7 +115,14 @@ export class ChainTable extends Table {
   // todo abstract this function
   public async getByHash(hash: Buffer): Promise<IChainRow[]> {
     this.logDebug('getByHash')
+    const cachedValue = this.hashCache.get(hash.toString('base64'))
     return new Promise<IChainRow[]>((resolve: any, reject: any) => {
+
+      if (cachedValue) {
+        resolve(cachedValue)
+        return
+      }
+
       try {
         const params: DynamoDB.Types.QueryInput = {
           IndexName: 'BlockHash',
@@ -126,7 +149,13 @@ export class ChainTable extends Table {
 
   public async getByPreviousHash(hash: Buffer): Promise<IChainRow[]> {
     this.logDebug('getByPreviousHash')
+    const cachedValue = this.previousHashCache.get(hash.toString('base64'))
     return new Promise<IChainRow[]>((resolve: any, reject: any) => {
+      if (cachedValue) {
+        resolve(cachedValue)
+        return
+      }
+
       try {
         const params: DynamoDB.Types.QueryInput = {
           KeyConditionExpression: 'PreviousHash = :hash',
@@ -177,12 +206,15 @@ export class ChainTable extends Table {
     })
   }
 
-  public async updateBottomSegment(newBottomSegment: Buffer, blockHash: number, chainSegmentId: Buffer) {
+  public async updateBottomSegment(newBottomSegment: Buffer, blockIndex: number, chainSegmentId: Buffer, chainSegment: IChainRow) {
+    chainSegment.bottomSegment = newBottomSegment
+    this.addRowToCache(chainSegment)
+
     return new Promise((resolve, reject) => {
       const params: DynamoDB.Types.Update = {
         Key: {
           Index: {
-            N: blockHash.toString()
+            N: blockIndex.toString()
           },
           ChainSegmentId: {
             B: chainSegmentId
@@ -255,6 +287,31 @@ export class ChainTable extends Table {
         reject(ex)
       }
     })
+  }
+
+  private addRowToCache(row: IChainRow) {
+    const hashAsString = row.hash.toString('base64')
+
+    const currentHashIndex = this.hashCache.get(hashAsString)
+
+    if (currentHashIndex) {
+      currentHashIndex.push(row)
+      this.hashCache.set(hashAsString, currentHashIndex)
+    } else {
+      this.hashCache.set(hashAsString, [row])
+    }
+
+    if (row.previousHash) {
+      const previousHashAsString = row.previousHash.toString('base64')
+      const currentPreviousHashIndex = this.hashCache.get(previousHashAsString)
+
+      if (currentPreviousHashIndex) {
+        currentPreviousHashIndex.push(row)
+        this.previousHashCache.set(previousHashAsString, currentPreviousHashIndex)
+      } else {
+        this.previousHashCache.set(previousHashAsString, [row])
+      }
+    }
   }
 
   private getChainRowFromResult(data: DynamoDB.Types.ScanOutput): IChainRow[] {
