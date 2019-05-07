@@ -19,7 +19,7 @@ export const serviceDependencies = ['archivistRepository', 'hashProvider', 'seri
 
 export class XyoGetBlocksByPublicKeyResolver extends XyoBase implements IXyoDataResolver<any, any, any, any> {
 
-  public static query = 'blocksByPublicKey(publicKeys: [String!]): [XyoBlockCollection]'
+  public static query = 'blocksByPublicKey(publicKey: String!, limit: Int, cursor: String): [XyoBlockCollection]'
   public static dependsOnTypes = ['XyoBlockCollection']
 
   constructor(
@@ -29,27 +29,26 @@ export class XyoGetBlocksByPublicKeyResolver extends XyoBase implements IXyoData
   }
 
   public async resolve(obj: any, args: any, context: any, info: any): Promise<any> {
-    if (!args || !args.publicKeys || !args.publicKeys.length) {
+    if (!args || !args.publicKey || !args.publicKeys.length) {
       return []
     }
 
-    const blocks = await Promise.all((args.publicKeys as string[]).map(async(publicKey) => {
-      const innerBlocks = await this.getBlockCollectionForPublicKey(publicKey)
-      return {
-        publicKey,
-        publicKeySet: innerBlocks.keySet,
-        blocks: innerBlocks.blocks
-      }
-    }))
+    const innerBlocks = await this.getBlockCollectionForPublicKey(args.publicKey, args.limit, args.cursor)
 
-    return blocks
+    return innerBlocks
   }
 
-  private async getBlockCollectionForPublicKey(publicKey: string) {
+  private getCursor(string: string | undefined): Buffer | undefined {
+    if (string && string !== '') {
+      return bs58.decode(string)
+    }
+
+    return undefined
+  }
+
+  private async getBlockCollectionForPublicKey(publicKey: string, limit: number | undefined, cursor: string | undefined) {
     try {
-      const blocksByPublicKeySet = await this.archivistRepository.getOriginBlocksByPublicKey(
-        bs58.decode(publicKey)
-      )
+      const blocksByPublicKeySet = await this.archivistRepository.getOriginBlocksByPublicKey(bs58.decode(publicKey), this.getCursor(cursor), limit)
 
       const serializedBoundWitnesses = await Promise.all(blocksByPublicKeySet.items.map(async(block: Buffer) => {
         return bufferToGraphQlBlock(block)

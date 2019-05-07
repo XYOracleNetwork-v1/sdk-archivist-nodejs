@@ -16,7 +16,7 @@ export interface IXyoArchivistRepository extends IXyoOriginBlockRepository {
 
   initialize(): Promise<boolean>
 
-  getOriginBlocksByPublicKey(publicKey: Buffer): Promise<{items: Buffer[], total: number}>
+  getOriginBlocksByPublicKey(publicKey: Buffer, cursor: Buffer | undefined, limit: number | undefined): Promise<{items: Buffer[], total: number}>
 
   getEntities(limit: number, cursor: Buffer | undefined): Promise<{items: Buffer[], total: number}>
 }

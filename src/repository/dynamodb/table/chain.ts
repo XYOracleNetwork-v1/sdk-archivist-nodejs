@@ -23,8 +23,8 @@ export class ChainTable extends Table {
     this.createTableInput = {
       AttributeDefinitions: [
         {
-          AttributeName: 'BlockHash',
-          AttributeType: 'B'
+          AttributeName: 'Index',
+          AttributeType: 'N'
         },
         {
           AttributeName: 'ChainSegmentId',
@@ -33,12 +33,12 @@ export class ChainTable extends Table {
       ],
       KeySchema: [
         {
-          AttributeName: 'BlockHash',
-          KeyType: 'HASH'
+          AttributeName: 'Index',
+          KeyType: 'RANGE'
         },
         {
           AttributeName: 'ChainSegmentId',
-          KeyType: 'RANGE'
+          KeyType: 'HASH'
         },
       ],
       ProvisionedThroughput: {
@@ -49,9 +49,9 @@ export class ChainTable extends Table {
     }
   }
 
-  public async putItem(row: IChainRow): Promise<void> {
+  public async putItem(row: IChainRow): Promise<boolean> {
     this.logInfo('putItem')
-    return new Promise<void>((resolve: any, reject: any) => {
+    return new Promise<boolean>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.PutItemInput = {
           Item: {
@@ -68,6 +68,11 @@ export class ChainTable extends Table {
               N: row.index.toString(),
             },
           },
+          ExpressionAttributeNames : {
+            '#seg' : 'ChainSegmentId',
+            '#index' : 'Index',
+          },
+          ConditionExpression: 'attribute_not_exists(#seg) AND attribute_not_exists(#index)',
           ReturnConsumedCapacity: 'TOTAL',
           TableName: this.tableName
         }
@@ -79,9 +84,10 @@ export class ChainTable extends Table {
 
         this.dynamodb.putItem(params, (err: any, data: DynamoDB.Types.PutItemOutput) => {
           if (err) {
-            reject(err)
+            resolve(false)
+            return
           }
-          resolve()
+          resolve(true)
         })
       } catch (ex) {
         this.logError(ex)
@@ -96,6 +102,7 @@ export class ChainTable extends Table {
     return new Promise<IChainRow[]>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.QueryInput = {
+          IndexName: 'BlockHash',
           KeyConditionExpression: 'BlockHash = :key',
           ExpressionAttributeValues: {
             ':key': { B: hash }
@@ -170,12 +177,12 @@ export class ChainTable extends Table {
     })
   }
 
-  public async updateBottomSegment(newBottomSegment: Buffer, blockHash: Buffer, chainSegmentId: Buffer) {
+  public async updateBottomSegment(newBottomSegment: Buffer, blockHash: number, chainSegmentId: Buffer) {
     return new Promise((resolve, reject) => {
       const params: DynamoDB.Types.Update = {
         Key: {
-          BlockHash: {
-            B: blockHash
+          Index: {
+            N: blockHash.toString()
           },
           ChainSegmentId: {
             B: chainSegmentId
@@ -203,7 +210,7 @@ export class ChainTable extends Table {
     })
   }
 
-  public async getBySegmentId(id: Buffer): Promise<IChainRow[]> {
+  public async getBySegmentId(id: Buffer, up: boolean, limit: number, offsetIndex: number | undefined): Promise<IChainRow[]> {
     this.logInfo('getBySegmentId')
     return new Promise<IChainRow[]>((resolve: any, reject: any) => {
       try {
@@ -212,15 +219,36 @@ export class ChainTable extends Table {
           ExpressionAttributeValues: {
             ':seg': { B: id }
           },
-          TableName: this.tableName
+          TableName: this.tableName,
+          Limit: limit,
+          ScanIndexForward: up
         }
+
+        if (offsetIndex) {
+          params.ExclusiveStartKey = {
+            ChainSegmentId: {
+              B: id
+            },
+            Index: {
+              N: offsetIndex.toString()
+            }
+          }
+        }
+
         this.dynamodb.query(params, async(err: any, data: DynamoDB.Types.ScanOutput) => {
           if (err) {
             this.logError(err)
             reject(err)
           }
 
-          resolve(this.getChainRowFromResult(data))
+          // todo move this filter into dynanmo
+          resolve(this.getChainRowFromResult(data).filter((item) => {
+            if (up) {
+              return item.index > (offsetIndex || 0)
+            }
+
+            return item.index < (offsetIndex || 0)
+          }))
         })
       } catch (ex) {
         this.logError(ex)
@@ -238,7 +266,7 @@ export class ChainTable extends Table {
             segmentId: item.ChainSegmentId.B as Buffer,
             hash: item.BlockHash.B as Buffer,
             nextPublicKey: item.BlockHash && item.BlockHash.B as Buffer | undefined,
-            previousHash: item.NextPublicKey && item.NextPublicKey.B as Buffer | undefined,
+            previousHash: item.PreviousHash && item.PreviousHash.B as Buffer | undefined,
             publicKeys: item.PublicKeys.BS as Buffer[],
             bottomSegment: item.BottomSegment && item.BottomSegment.B as Buffer | undefined,
             topSegment: item.TopSegment && item.TopSegment.B as Buffer | undefined,
