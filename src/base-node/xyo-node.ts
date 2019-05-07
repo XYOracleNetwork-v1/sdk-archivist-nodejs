@@ -89,11 +89,6 @@ export class XyoNode extends XyoBase {
     }
 
     this.network.startListening()
-
-    setTimeout(async() => {
-      const genesisBlock =  await XyoGenesisBlockCreator.create(this.state.getSigners(), this.payloadProvider)
-      await this.inserter.insert(genesisBlock)
-    },         2000)
   }
 
   public async stop() {

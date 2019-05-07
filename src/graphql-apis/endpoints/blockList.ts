@@ -38,14 +38,22 @@ export class XyoGetBlockList implements IXyoDataResolver<any, any, any, any> {
       endCursor = hasher.hash(signingData).getAll().getContentsCopy().toString()
     }
 
+    const items: any[] = []
+
+    result.items.forEach((buffer) => {
+      try {
+        items.push(bufferToGraphQlBlock(buffer))
+      } catch {
+        // do nothing if there is an error parcing the block todo delete the block
+      }
+    })
+
     return {
+      items,
       meta: {
         endCursor,
         totalCount: result.total
       },
-      items: await Promise.all(result.items.map(async(block: Buffer) => {
-        return bufferToGraphQlBlock(block)
-      }))
     }
   }
 }

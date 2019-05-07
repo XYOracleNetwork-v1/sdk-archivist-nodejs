@@ -50,7 +50,7 @@ export class ChainTable extends Table {
   }
 
   public async putItem(row: IChainRow): Promise<boolean> {
-    this.logInfo('putItem')
+    this.logDebug('putItem')
     return new Promise<boolean>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.PutItemInput = {
@@ -98,7 +98,7 @@ export class ChainTable extends Table {
 
   // todo abstract this function
   public async getByHash(hash: Buffer): Promise<IChainRow[]> {
-    this.logInfo('getByHash')
+    this.logDebug('getByHash')
     return new Promise<IChainRow[]>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.QueryInput = {
@@ -125,7 +125,7 @@ export class ChainTable extends Table {
   }
 
   public async getByPreviousHash(hash: Buffer): Promise<IChainRow[]> {
-    this.logInfo('getByPreviousHash')
+    this.logDebug('getByPreviousHash')
     return new Promise<IChainRow[]>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.QueryInput = {
@@ -152,7 +152,7 @@ export class ChainTable extends Table {
   }
 
   public async getByNextPublicKey(key: Buffer): Promise<IChainRow[]> {
-    this.logInfo('getByNextPublicKey')
+    this.logDebug('getByNextPublicKey')
     return new Promise<IChainRow[]>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.QueryInput = {
@@ -211,7 +211,7 @@ export class ChainTable extends Table {
   }
 
   public async getBySegmentId(id: Buffer, up: boolean, limit: number, offsetIndex: number | undefined): Promise<IChainRow[]> {
-    this.logInfo('getBySegmentId')
+    this.logDebug('getBySegmentId')
     return new Promise<IChainRow[]>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.QueryInput = {

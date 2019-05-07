@@ -17,6 +17,10 @@ import { instantiateGraphql } from './base-node/instantiators/xyo-graphql-instan
 import { IXyoNodeConfig } from './base-node/@types'
 import { XyoAboutMeService } from './about-me'
 import { instantiateAboutMe } from './base-node/instantiators/xyo-aboutme-instantiator'
+import { ArchivistAbsorber } from './absorb/archivist-absorber'
+import { XyoBoundWitness, XyoSha256 } from '@xyo-network/sdk-core-nodejs'
+import bs58 from 'bs58'
+import crypto from 'crypto'
 
 export * from './about-me'
 export * from './attribution-request'
@@ -44,6 +48,19 @@ async function main() {
 
   await graphql.start()
 
+  // const absorber = new ArchivistAbsorber('http://3.80.173.107:11001/')
+  // absorber.resetCursor('1N9qKYAMoSE91Rgm6C42SHNpj8TT9xiDsAUK5DRYcGgY7cY')
+
+  // while (true) {
+  //   const blocks = await absorber.readBlocks(5)
+
+  //   for (const block of blocks) {
+  //     const bw = new XyoBoundWitness(block)
+  //     const hash = bw.getHash(new XyoSha256()).getAll().getContentsCopy()
+  //     await db.addOriginBlock(hash, block)
+  //   }
+
+  // }
 }
 
 const resolveConfig = (): IXyoNodeConfig => {

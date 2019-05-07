@@ -21,8 +21,8 @@ import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
 import crypto from 'crypto'
 import bs58 from 'bs58'
-import { XyoBoundWitness, XyoObjectSchema, XyoSha256, indexResolver, IXyoBoundWitnessOrigin, XyoBoundWitnessOriginGetter } from '@xyo-network/sdk-core-nodejs'
-import { XyoIterableStructure, XyoStructure, XyoSchema } from '@xyo-network/object-model'
+import { XyoBoundWitness, XyoSha256, IXyoBoundWitnessOrigin, XyoBoundWitnessOriginGetter } from '@xyo-network/sdk-core-nodejs'
+import { XyoIterableStructure } from '@xyo-network/object-model'
 import { ChainTable, IChainRow } from './table/chain'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
