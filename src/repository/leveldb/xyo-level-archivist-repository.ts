@@ -52,6 +52,10 @@ export class XyoArchivistLevelRepository extends XyoBase implements IXyoArchivis
     return false
   }
 
+  public async traceChain(publicKey: Buffer, limit: number, offsetHash: Buffer | undefined, up: boolean): Promise<Buffer[]> {
+    return []
+  }
+
   public async getEntities(limit: number, offsetCursor?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
     this.logError('getEntities: Not Implemented')
     return { items: [], total: 0 }

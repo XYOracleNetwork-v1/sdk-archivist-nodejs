@@ -27,6 +27,7 @@ export const DEFAULT_NODE_ARCHIVIST_CONFIG: IXyoNodeConfig = {
       entities: true,
       blockList: true,
       blocksByPublicKey: true,
+      traceChain: true
     }
   },
   aboutMeService: {

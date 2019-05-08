@@ -18,7 +18,7 @@ export interface IXyoArchivistRepository extends IXyoOriginBlockRepository {
 
   getOriginBlocksByPublicKey(publicKey: Buffer, cursor: Buffer | undefined, limit: number | undefined): Promise<{items: Buffer[], total: number}>
 
-  getEntities(limit: number, cursor: Buffer | undefined): Promise<{items: Buffer[], total: number}>
+  traceChain(publicKey: Buffer, limit: number, offsetHash: Buffer | undefined, up: boolean): Promise<Buffer[]>
 }
 
 export interface IXyoIntersectionsList {

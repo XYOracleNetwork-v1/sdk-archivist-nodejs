@@ -29,6 +29,7 @@ export interface IXyoGraphQLConfig {
     blockList: boolean
     entities: boolean
     blocksByPublicKey: boolean
+    traceChain: boolean
   }
 }
 

@@ -6,7 +6,7 @@ import { IXyoArchivistRepository } from '../../repository'
 import { XyoGetBlockByHashResolver } from '../../graphql-apis/endpoints/blockByHash'
 import { XyoGetBlockList } from '../../graphql-apis/endpoints/blockList'
 import { XyoGetBlocksByPublicKeyResolver } from '../../graphql-apis/endpoints/blocksByPublicKey'
-import { GetEntitiesResolver } from '../../graphql-apis/endpoints/entities'
+import { XyoTraceChainResolver } from '../../graphql-apis/endpoints/trace-chain'
 
 export function instantiateGraphql(config: IXyoGraphQLConfig, about: XyoAboutMeService | undefined, archivistRepo: IXyoArchivistRepository | undefined): XyoGraphQLServer {
   const server = new XyoGraphQLServer(getGraphQlSchema(config), config.port)
@@ -31,9 +31,9 @@ export function instantiateGraphql(config: IXyoGraphQLConfig, about: XyoAboutMeS
     server.addQueryResolver('blocksByPublicKey', endpoint)
   }
 
-  if (config.apis.entities && archivistRepo) {
-    const endpoint = new GetEntitiesResolver(archivistRepo)
-    server.addQueryResolver('entities', endpoint)
+  if (config.apis.traceChain && archivistRepo) {
+    const endpoint = new XyoTraceChainResolver(archivistRepo)
+    server.addQueryResolver('traceChain', endpoint)
   }
 
   return server
@@ -78,8 +78,8 @@ const getGraphQlSchema = (config: IXyoGraphQLConfig): string => {
     queries.push(XyoGetBlocksByPublicKeyResolver.query)
   }
 
-  if (config.apis.entities) {
-    queries.push(GetEntitiesResolver.query)
+  if (config.apis.traceChain) {
+    queries.push(XyoTraceChainResolver.query)
   }
 
   return `

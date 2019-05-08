@@ -256,6 +256,10 @@ export class XyoArchivistSqlRepository extends XyoBase implements IXyoArchivistR
     return new SelectOriginBlocksQuery(this.sqlService).send({ limit })*/
   }
 
+  public async traceChain(publicKey: Buffer, limit: number, offsetHash: Buffer | undefined, up: boolean): Promise<Buffer[]> {
+    return []
+  }
+
   private async tryCreatePublicKeys(originBlock: XyoBoundWitness) {
     throw new Error('tryCreatePublicKeys: stub')
     /*try {

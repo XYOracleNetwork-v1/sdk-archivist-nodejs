@@ -67,6 +67,10 @@ export class XyoArchivistNeo4jRepository extends XyoBase implements IXyoArchivis
     return undefined
   }
 
+  public async traceChain(publicKey: Buffer, limit: number, offsetHash: Buffer | undefined, up: boolean): Promise<Buffer[]> {
+    return []
+  }
+
   public async getBlocksThatProviderAttribution(hash: Buffer): Promise<{[h: string]: Buffer}> {
     return {
 

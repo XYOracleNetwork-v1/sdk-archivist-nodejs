@@ -24,6 +24,7 @@ import bs58 from 'bs58'
 import { XyoBoundWitness, XyoSha256, IXyoBoundWitnessOrigin, XyoBoundWitnessOriginGetter } from '@xyo-network/sdk-core-nodejs'
 import { XyoIterableStructure } from '@xyo-network/object-model'
 import { ChainTable, IChainRow } from './table/chain'
+import { XyoDynamoChainTracer } from './xyo-dynamo-chain-tracer'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
@@ -33,6 +34,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   private boundWitnessTable: BoundWitnessTable
   private publicKeyTable: PublicKeyTable
   private chainsTable: ChainTable
+  private chainsTracer: XyoDynamoChainTracer
   private linkerQueue: Buffer[] = []
   private isLinking = false
 
@@ -44,6 +46,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     this.boundWitnessTable = new BoundWitnessTable(`${tablePrefix}-boundwitness`, region)
     this.publicKeyTable = new PublicKeyTable(`${tablePrefix}-publickey`, region)
     this.chainsTable = new ChainTable(`${tablePrefix}-chains`, region)
+    this.chainsTracer = new XyoDynamoChainTracer(this.chainsTable)
 
   }
 
@@ -146,57 +149,34 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     return { items: result, total: (await this.boundWitnessTable.getRecordCount()) || -1 }
   }
 
-  public async getFromChainUp(startingChainSegmentId: Buffer, limit: number, offsetIndex: number): Promise<Buffer[]> {
-    const firstResult = await this.getFromSegment(startingChainSegmentId, true, limit, offsetIndex - 1)
-
-    // found thr amount we wanted so we can return
-    if (firstResult.items.length >= limit) {
-      return firstResult.items
+  public async traceChain(publicKey: Buffer, limit: number, offsetHash: Buffer | undefined, up: boolean): Promise<Buffer[]> {
+    if (offsetHash) {
+      const hashes = await this.chainsTracer.traceChainWithOffsetHash(this.sha1(publicKey), limit, this.sha1(offsetHash), up)
+      return this.getAllBlocksFromBlockHashes(hashes)
     }
 
-    if (!firstResult.topLink || firstResult.items.length === 0 || !firstResult.topIndex) {
-      // hit the end of the chain
-      return firstResult.items
+    const blockToPublicKey = await this.publicKeyTable.scanByKey(this.sha1(publicKey), 1, undefined)
+
+    if (!blockToPublicKey.items) {
+      return []
     }
 
-    const delta = limit - firstResult.items.length
-
-    const toReturn: Buffer[] = firstResult.items
-    const result = await this.getFromChainUp(firstResult.topLink, delta, firstResult.topIndex)
-
-    for (const item of result) {
-      toReturn.push(item)
-    }
-
-    return toReturn
+    const hashesFromPublicKey = await this.chainsTracer.traceChainWithOffsetHash(this.sha1(publicKey), limit, blockToPublicKey.items[0], up)
+    return this.getAllBlocksFromBlockHashes(hashesFromPublicKey)
   }
 
-  public async getFromChainDown(startingChainSegmentId: Buffer, limit: number, offsetIndex: number): Promise<Buffer[]> {
-    const firstResult = await this.getFromSegment(startingChainSegmentId, false, limit, offsetIndex + 1)
-    console.log(firstResult.items.length)
-    console.log(firstResult.bottomLink)
+  public async getAllBlocksFromBlockHashes(blockHashes: Buffer[]): Promise<Buffer[]> {
+    const blocks: Buffer[] = []
 
-    // found thr amount we wanted so we can return
-    if (firstResult.items.length >= limit) {
-      return firstResult.items
+    for (const hash of blockHashes) {
+      const block = await this.boundWitnessTable.getItem(hash)
+
+      if (block) {
+        blocks.push(block)
+      }
     }
 
-    if (!firstResult.bottomLink || firstResult.items.length === 0 || !firstResult.bottomIndex) {
-      // hit the end of the chain
-      return firstResult.items
-    }
-
-    // 4 - 2
-    const delta = limit - firstResult.items.length
-
-    const toReturn: Buffer[] = firstResult.items
-    const result = await this.getFromChainDown(firstResult.bottomLink, delta, firstResult.bottomIndex)
-
-    for (const item of result) {
-      toReturn.push(item)
-    }
-
-    return toReturn
+    return blocks
   }
 
   private link = async() => {
@@ -206,178 +186,18 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     }
 
     // show link
-
     this.isLinking = true
 
     while (this.linkerQueue.length !== 0) {
       const itemToLink = this.linkerQueue[0]
-      await this.createSegments(new XyoBoundWitness(itemToLink))
+      await this.chainsTracer.createSegments(new XyoBoundWitness(itemToLink))
       this.linkerQueue.shift()
     }
 
     this.isLinking = false
   }
+
   private sha1(data: Buffer) {
     return crypto.createHash('sha1').update(data).digest()
-  }
-
-  private async createSegments(boundWitness: XyoBoundWitness): Promise<void> {
-    const allPublicKeys = boundWitness.getPublicKeys()
-    const allOrigins = XyoBoundWitnessOriginGetter.getOriginInformation(boundWitness)
-    const hash = boundWitness.getHash(new XyoSha256())
-
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < allPublicKeys.length; i++) {
-      const publicKeysOfParty = allPublicKeys[i].map((item) => {
-        return this.sha1(item.getAll().getContentsCopy())
-      })
-
-      const row = await this.findOrCreateChainRow(allOrigins[i], publicKeysOfParty, this.sha1(hash.getAll().getContentsCopy()))
-
-      if (row) {
-        await this.chainsTable.putItem(row)
-      }
-    }
-  }
-
-  // todo move into the
-  private async findOrCreateChainRow(origin: IXyoBoundWitnessOrigin, publicKeys: Buffer[], hash: Buffer): Promise < IChainRow | undefined> {
-    const minPreviousHash = origin.previousHash && this.sha1(origin.previousHash)
-    const minNextPublicKey =  origin.nextPublicKey && this.sha1(origin.nextPublicKey)
-    const segmentIdTop = await this.traverseBlockUp(hash, publicKeys, minNextPublicKey)
-    let segmentIdBelow: IChainRow | undefined
-
-    if (minPreviousHash) {
-      segmentIdBelow = await this.traverseBlockDown(minPreviousHash, publicKeys)
-    }
-
-    if (segmentIdTop && segmentIdBelow && segmentIdTop.hash && segmentIdTop.segmentId) {
-      // do merge here
-
-      const didNotExist = await this.chainsTable.putItem({
-        hash,
-        publicKeys,
-        nextPublicKey: minNextPublicKey,
-        previousHash: minPreviousHash,
-        index: origin.index,
-        segmentId: segmentIdBelow.segmentId,
-        topSegment: segmentIdTop.segmentId,
-        bottomSegment: undefined,
-      })
-
-      if (didNotExist) {
-        this.logInfo(`Merging block segments: ${segmentIdTop.segmentId.toString('base64')}, ${segmentIdBelow.segmentId.toString('base64')}`)
-        await this.chainsTable.updateBottomSegment(segmentIdBelow.segmentId, segmentIdTop.index, segmentIdTop.segmentId, segmentIdTop)
-      }
-
-      return undefined
-    }
-
-    if (segmentIdTop) {
-      this.logInfo(`Adding block with hash ${bs58.encode(hash)} below ${segmentIdTop.segmentId.toString('base64')}`)
-    } else if (segmentIdBelow) {
-      this.logInfo(`Adding block with hash ${bs58.encode(hash)} on top of ${segmentIdBelow.segmentId.toString('base64')}`)
-    } else {
-      this.logInfo(`Adding block with hash ${bs58.encode(hash)} to new segment`)
-    }
-
-    // if no segment is found, create a new segment
-    const segId = ((segmentIdBelow && segmentIdBelow.segmentId) || (segmentIdTop && segmentIdTop.segmentId)) || this.sha1(Buffer.concat([hash, Buffer.concat(publicKeys)]))
-
-    return {
-      hash,
-      publicKeys,
-      nextPublicKey: minNextPublicKey,
-      previousHash: minPreviousHash,
-      index: origin.index,
-      segmentId: segId,
-      topSegment: undefined,
-      bottomSegment: undefined,
-    }
-  }
-
-  private async getFromSegment(chainSegmentId: Buffer, up: boolean, limit: number, offsetIndex: number): Promise < {
-    items: Buffer[],
-    topLink: Buffer | undefined,
-    topIndex: number | undefined,
-    bottomIndex: number | undefined,
-    bottomLink: Buffer | undefined
-  } > {
-    const items = await this.chainsTable.getBySegmentId(chainSegmentId, up, limit, offsetIndex)
-
-    const hashes: Buffer[] = []
-    let topLink: Buffer | undefined
-    let bottomLink: Buffer | undefined
-    let topIndex: number | undefined
-    let bottomIndex: number | undefined
-
-    for (const item of items) {
-      if (item.bottomSegment) {
-        bottomLink = item.bottomSegment
-      } else if (item.topSegment) {
-        topLink = item.topSegment
-      }
-
-      if ((topIndex || 0) < item.index) {
-        topIndex = item.index
-      }
-
-      if ((bottomIndex || item.index) >= item.index) {
-        bottomIndex = item.index
-      }
-
-      hashes.push(item.hash)
-    }
-
-    return {
-      topLink,
-      bottomLink,
-      bottomIndex,
-      topIndex,
-      items: hashes,
-    }
-  }
-
-  private async traverseBlockDown(previousHash: Buffer, publicKeys: Buffer[]): Promise < IChainRow | undefined > {
-    const blockParties = await this.chainsTable.getByHash(previousHash)
-
-    for (const party of blockParties) {
-
-      // check to see if the public keys are equal, if so it is the correct party
-      for (const publicKey of publicKeys) {
-        for (const partyPublicKey of party.publicKeys) {
-          if (publicKey.equals(partyPublicKey)) {
-            return party
-          }
-        }
-
-        // check to see if the next public key is the public key, if so it is the correct party
-        if (party.nextPublicKey && publicKey.equals(party.nextPublicKey)) {
-          return party
-        }
-      }
-    }
-
-    return undefined
-  }
-
-  private async traverseBlockUp(hash: Buffer, publicKeys: Buffer[], nextPublicKey: Buffer | undefined): Promise < IChainRow | undefined > {
-    const blockParties = await this.chainsTable.getByPreviousHash(hash)
-
-    for (const party of blockParties) {
-
-      // check to see if the public keys are equal, if so it is the correct party
-      for (const publicKey of publicKeys) {
-        for (const partyPublicKey of party.publicKeys) {
-
-          // check to see if it is also the next public key
-          if (publicKey.equals(partyPublicKey) || (nextPublicKey && publicKey.equals(nextPublicKey))) {
-            return party
-          }
-        }
-      }
-    }
-
-    return undefined
   }
 }
