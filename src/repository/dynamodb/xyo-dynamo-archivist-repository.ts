@@ -282,7 +282,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     }
 
     // if no segment is found, create a new segment
-    const segId = ((segmentIdBelow && segmentIdBelow.segmentId) || (segmentIdTop && segmentIdTop.segmentId)) || hash
+    const segId = ((segmentIdBelow && segmentIdBelow.segmentId) || (segmentIdTop && segmentIdTop.segmentId)) || this.sha1(Buffer.concat([hash, Buffer.concat(publicKeys)]))
 
     return {
       hash,
