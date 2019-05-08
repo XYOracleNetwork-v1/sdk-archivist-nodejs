@@ -39,8 +39,6 @@ export class XyoDynamoChainTracer extends XyoBase {
 
   public async getFromChainDown(startingChainSegmentId: Buffer, limit: number, offsetIndex: number): Promise<Buffer[]> {
     const firstResult = await this.getFromSegment(startingChainSegmentId, false, limit, offsetIndex + 1)
-    console.log(firstResult.items.length)
-    console.log(firstResult.bottomLink)
 
     // found thr amount we wanted so we can return
     if (firstResult.items.length >= limit) {
@@ -109,8 +107,6 @@ export class XyoDynamoChainTracer extends XyoBase {
 
   public async traceChainWithOffsetHash(publicKey: Buffer, limit: number, offsetHash: Buffer, up: boolean): Promise<Buffer[]> {
     const blocksWithHash = await this.chainsTable.getByHash(offsetHash)
-
-    console.log(blocksWithHash)
 
     for (const party of blocksWithHash) {
       for (const partyPublicKey of party.publicKeys) {
