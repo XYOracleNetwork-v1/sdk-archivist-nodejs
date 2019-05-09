@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.3.0-beta.1",
+  "version": "0.3.0-beta.2",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,6 +28,7 @@
     "develop": "ts-node --files src/cli.ts"
   },
   "devDependencies": {
+    "@types/bs58": "^4.0.0",
     "@types/elliptic": "^6.4.6",
     "@types/graphql": "^14.2.0",
     "@types/graphql-type-json": "^0.1.3",
@@ -38,9 +39,8 @@
     "@types/lru-cache": "^5.1.0",
     "@types/mysql": "^2.15.5",
     "@types/node": "^11.13.8",
-    "@types/yargs": "^13.0.0",
-    "@types/bs58": "^4.0.0",
     "@types/node-fetch": "^2.3.3",
+    "@types/yargs": "^13.0.0",
     "@xyo-network/config-tslint": "^0.1.31",
     "copyfiles": "^2.1.0",
     "license-checker": "^25.0.1",
