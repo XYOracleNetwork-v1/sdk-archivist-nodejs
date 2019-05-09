@@ -56,17 +56,14 @@ export class XyoNode extends XyoBase {
 
   public async start() {
     if (this.state.getIndexAsNumber() === 0) {
-      this.state.addSigner(new XyoSecp2556k1())
       const genesisBlock =  await XyoGenesisBlockCreator.create(this.state.getSigners(), this.payloadProvider)
       this.logInfo(`Created genesis block with hash: ${bs58.encode(genesisBlock.getHash(this.hasher).getAll().getContentsCopy())}`)
       await this.inserter.insert(genesisBlock)
     }
 
-    this.logInfo(`Using public key: ${bs58.encode(this.state.getSigners()[0].getPublicKey().getAll().getContentsCopy())}`)
-
     this.network.onPipeCreated = async(pipe) => {
       this.network.stopListening()
-      this.logInfo('New request!')
+      this.logInfo('New archivist request!')
 
       if (!this.mutexHandler.acquireMutex()) {
         await pipe.close()
