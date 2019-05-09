@@ -9,24 +9,21 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { IXyoDataResolver } from '../../graphql-server'
 import { GraphQLResolveInfo } from 'graphql'
 import { IXyoOriginBlockRepository, XyoSha256, XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
 import bs58 from 'bs58'
 
-export const serviceDependencies = ['originBlockRepository', 'hashProvider']
-
-export class XyoGetBlockList implements IXyoDataResolver<any, any, any, any> {
+export class XyoGetBlockList {
 
   public static query = 'blockList(limit: Int!, cursor: String): XyoBlockList!'
-  public static dependsOnTypes = ['XyoBlockList']
+  public static queryName = 'blockList'
 
   constructor(
     private readonly originBlockRepository: IXyoOriginBlockRepository
   ) {}
 
-  public async resolve(obj: any, args: any, context: any, info: GraphQLResolveInfo): Promise<any> {
+  public async resolve(obj: any, args: any): Promise<any> {
     const cursor = args.cursor as string | undefined
     const cursorBuffer = cursor ? bs58.decode(cursor) : undefined
     const result = await this.originBlockRepository.getOriginBlocks(args.limit as number, cursorBuffer)

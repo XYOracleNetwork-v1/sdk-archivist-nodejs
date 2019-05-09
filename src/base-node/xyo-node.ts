@@ -9,7 +9,7 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { XyoBase } from '@xyo-network/sdk-base-nodejs'
+import { XyoBase, IXyoBoundWitnessMutexDelegate } from '@xyo-network/sdk-base-nodejs'
 import { receiveProcedureCatalog } from './xyo-recive-catalog'
 import {
     XyoServerTcpNetwork,
@@ -27,26 +27,25 @@ import {
     IXyoOriginBlockRepository} from '@xyo-network/sdk-core-nodejs'
 import _ from 'lodash'
 import bs58 from 'bs58'
-import { XyoArchivistLevelRepository } from '../repository/leveldb/xyo-level-archivist-repository'
 
 export class XyoNode extends XyoBase {
 
   public network: XyoServerTcpNetwork
-  public stateRepo: XyoFileOriginStateRepository
   public blockRepo: IXyoOriginBlockRepository
   public state: XyoOriginState
   public hasher: XyoSha256
   public inserter: XyoBoundWitnessInserter
   public payloadProvider: XyoOriginPayloadConstructor
   public handler: XyoZigZagBoundWitnessHander
+  public mutexHandler: IXyoBoundWitnessMutexDelegate
 
-  constructor(port: number, statePath: string = './state-data', blockRepository: IXyoOriginBlockRepository = new XyoArchivistLevelRepository()) {
+  constructor(port: number, state: XyoOriginState, blockRepository: IXyoOriginBlockRepository, mutexHandler: IXyoBoundWitnessMutexDelegate) {
     super()
     this.blockRepo = blockRepository
-    this.network = new XyoServerTcpNetwork(port)
-    this.stateRepo = new XyoFileOriginStateRepository(statePath)
+    this.state = state
+    this.mutexHandler = mutexHandler
 
-    this.state = new XyoOriginState(this.stateRepo)
+    this.network = new XyoServerTcpNetwork(port)
     this.hasher = new XyoSha256()
     this.inserter = new XyoBoundWitnessInserter(this.hasher, this.state, this.blockRepo)
     this.payloadProvider = new XyoOriginPayloadConstructor(this.state)
@@ -56,10 +55,6 @@ export class XyoNode extends XyoBase {
   }
 
   public async start() {
-    await this.stateRepo.restore((privateKey: Buffer) => {
-      return new XyoSecp2556k1(privateKey)
-    })
-
     if (this.state.getIndexAsNumber() === 0) {
       this.state.addSigner(new XyoSecp2556k1())
       const genesisBlock =  await XyoGenesisBlockCreator.create(this.state.getSigners(), this.payloadProvider)
@@ -72,6 +67,13 @@ export class XyoNode extends XyoBase {
     this.network.onPipeCreated = async(pipe) => {
       this.network.stopListening()
       this.logInfo('New request!')
+
+      if (!this.mutexHandler.acquireMutex()) {
+        await pipe.close()
+        this.network.startListening()
+        return
+      }
+
       try {
         const networkHandle = new XyoNetworkHandler(pipe)
         const boundWitness = await this.handler.boundWitness(networkHandle, receiveProcedureCatalog, this.state.getSigners())
@@ -84,7 +86,8 @@ export class XyoNode extends XyoBase {
         this.logWarning(`Error creating bound witness: ${error}`)
       }
 
-      pipe.close()
+      await pipe.close()
+      this.mutexHandler.releaseMutex()
       this.network.startListening()
     }
 

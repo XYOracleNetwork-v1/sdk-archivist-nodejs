@@ -8,24 +8,15 @@
  * @License: All Rights Reserved
  * @Copyright: Copyright XY | The Findables Company
  */
-import { IXyoDataResolver } from '../../graphql-server'
-import { GraphQLResolveInfo } from 'graphql'
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { IXyoOriginBlockRepository, XyoBoundWitness, XyoSha256 } from '@xyo-network/sdk-core-nodejs'
 import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
 import bs58 from 'bs58'
 
-export const serviceDependencies = [
-  'originBlockRepository',
-  'hashProvider',
-  'serializationService',
-  'archivistNetwork?'
-]
-
-export class XyoGetBlockByHashResolver extends XyoBase implements IXyoDataResolver<any, any, any, any> {
+export class XyoGetBlockByHashResolver extends XyoBase  {
 
   public static query = 'blockByHash(hash: String!): XyoBlock'
-  public static dependsOnTypes = ['XyoBlock']
+  public static queryName = 'blockByHash'
 
   constructor(
     private readonly originBlockRepository: IXyoOriginBlockRepository
@@ -33,7 +24,7 @@ export class XyoGetBlockByHashResolver extends XyoBase implements IXyoDataResolv
     super()
   }
 
-  public async resolve(obj: any, args: any, context: any, info: GraphQLResolveInfo): Promise<any> {
+  public async resolve(obj: any, args: any): Promise<any> {
     const stringHash = args.hash as string
     const bufferHash = bs58.decode(stringHash)
 

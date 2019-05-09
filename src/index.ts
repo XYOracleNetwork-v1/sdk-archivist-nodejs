@@ -10,75 +10,69 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { XyoNode, DEFAULT_NODE_CONFIG_MYSQL, DEFAULT_NODE_CONFIG_DYNAMODB, DEFAULT_NODE_ARCHIVIST_CONFIG } from './base-node'
+import { XyoNode } from './base-node'
+import { IXyoPlugin, IXyoBoundWitnessMutexDelegate, IXyoGraphQlDelegate } from '@xyo-network/sdk-base-nodejs'
+import { IXyoArchivistConfig } from './base-node/@types'
+import { XyoOriginState } from '@xyo-network/sdk-core-nodejs'
+import { IXyoArchivistRepository } from './repository'
+import { XyoGetBlockByHashResolver } from './endpoints/blockByHash'
+import { XyoGetBlockList } from './endpoints/blockList'
+import { XyoGetBlocksByPublicKeyResolver } from './endpoints/blocksByPublicKey'
 import _ from 'lodash'
-import { instantiateBlockRepository } from './base-node/instantiators/xyo-originblock-repository-instaniator'
-import { instantiateGraphql } from './base-node/instantiators/xyo-graphql-instantiator'
-import { IXyoNodeConfig } from './base-node/@types'
-import { XyoAboutMeService } from './about-me'
-import { instantiateAboutMe } from './base-node/instantiators/xyo-aboutme-instantiator'
-import { ArchivistAbsorber } from './absorb/archivist-absorber'
-import { XyoBoundWitness, XyoSha256 } from '@xyo-network/sdk-core-nodejs'
-import bs58 from 'bs58'
-import crypto from 'crypto'
 
-export * from './about-me'
-export * from './attribution-request'
 export * from './base-node'
-export * from './diviner-archivist-client'
-export * from './graphql-apis'
-export * from './graphql-server'
 export * from './repository'
 export * from './@types'
 
-// function to launch for testing.  Should never be used in production
-async function main() {
-  const config = resolveConfig()
-  const port = config.tcpServerConfig && config.tcpServerConfig.serverPort || 11000
-  const path = config.originStateRepository && config.originStateRepository.path || './test-state.json'
-  const db = config.archivistRepository && instantiateBlockRepository(config.archivistRepository) || (() => { throw new Error('No archivist repository') })()
-
-  const node = new XyoNode(port, path, db)
-  await node.start()
-  await db.initialize()
-
-  const about = config.aboutMeService && instantiateAboutMe(
-  config.aboutMeService, node.stateRepo.getSigners()[0].getPublicKey().getAll().getContentsCopy()) || (() => { throw new Error('No about me') })()
-  const graphql = config.graphql && instantiateGraphql(config.graphql, about, db) || (() => { throw new Error('No graphql') })()
-
-  await graphql.start()
-
-  // const absorber = new ArchivistAbsorber('http://3.80.173.107:11001/')
-  // absorber.resetCursor('1N9qKYAMoSE91Rgm6C42SHNpj8TT9xiDsAUK5DRYcGgY7cY')
-
-  // while (true) {
-  //   const blocks = await absorber.readBlocks(5)
-
-  //   for (const block of blocks) {
-  //     const bw = new XyoBoundWitness(block)
-  //     const hash = bw.getHash(new XyoSha256()).getAll().getContentsCopy()
-  //     await db.addOriginBlock(hash, block)
-  //   }
-
-  // }
-}
-
-const resolveConfig = (): IXyoNodeConfig => {
-  const db = process.argv.length > 2 ? process.argv[2] : 'unknown'
-
-  switch (db) {
-    case 'mysql': {
-      return _.merge({}, DEFAULT_NODE_ARCHIVIST_CONFIG, DEFAULT_NODE_CONFIG_MYSQL)
-    }
-    case 'dynamodb': {
-      return _.merge({}, DEFAULT_NODE_ARCHIVIST_CONFIG, DEFAULT_NODE_CONFIG_DYNAMODB)
-    }
-    default: {
-      return DEFAULT_NODE_ARCHIVIST_CONFIG
-    }
+class XyoArchivistPlugin implements IXyoPlugin {
+  public getName(): string {
+    return 'archivist'
   }
+
+  public getProvides(): string[] {
+    return ['archivist']
+  }
+
+  public getPluginDependencies(): string[] {
+    return ['ORIGIN_STATE', 'BLOCK_REPOSITORY', 'BASE_GRAPHQL_TYPES']
+  }
+
+  public async initialize(
+    deps: { [key: string]: any; },
+    config: any,
+    graphql?: IXyoGraphQlDelegate | undefined,
+    mutex?: IXyoBoundWitnessMutexDelegate | undefined
+  ): Promise<boolean> {
+    const archivistConfig = config as IXyoArchivistConfig
+    const originState = deps.ORIGIN_STATE as XyoOriginState
+    const blockRepository = deps.BLOCK_REPOSITORY as IXyoArchivistRepository
+
+    if (!graphql) {
+      throw new Error('Expecting graphql')
+    }
+
+    if (!mutex) {
+      throw new Error('Expecting mutex')
+    }
+
+    const blockByHash = new XyoGetBlockByHashResolver(blockRepository)
+    const blockList = new XyoGetBlockList(blockRepository)
+    const blockByPublicKey = new XyoGetBlocksByPublicKeyResolver(blockRepository)
+
+    graphql.addQuery(XyoGetBlockByHashResolver.query)
+    graphql.addQuery(XyoGetBlockList.query)
+    graphql.addQuery(XyoGetBlocksByPublicKeyResolver.query)
+
+    graphql.addResolver(XyoGetBlockByHashResolver.queryName, blockByHash)
+    graphql.addResolver(XyoGetBlockList.queryName, blockList)
+    graphql.addResolver(XyoGetBlocksByPublicKeyResolver.queryName, blockByPublicKey)
+
+    const node = new XyoNode(archivistConfig.port || 11000, originState, blockRepository, mutex)
+    await node.start()
+
+    return true
+  }
+
 }
 
-if (require.main === module) {
-  main()
-}
+module.exports = new XyoArchivistPlugin()

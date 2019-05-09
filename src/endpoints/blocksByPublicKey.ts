@@ -9,18 +9,17 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { IXyoDataResolver } from '../../graphql-server'
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
-import { IXyoArchivistRepository } from '../../repository'
+import { IXyoArchivistRepository } from '../repository'
 import bs58 from 'bs58'
 import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
 
 export const serviceDependencies = ['archivistRepository', 'hashProvider', 'serializationService']
 
-export class XyoGetBlocksByPublicKeyResolver extends XyoBase implements IXyoDataResolver<any, any, any, any> {
+export class XyoGetBlocksByPublicKeyResolver extends XyoBase {
 
   public static query = 'blocksByPublicKey(publicKey: String!, limit: Int, cursor: String): [XyoBlockCollection]'
-  public static dependsOnTypes = ['XyoBlockCollection']
+  public static queryName = 'blocksByPublicKey'
 
   constructor(
     private readonly archivistRepository: IXyoArchivistRepository
@@ -28,7 +27,7 @@ export class XyoGetBlocksByPublicKeyResolver extends XyoBase implements IXyoData
     super()
   }
 
-  public async resolve(obj: any, args: any, context: any, info: any): Promise<any> {
+  public async resolve(obj: any, args: any): Promise<any> {
     if (!args || !args.publicKey || !args.publicKeys.length) {
       return []
     }

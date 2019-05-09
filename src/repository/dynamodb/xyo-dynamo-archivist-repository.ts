@@ -16,15 +16,12 @@ import {
 
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
-import _ from 'lodash'
 import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
 import crypto from 'crypto'
-import bs58 from 'bs58'
-import { XyoBoundWitness, XyoSha256, IXyoBoundWitnessOrigin, XyoBoundWitnessOriginGetter } from '@xyo-network/sdk-core-nodejs'
+import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 import { XyoIterableStructure } from '@xyo-network/object-model'
-import { ChainTable, IChainRow } from './table/chain'
-import { XyoDynamoChainTracer } from './xyo-dynamo-chain-tracer'
+import bs58 from 'bs58'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
@@ -33,28 +30,21 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   private maxNumberOfBlockResults = 10_000
   private boundWitnessTable: BoundWitnessTable
   private publicKeyTable: PublicKeyTable
-  private chainsTable: ChainTable
-  private chainsTracer: XyoDynamoChainTracer
   private linkerQueue: Buffer[] = []
-  private isLinking = false
 
   constructor(
-    tablePrefix: string = 'xyo-archivist-development',
+    tablePrefix: string = 'xyo-archivist',
     region: string = 'us-east-1'
   ) {
     super()
     this.boundWitnessTable = new BoundWitnessTable(`${tablePrefix}-boundwitness`, region)
     this.publicKeyTable = new PublicKeyTable(`${tablePrefix}-publickey`, region)
-    this.chainsTable = new ChainTable(`${tablePrefix}-chains`, region)
-    this.chainsTracer = new XyoDynamoChainTracer(this.chainsTable)
 
   }
 
   public async initialize() {
     this.boundWitnessTable.initialize()
     this.publicKeyTable.initialize()
-    this.chainsTable.initialize()
-    setInterval(this.link, 5_000)
     return true
   }
 
@@ -149,21 +139,21 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     return { items: result, total: (await this.boundWitnessTable.getRecordCount()) || -1 }
   }
 
-  public async traceChain(publicKey: Buffer, limit: number, offsetHash: Buffer | undefined, up: boolean): Promise<Buffer[]> {
-    if (offsetHash) {
-      const hashes = await this.chainsTracer.traceChainWithOffsetHash(this.sha1(publicKey), limit, this.sha1(offsetHash), up)
-      return this.getAllBlocksFromBlockHashes(hashes)
-    }
+  // public async traceChain(publicKey: Buffer, limit: number, offsetHash: Buffer | undefined, up: boolean): Promise<Buffer[]> {
+  //   if (offsetHash) {
+  //     const hashes = await this.chainsTracer.traceChainWithOffsetHash(this.sha1(publicKey), limit, this.sha1(offsetHash), up)
+  //     return this.getAllBlocksFromBlockHashes(hashes)
+  //   }
 
-    const blockToPublicKey = await this.publicKeyTable.scanByKey(this.sha1(publicKey), 1, undefined)
+  //   const blockToPublicKey = await this.publicKeyTable.scanByKey(this.sha1(publicKey), 1, undefined)
 
-    if (!blockToPublicKey.items) {
-      return []
-    }
+  //   if (!blockToPublicKey.items) {
+  //     return []
+  //   }
 
-    const hashesFromPublicKey = await this.chainsTracer.traceChainWithOffsetHash(this.sha1(publicKey), limit, blockToPublicKey.items[0], up)
-    return this.getAllBlocksFromBlockHashes(hashesFromPublicKey)
-  }
+  //   const hashesFromPublicKey = await this.chainsTracer.traceChainWithOffsetHash(this.sha1(publicKey), limit, blockToPublicKey.items[0], up)
+  //   return this.getAllBlocksFromBlockHashes(hashesFromPublicKey)
+  // }
 
   public async getAllBlocksFromBlockHashes(blockHashes: Buffer[]): Promise<Buffer[]> {
     const blocks: Buffer[] = []
@@ -177,24 +167,6 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     }
 
     return blocks
-  }
-
-  private link = async() => {
-    if (this.isLinking || this.linkerQueue.length === 0) {
-      // should not link
-      return
-    }
-
-    // show link
-    this.isLinking = true
-
-    while (this.linkerQueue.length !== 0) {
-      const itemToLink = this.linkerQueue[0]
-      await this.chainsTracer.createSegments(new XyoBoundWitness(itemToLink))
-      this.linkerQueue.shift()
-    }
-
-    this.isLinking = false
   }
 
   private sha1(data: Buffer) {

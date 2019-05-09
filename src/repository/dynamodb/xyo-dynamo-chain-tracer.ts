@@ -1,8 +1,8 @@
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { ChainTable, IChainRow } from './table/chain'
-import bs58 from 'bs58'
-import crypto from 'crypto'
 import { XyoBoundWitnessOriginGetter, XyoBoundWitness, XyoSha256, IXyoBoundWitnessHander, IXyoBoundWitnessOrigin } from '@xyo-network/sdk-core-nodejs'
+import crypto from 'crypto'
+import bs58 from 'bs58'
 
 export class XyoDynamoChainTracer extends XyoBase {
   private chainsTable: ChainTable
