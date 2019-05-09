@@ -72,6 +72,8 @@ class XyoArchivistPlugin implements IXyoPlugin {
     graphql.addResolver(XyoGetBlocksByPublicKeyResolver.queryName, blockByPublicKey)
     graphql.addResolver(XyoArchivistInfoResolver.queryName, archivistQuery)
 
+    graphql.addType(XyoArchivistInfoResolver.type)
+
     const node = new XyoNode(port, originState, blockRepository, mutex)
     await node.start()
 

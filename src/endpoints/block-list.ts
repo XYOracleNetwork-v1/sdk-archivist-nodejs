@@ -9,7 +9,6 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 
-import { GraphQLResolveInfo } from 'graphql'
 import { IXyoOriginBlockRepository, XyoSha256, XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
 import bs58 from 'bs58'
