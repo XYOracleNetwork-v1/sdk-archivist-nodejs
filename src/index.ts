@@ -15,10 +15,11 @@ import { IXyoPlugin, IXyoBoundWitnessMutexDelegate, IXyoGraphQlDelegate } from '
 import { IXyoArchivistConfig } from './base-node/@types'
 import { XyoOriginState } from '@xyo-network/sdk-core-nodejs'
 import { IXyoArchivistRepository } from './repository'
-import { XyoGetBlockByHashResolver } from './endpoints/blockByHash'
-import { XyoGetBlockList } from './endpoints/blockList'
-import { XyoGetBlocksByPublicKeyResolver } from './endpoints/blocksByPublicKey'
+import { XyoGetBlockByHashResolver } from './endpoints/block-by-hash'
+import { XyoGetBlockList } from './endpoints/block-list'
+import { XyoGetBlocksByPublicKeyResolver } from './endpoints/blocks-by-public-key'
 import _ from 'lodash'
+import { XyoArchivistInfoResolver } from './endpoints/archivist-info'
 
 export * from './base-node'
 export * from './repository'
@@ -46,6 +47,7 @@ class XyoArchivistPlugin implements IXyoPlugin {
     const archivistConfig = config as IXyoArchivistConfig
     const originState = deps.ORIGIN_STATE as XyoOriginState
     const blockRepository = deps.BLOCK_REPOSITORY as IXyoArchivistRepository
+    const port = archivistConfig.port || 11000
 
     if (!graphql) {
       throw new Error('Expecting graphql')
@@ -58,16 +60,19 @@ class XyoArchivistPlugin implements IXyoPlugin {
     const blockByHash = new XyoGetBlockByHashResolver(blockRepository)
     const blockList = new XyoGetBlockList(blockRepository)
     const blockByPublicKey = new XyoGetBlocksByPublicKeyResolver(blockRepository)
+    const archivistQuery = new XyoArchivistInfoResolver(port)
 
     graphql.addQuery(XyoGetBlockByHashResolver.query)
     graphql.addQuery(XyoGetBlockList.query)
     graphql.addQuery(XyoGetBlocksByPublicKeyResolver.query)
+    graphql.addQuery(XyoArchivistInfoResolver.query)
 
     graphql.addResolver(XyoGetBlockByHashResolver.queryName, blockByHash)
     graphql.addResolver(XyoGetBlockList.queryName, blockList)
     graphql.addResolver(XyoGetBlocksByPublicKeyResolver.queryName, blockByPublicKey)
+    graphql.addResolver(XyoArchivistInfoResolver.queryName, archivistQuery)
 
-    const node = new XyoNode(archivistConfig.port || 11000, originState, blockRepository, mutex)
+    const node = new XyoNode(port, originState, blockRepository, mutex)
     await node.start()
 
     return true
