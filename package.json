@@ -39,6 +39,8 @@
     "@types/mysql": "^2.15.5",
     "@types/node": "^11.13.8",
     "@types/yargs": "^13.0.0",
+    "@types/bs58": "^4.0.0",
+    "@types/node-fetch": "^2.3.3",
     "@xyo-network/config-tslint": "^0.1.31",
     "copyfiles": "^2.1.0",
     "license-checker": "^25.0.1",
@@ -47,28 +49,17 @@
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "@types/bs58": "^4.0.0",
-    "@types/node-fetch": "^2.3.3",
     "@xyo-network/meta-list": "^0.55.9-alpha.0",
     "@xyo-network/object-model": "^0.5.10",
     "@xyo-network/sdk-base-nodejs": "0.3.1",
     "@xyo-network/sdk-core-nodejs": "^0.63.0",
     "abstract-leveldown": "^6.0.3",
-    "apollo-boost": "^0.3.1",
-    "apollo-cache-inmemory": "^1.5.1",
-    "apollo-client": "^2.5.1",
-    "apollo-link-http": "^1.5.14",
-    "apollo-server": "^2.4.8",
     "aws-sdk": "^2.446.0",
     "bs58": "^4.0.1",
-    "graphql": "^14.2.1",
-    "graphql-tag": "^2.10.1",
-    "graphql-type-json": "^0.3.0",
     "leveldown": "^5.0.3",
     "levelup": "^4.0.1",
     "lodash": "^4.17.11",
     "lru-cache": "^5.1.1",
-    "mysql": "^2.17.1",
-    "node-fetch": "^2.5.0"
+    "mysql": "^2.17.1"
   }
 }
