@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.2.80",
+  "version": "0.2.81",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,8 +23,9 @@
     "lint": "tslint --config tslint.json --project tsconfig.json",
     "test": "yarn lint && yarn licensecheck",
     "start": "node ./dist/index.js dynamodb",
-    "build": "tsc && yarn copy",
+    "build": "yarn hooks && tsc && yarn copy",
     "copy": "copyfiles -u 1 src/**/*.sql dist/",
+    "hooks": "copyfiles -u 1 hooks/* .git/hooks",
     "develop": "ts-node --files src/cli.ts"
   },
   "devDependencies": {
