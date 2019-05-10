@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.2.81",
+  "version": "0.2.82",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,12 +20,10 @@
   },
   "scripts": {
     "pretest": "yarn install",
-    "lint": "tslint --config tslint.json --project tsconfig.json",
     "test": "yarn lint && yarn licensecheck",
     "start": "node ./dist/index.js dynamodb",
-    "build": "yarn hooks && tsc && yarn copy",
+    "build": "yarn xybuild && yarn copy",
     "copy": "copyfiles -u 1 src/**/*.sql dist/",
-    "hooks": "copyfiles -u 1 hooks/* .git/hooks",
     "develop": "ts-node --files src/cli.ts"
   },
   "devDependencies": {
@@ -51,7 +49,7 @@
     "@types/bs58": "^4.0.0",
     "@xyo-network/meta-list": "^0.55.9-alpha.0",
     "@xyo-network/object-model": "^0.5.10",
-    "@xyo-network/sdk-base-nodejs": "0.2.23",
+    "@xyo-network/sdk-base-nodejs": "^0.3.10",
     "@xyo-network/sdk-core-nodejs": "^0.61.0-alpha.22",
     "abstract-leveldown": "^6.0.3",
     "apollo-cache-inmemory": "^1.5.1",

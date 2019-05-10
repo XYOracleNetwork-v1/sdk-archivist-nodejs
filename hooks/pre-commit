@@ -1,4 +1,0 @@
-#!/bin/sh
-yarn version --patch --no-git-tag-version --no-commit-hooks
-git add package.json
-exit 0 
