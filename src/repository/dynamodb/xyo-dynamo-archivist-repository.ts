@@ -10,23 +10,17 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import {
-  IXyoArchivistRepository
-} from '..'
-
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
-
 import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
-import crypto from 'crypto'
-import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 import { XyoIterableStructure } from '@xyo-network/object-model'
-import bs58 from 'bs58'
+import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoBoundWitness, IXyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
+import crypto from 'crypto'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
 
-export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivistRepository {
+export class XyoArchivistDynamoRepository extends XyoBase implements IXyoOriginBlockGetter, IXyoOriginBlockRepository, IXyoBlockByPublicKeyRepository {
   private maxNumberOfBlockResults = 10_000
   private boundWitnessTable: BoundWitnessTable
   private publicKeyTable: PublicKeyTable
@@ -64,28 +58,12 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     return { items: result, total:scanResult.total }
   }
 
-  public async getEntities(limit: number, offsetCursor?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
-    throw new Error('getEntities: Not Implemented')
-  }
-
   public async removeOriginBlock(hash: Buffer): Promise<void> {
     const shortHash = this.sha1(hash)
     return this.boundWitnessTable.deleteItem(shortHash)
   }
 
-  public async containsOriginBlock(hash: Buffer): Promise<boolean> {
-    const shortHash = this.sha1(hash)
-    return this.boundWitnessTable.getItem(shortHash)
-  }
-
-  public async getAllOriginBlockHashes(): Promise<Buffer[]> {
-    throw new Error('getAllOriginBlockHashes: Not Implemented')
-  }
-
-  public async addOriginBlock(
-    hash: Buffer,
-    originBlock: Buffer
-  ): Promise<void> {
+  public async addOriginBlock(hash: Buffer, originBlock: Buffer): Promise<void> {
     try {
       const shortHash = this.sha1(hash)
 

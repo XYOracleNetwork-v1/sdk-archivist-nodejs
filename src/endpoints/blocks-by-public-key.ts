@@ -10,11 +10,9 @@
  */
 
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
-import { IXyoArchivistRepository } from '../repository'
-import bs58 from 'bs58'
 import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
-
-export const serviceDependencies = ['archivistRepository', 'hashProvider', 'serializationService']
+import { IXyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
+import bs58 from 'bs58'
 
 export class XyoGetBlocksByPublicKeyResolver extends XyoBase {
 
@@ -22,7 +20,7 @@ export class XyoGetBlocksByPublicKeyResolver extends XyoBase {
   public static queryName = 'blocksByPublicKey'
 
   constructor(
-    private readonly archivistRepository: IXyoArchivistRepository
+    private readonly archivistRepository: IXyoBlockByPublicKeyRepository
   ) {
     super()
   }

@@ -7,12 +7,10 @@ import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
 export class ArchivistAbsorber extends XyoBase {
   private cursorHash: string | undefined
-  private endpoint: string
   private client: ApolloClient<NormalizedCacheObject>
 
   constructor(endpoint: string) {
     super()
-    this.endpoint = endpoint
 
     this.client = new ApolloClient({
       link: createHttpLink({
@@ -53,8 +51,8 @@ export class ArchivistAbsorber extends XyoBase {
         query {
                 blockList(limit: ${limit}, cursor: "${offset}") {
                 items {
-                signedHash
-                bytes
+                  signedHash
+                  bytes
                 }
             }
         }

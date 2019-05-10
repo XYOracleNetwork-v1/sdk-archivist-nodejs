@@ -10,18 +10,12 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import {
-  IXyoArchivistRepository,
-  IXyoOriginBlocksByPublicKeyResult,
-  IXyoEntitiesList,
-  IXyoIntersectionsList
-} from '..'
-
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
 import _ from 'lodash'
+import { IXyoOriginBlockGetter, IXyoOriginBlockRepository } from '@xyo-network/sdk-core-nodejs'
 
-export class XyoArchivistNeo4jRepository extends XyoBase implements IXyoArchivistRepository {
+export class XyoArchivistNeo4jRepository extends XyoBase implements IXyoOriginBlockGetter, IXyoOriginBlockRepository {
 
   constructor(
   ) {

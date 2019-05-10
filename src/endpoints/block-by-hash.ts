@@ -9,7 +9,7 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
-import { IXyoOriginBlockRepository, XyoBoundWitness, XyoSha256 } from '@xyo-network/sdk-core-nodejs'
+import { IXyoOriginBlockGetter } from '@xyo-network/sdk-core-nodejs'
 import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
 import bs58 from 'bs58'
 
@@ -19,7 +19,7 @@ export class XyoGetBlockByHashResolver extends XyoBase  {
   public static queryName = 'blockByHash'
 
   constructor(
-    private readonly originBlockRepository: IXyoOriginBlockRepository
+    private readonly originBlockRepository: IXyoOriginBlockGetter
   ) {
     super()
   }

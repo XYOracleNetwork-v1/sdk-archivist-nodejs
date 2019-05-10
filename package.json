@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.3.0-beta.3",
+  "version": "0.3.0",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -49,10 +49,9 @@
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "@xyo-network/meta-list": "^0.55.9-alpha.0",
     "@xyo-network/object-model": "^0.5.10",
     "@xyo-network/sdk-base-nodejs": "0.3.1",
-    "@xyo-network/sdk-core-nodejs": "^0.63.0",
+    "@xyo-network/sdk-core-nodejs": "0.64.2",
     "abstract-leveldown": "^6.0.3",
     "aws-sdk": "^2.446.0",
     "bs58": "^4.0.1",
