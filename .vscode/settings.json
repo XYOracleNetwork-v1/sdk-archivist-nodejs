@@ -33,6 +33,8 @@
   ],
   "cSpell.words": [
     "dynamodb",
-    "hasher"
+    "hasher",
+    "leveldown",
+    "mutex"
   ]
 }

@@ -1,16 +1,14 @@
-
 /*
  * File: index.ts
- * Project: sdk-archivist-nodejs
- * File Created: Tuesday, 16th April 2019 9:19:05 am
+ * Project: @xyo-network/base-node
+ * File Created: Wednesday, 17th April 2019 9:10:14 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Monday, 22nd April 2019 8:32:48 am
+ * Last Modified: Thursday, 25th April 2019 6:18:33 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-export interface INeo4jArchivistRepositoryConfig {
-  host: string
-}
+export * from './xyo-node'
+export * from './default-node-config'

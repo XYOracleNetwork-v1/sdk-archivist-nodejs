@@ -1,4 +1,3 @@
-import { IArchivistRepositoryConfig } from '../../'
 
 /*
  * File: index.ts
@@ -12,6 +11,6 @@ import { IArchivistRepositoryConfig } from '../../'
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-export interface IDynamoDBArchivistRepositoryConfig extends IArchivistRepositoryConfig {
+export interface IDynamoDBArchivistRepositoryConfig {
   tableName: string
 }

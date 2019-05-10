@@ -95,6 +95,9 @@ export class PublicKeyTable extends Table {
           params.ExclusiveStartKey = {
             BlockHash: {
               B: offsetHash
+            },
+            PublicKey: {
+              B: key
             }
           }
         }
