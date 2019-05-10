@@ -13,5 +13,5 @@
 import { XyoArchivistLevelRepository } from './xyo-level-archivist-repository'
 
 export async function createArchivistLevelDBRepository() {
-  return = new XyoArchivistLevelRepository()
+  return new XyoArchivistLevelRepository()
 }

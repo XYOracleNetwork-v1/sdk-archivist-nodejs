@@ -11,4 +11,4 @@
  */
 
 export * from './xyo-node'
-export * from '././default-node-config'
+export * from './default-node-config'
