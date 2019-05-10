@@ -1,12 +1,11 @@
 import { IXyoPlugin, IXyoGraphQlDelegate, IXyoBoundWitnessMutexDelegate } from '@xyo-network/sdk-base-nodejs'
 import { IXyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
-import { XyoGetBlockByHashResolver } from '../block-by-hash'
 import { XyoGetBlocksByPublicKeyResolver } from '../blocks-by-public-key'
 
 export class XyoGraphQlBlockGetPlugin implements IXyoPlugin {
 
   public getName(): string {
-    return 'graphql-block-getter'
+    return 'graphql-public-key-block-getter'
   }
 
   public getProvides(): string[] {

@@ -14,9 +14,6 @@ import { XyoNode } from './archivist-collecter'
 import { IXyoPlugin, IXyoBoundWitnessMutexDelegate, IXyoGraphQlDelegate } from '@xyo-network/sdk-base-nodejs'
 import { IXyoArchivistConfig } from './archivist-collecter/@types'
 import { XyoOriginState, IXyoOriginBlockRepository, IXyoOriginBlockGetter, IXyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
-import { XyoGetBlockByHashResolver } from './endpoints/block-by-hash'
-import { XyoGetBlockList } from './endpoints/block-list'
-import { XyoGetBlocksByPublicKeyResolver } from './endpoints/blocks-by-public-key'
 import { XyoArchivistInfoResolver } from './endpoints/archivist-info'
 
 class XyoArchivistPlugin implements IXyoPlugin {
@@ -47,7 +44,6 @@ class XyoArchivistPlugin implements IXyoPlugin {
 
     const originState = deps.ORIGIN_STATE as XyoOriginState
     const blockRepositoryAdd = deps.BLOCK_REPOSITORY_ADD as IXyoOriginBlockRepository
-    const blockRepositoryKeys = deps.BLOCK_REPOSITORY_PUBLIC_KEY as IXyoBlockByPublicKeyRepository
 
     if (!graphql) {
       throw new Error('Expecting graphql')
@@ -57,15 +53,10 @@ class XyoArchivistPlugin implements IXyoPlugin {
       throw new Error('Expecting mutex')
     }
 
-    const blockByPublicKey = new XyoGetBlocksByPublicKeyResolver(blockRepositoryKeys)
     const archivistQuery = new XyoArchivistInfoResolver(port)
 
-    graphql.addQuery(XyoGetBlocksByPublicKeyResolver.query)
     graphql.addQuery(XyoArchivistInfoResolver.query)
-
-    graphql.addResolver(XyoGetBlocksByPublicKeyResolver.queryName, blockByPublicKey)
     graphql.addResolver(XyoArchivistInfoResolver.queryName, archivistQuery)
-
     graphql.addType(XyoArchivistInfoResolver.type)
 
     const node = new XyoNode(port, originState, blockRepositoryAdd, mutex)
