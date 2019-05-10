@@ -10,18 +10,17 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { XyoNode } from './base-node'
+import { XyoNode } from './archivist-plugin'
 import { IXyoPlugin, IXyoBoundWitnessMutexDelegate, IXyoGraphQlDelegate } from '@xyo-network/sdk-base-nodejs'
-import { IXyoArchivistConfig } from './base-node/@types'
+import { IXyoArchivistConfig } from './archivist-plugin/@types'
 import { XyoOriginState } from '@xyo-network/sdk-core-nodejs'
 import { IXyoArchivistRepository } from './repository'
 import { XyoGetBlockByHashResolver } from './endpoints/block-by-hash'
 import { XyoGetBlockList } from './endpoints/block-list'
 import { XyoGetBlocksByPublicKeyResolver } from './endpoints/blocks-by-public-key'
-import _ from 'lodash'
 import { XyoArchivistInfoResolver } from './endpoints/archivist-info'
 
-export * from './base-node'
+export * from './archivist-plugin'
 export * from './repository'
 export * from './@types'
 
