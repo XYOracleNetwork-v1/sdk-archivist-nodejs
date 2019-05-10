@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -27,7 +27,7 @@
     "copy": "copyfiles -u 1 src/**/*.sql dist/",
     "develop": "ts-node --files src/cli.ts"
   },
-  "xyo-plugins": [
+  "xyoPlugins": [
     "dist/index.js",
     "dist/repository/xyo-dynamo-plugin.js",
     "dist/endpoints/plugins/xyo-graphql-block-getter-plugin.js",
