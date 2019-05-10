@@ -20,10 +20,9 @@
   },
   "scripts": {
     "pretest": "yarn install",
-    "lint": "tslint --config tslint.json --project tsconfig.json",
     "test": "yarn lint && yarn licensecheck",
     "start": "node ./dist/index.js dynamodb",
-    "build": "tsc && yarn copy",
+    "build": "yarn xybuild && yarn copy",
     "copy": "copyfiles -u 1 src/**/*.sql dist/",
     "develop": "ts-node --files src/cli.ts"
   },
@@ -56,15 +55,20 @@
   },
   "dependencies": {
     "@xyo-network/object-model": "^0.5.10",
-    "@xyo-network/sdk-base-nodejs": "0.3.1",
-    "@xyo-network/sdk-core-nodejs": "0.64.2",
+    "@xyo-network/sdk-base-nodejs": "^0.3.10",
+    "@xyo-network/sdk-core-nodejs": "^0.64.2",
     "abstract-leveldown": "^6.0.3",
+    "apollo-cache-inmemory": "^1.5.1",
+    "apollo-client": "^2.5.1",
+    "apollo-link-http": "^1.5.14",
     "aws-sdk": "^2.446.0",
     "bs58": "^4.0.1",
+    "graphql-tag": "^2.10.1",
     "leveldown": "^5.0.3",
     "levelup": "^4.0.1",
     "lodash": "^4.17.11",
     "lru-cache": "^5.1.1",
-    "mysql": "^2.17.1"
+    "mysql": "^2.17.1",
+    "node-fetch": "^2.5.0"
   }
 }
