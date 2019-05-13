@@ -13,13 +13,13 @@ class Migrator extends XyoBase {
   }
 
   public async migrate() {
-    let offset: Buffer | undefined = undefined
+    let offset: Buffer | undefined = bs58.decode(process.argv[2])
 
     while (true) {
-      this.logInfo(`Migrating 500 blocks starting at offset hash: ${offset && bs58.encode(offset)}`)
-      const blocks = (await this.db.getOriginBlocks(500, offset)).items as Buffer[]
+      this.logInfo(`Migrating 50 blocks starting at offset hash: ${offset && bs58.encode(offset)}`)
+      const blocks = (await this.db.getOriginBlocks(50, offset)).items as Buffer[]
 
-      for (const block of blocks) {
+      await Promise.all(blocks.map(async(block) => {
         try {
           const bw = new XyoBoundWitness(block)
           const hash = bw.getHash(hasher).getAll().getContentsCopy()
@@ -28,13 +28,15 @@ class Migrator extends XyoBase {
         } catch (e) {
           this.logError(`Error adding block ${e}`)
         }
+      }))
 
-      }
-
-      if (blocks.length < 499) {
+      if (blocks.length < 99) {
         this.logInfo(`Finished migration ${blocks.length}`)
         break
       }
+
+      const bw = new XyoBoundWitness(blocks[blocks.length - 1])
+      offset = bw.getHash(hasher).getAll().getContentsCopy()
 
     }
 
