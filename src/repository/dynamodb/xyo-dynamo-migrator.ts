@@ -20,10 +20,15 @@ class Migrator extends XyoBase {
       const blocks = (await this.db.getOriginBlocks(500, offset)).items as Buffer[]
 
       for (const block of blocks) {
-        const bw = new XyoBoundWitness(block)
-        const hash = bw.getHash(hasher).getAll().getContentsCopy()
-        offset = hash
-        await this.db.addOriginBlockPublicKeys(hash, block)
+        try {
+          const bw = new XyoBoundWitness(block)
+          const hash = bw.getHash(hasher).getAll().getContentsCopy()
+          offset = hash
+          await this.db.addOriginBlockPublicKeys(hash, block)
+        } catch (e) {
+          this.logError(`Error adding block ${e}`)
+        }
+
       }
 
       if (blocks.length < 499) {
