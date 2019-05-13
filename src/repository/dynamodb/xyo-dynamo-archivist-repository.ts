@@ -26,12 +26,12 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoOriginB
   private publicKeyTable: PublicKeyTable
 
   constructor(
-    tablePrefix: string = 'xyo-archivist-development',
+    tablePrefix: string = 'xyo-archivist',
     region: string = 'us-east-1'
   ) {
     super()
     this.boundWitnessTable = new BoundWitnessTable(`${tablePrefix}-boundwitness`, region)
-    this.publicKeyTable = new PublicKeyTable(`${tablePrefix}-publickey`, region)
+    this.publicKeyTable = new PublicKeyTable(`${tablePrefix}-chains`, region)
 
   }
 
@@ -81,6 +81,30 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoOriginB
       }
 
       return await this.boundWitnessTable.putItem(shortHash, originBlock)
+    } catch (ex) {
+      this.logError(ex)
+      throw ex
+    }
+  }
+
+  public async addOriginBlockPublicKeys(hash: Buffer, originBlock: Buffer): Promise<void> {
+    try {
+      const shortHash = this.sha1(hash)
+
+      const bw = new XyoBoundWitness(originBlock)
+      const publicKeys = bw.getPublicKeys()
+      const origins = XyoBoundWitnessOriginGetter.getOriginInformation(bw)
+
+      for (let i = 0; i < origins.length; i++) {
+        const pks = publicKeys[i]
+        const origin = origins[i]
+
+        for (const pk of pks) {
+          const shortKey = this.sha1(pk.getAll().getContentsCopy())
+          await this.publicKeyTable.putItem(shortKey, shortHash, origin.index)
+        }
+      }
+
     } catch (ex) {
       this.logError(ex)
       throw ex

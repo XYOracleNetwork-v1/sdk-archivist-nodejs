@@ -16,7 +16,7 @@ import { DynamoDB } from 'aws-sdk'
 export class PublicKeyTable extends Table {
 
   constructor(
-    tableName: string = 'xyo-archivist-publickey',
+    tableName: string = 'xyo-archivist-chains',
     region: string = 'us-east-1'
   ) {
     super(tableName, region)
