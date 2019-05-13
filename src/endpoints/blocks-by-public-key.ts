@@ -16,7 +16,7 @@ import bs58 from 'bs58'
 
 export class XyoGetBlocksByPublicKeyResolver extends XyoBase {
 
-  public static query = 'blocksByPublicKey(publicKey: String!, limit: Int, cursor: String): [XyoBlockCollection]'
+  public static query = 'blocksByPublicKey(publicKey: String!, up: Boolean!, limit: Int, index: Int): XyoBlockCollection'
   public static queryName = 'blocksByPublicKey'
 
   constructor(
@@ -26,33 +26,26 @@ export class XyoGetBlocksByPublicKeyResolver extends XyoBase {
   }
 
   public async resolve(obj: any, args: any): Promise<any> {
-    if (!args || !args.publicKey || !args.publicKeys.length) {
+    if (!args || !args.publicKey) {
       return []
     }
 
-    const innerBlocks = await this.getBlockCollectionForPublicKey(args.publicKey, args.limit, args.cursor)
+    const innerBlocks = await this.getBlockCollectionForPublicKey(args.publicKey, args.limit, args.index, args.up)
 
     return innerBlocks
   }
 
-  private getCursor(string: string | undefined): Buffer | undefined {
-    if (string && string !== '') {
-      return bs58.decode(string)
-    }
-
-    return undefined
-  }
-
-  private async getBlockCollectionForPublicKey(publicKey: string, limit: number | undefined, cursor: string | undefined) {
+  private async getBlockCollectionForPublicKey(publicKey: string, limit: number | undefined, index: number | undefined, up: boolean) {
     try {
-      const blocksByPublicKeySet = await this.archivistRepository.getOriginBlocksByPublicKey(bs58.decode(publicKey), this.getCursor(cursor), limit)
+      const blocksByPublicKeySet = await this.archivistRepository.getOriginBlocksByPublicKey(bs58.decode(publicKey), index, limit, up)
 
-      const serializedBoundWitnesses = await Promise.all(blocksByPublicKeySet.items.map(async(block: Buffer) => {
+      const serializedBoundWitnesses = await blocksByPublicKeySet.items.map((block: Buffer) => {
         return bufferToGraphQlBlock(block)
-      }))
+      })
 
       return {
-        blocks: serializedBoundWitnesses
+        blocks: serializedBoundWitnesses,
+        keySet: [publicKey]
       }
 
     } catch (e) {

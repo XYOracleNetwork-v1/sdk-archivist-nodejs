@@ -27,8 +27,8 @@ export class PublicKeyTable extends Table {
           AttributeType: 'B'
         },
         {
-          AttributeName: 'BlockHash',
-          AttributeType: 'B'
+          AttributeName: 'Index',
+          AttributeType: 'N'
         }
       ],
       KeySchema: [
@@ -37,7 +37,7 @@ export class PublicKeyTable extends Table {
           KeyType: 'HASH'
         },
         {
-          AttributeName: 'BlockHash',
+          AttributeName: 'Index',
           KeyType: 'RANGE'
         }
       ],
@@ -49,16 +49,16 @@ export class PublicKeyTable extends Table {
     }
   }
 
-  public async putItem(
-    key: Buffer,
-    hash: Buffer
-  ): Promise<void> {
+  public async putItem(key: Buffer, hash: Buffer, index: number): Promise<void> {
     return new Promise<void>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.PutItemInput = {
           Item: {
             PublicKey: {
               B: key
+            },
+            Index: {
+              N: index.toString()
             },
             BlockHash: {
               B: hash
@@ -80,7 +80,7 @@ export class PublicKeyTable extends Table {
     })
   }
 
-  public async scanByKey(key: Buffer, limit: number, offsetHash?: Buffer | undefined): Promise <{items: any[], total: number}> {
+  public async scanByKey(key: Buffer, limit: number, index: number | undefined, up: boolean): Promise <{items: any[], total: number}> {
     return new Promise<{items: any[], total: number}>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.QueryInput = {
@@ -89,18 +89,21 @@ export class PublicKeyTable extends Table {
           ExpressionAttributeValues: {
             ':key': { B: key }
           },
-          TableName: this.tableName
+          TableName: this.tableName,
+          ScanIndexForward: up
         }
-        if (offsetHash) {
+
+        if (index) {
           params.ExclusiveStartKey = {
-            BlockHash: {
-              B: offsetHash
+            Index: {
+              N: index.toString()
             },
             PublicKey: {
               B: key
             }
           }
         }
+
         this.dynamodb.query(params, async(err: any, data: DynamoDB.Types.ScanOutput) => {
           if (err) {
             this.logError(err)

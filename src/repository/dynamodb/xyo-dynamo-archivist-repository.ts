@@ -14,7 +14,7 @@ import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
 import { XyoIterableStructure } from '@xyo-network/object-model'
-import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoBoundWitness, IXyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
+import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoBoundWitness, IXyoBlockByPublicKeyRepository, XyoBoundWitnessOriginGetter } from '@xyo-network/sdk-core-nodejs'
 import crypto from 'crypto'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
@@ -24,10 +24,9 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoOriginB
   private maxNumberOfBlockResults = 10_000
   private boundWitnessTable: BoundWitnessTable
   private publicKeyTable: PublicKeyTable
-  private linkerQueue: Buffer[] = []
 
   constructor(
-    tablePrefix: string = 'xyo-archivist',
+    tablePrefix: string = 'xyo-archivist-development',
     region: string = 'us-east-1'
   ) {
     super()
@@ -42,13 +41,13 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoOriginB
     return true
   }
 
-  public async getOriginBlocksByPublicKey(publicKey: Buffer, cursor: Buffer | undefined, limit: number | undefined) {
+  public async getOriginBlocksByPublicKey(publicKey: Buffer, index: number | undefined, limit: number | undefined, up: boolean) {
     if ((limit || 100) > this.maxNumberOfBlockResults) {
       throw new Error('Max number of blocks reached')
     }
 
     const shortKey = this.sha1(publicKey)
-    const scanResult = await this.publicKeyTable.scanByKey(shortKey, limit || 100, cursor)
+    const scanResult = await this.publicKeyTable.scanByKey(shortKey, limit || 100, index || 0, up)
 
     const result: Buffer[] = []
     for (const hash of scanResult.items) {
@@ -68,13 +67,19 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoOriginB
       const shortHash = this.sha1(hash)
 
       const bw = new XyoBoundWitness(originBlock)
-      this.linkerQueue.push(originBlock)
-      for (const pks of bw.getPublicKeys()) {
+      const publicKeys = bw.getPublicKeys()
+      const origins = XyoBoundWitnessOriginGetter.getOriginInformation(bw)
+
+      for (let i = 0; i < origins.length; i++) {
+        const pks = publicKeys[i]
+        const origin = origins[i]
+
         for (const pk of pks) {
           const shortKey = this.sha1(pk.getAll().getContentsCopy())
-          await this.publicKeyTable.putItem(shortKey, shortHash)
+          await this.publicKeyTable.putItem(shortKey, shortHash, origin.index)
         }
       }
+
       return await this.boundWitnessTable.putItem(shortHash, originBlock)
     } catch (ex) {
       this.logError(ex)
@@ -95,8 +100,6 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoOriginB
       const hash = hashIt.next().value
       await this.addOriginBlock(hash.getAll().getContentsCopy(), block.getAll().getContentsCopy())
     }
-
-    this.logInfo(`Added ${i} blocks, linker queue size: ${this.linkerQueue.length}`)
   }
 
   public async getOriginBlock(hash: Buffer): Promise < Buffer | undefined > {
@@ -111,40 +114,12 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoOriginB
     const shortOffsetHash = offsetHash ? this.sha1(offsetHash) : undefined
     const items = await this.boundWitnessTable.scan(limit, shortOffsetHash)
     const result: Buffer[] = []
+
     for (const item of items) {
       result.push(item)
     }
+
     return { items: result, total: (await this.boundWitnessTable.getRecordCount()) || -1 }
-  }
-
-  // public async traceChain(publicKey: Buffer, limit: number, offsetHash: Buffer | undefined, up: boolean): Promise<Buffer[]> {
-  //   if (offsetHash) {
-  //     const hashes = await this.chainsTracer.traceChainWithOffsetHash(this.sha1(publicKey), limit, this.sha1(offsetHash), up)
-  //     return this.getAllBlocksFromBlockHashes(hashes)
-  //   }
-
-  //   const blockToPublicKey = await this.publicKeyTable.scanByKey(this.sha1(publicKey), 1, undefined)
-
-  //   if (!blockToPublicKey.items) {
-  //     return []
-  //   }
-
-  //   const hashesFromPublicKey = await this.chainsTracer.traceChainWithOffsetHash(this.sha1(publicKey), limit, blockToPublicKey.items[0], up)
-  //   return this.getAllBlocksFromBlockHashes(hashesFromPublicKey)
-  // }
-
-  public async getAllBlocksFromBlockHashes(blockHashes: Buffer[]): Promise<Buffer[]> {
-    const blocks: Buffer[] = []
-
-    for (const hash of blockHashes) {
-      const block = await this.boundWitnessTable.getItem(hash)
-
-      if (block) {
-        blocks.push(block)
-      }
-    }
-
-    return blocks
   }
 
   private sha1(data: Buffer) {
