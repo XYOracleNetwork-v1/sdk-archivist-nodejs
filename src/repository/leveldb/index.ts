@@ -11,13 +11,7 @@
  */
 
 import { XyoArchivistLevelRepository } from './xyo-level-archivist-repository'
-import { ILevelDBArchivistRepositoryConfig } from './@types'
 
-export async function createArchivistLevelDBRepository(
-  config: ILevelDBArchivistRepositoryConfig
-) {
-  const repo = new XyoArchivistLevelRepository()
-  return repo
+export async function createArchivistLevelDBRepository() {
+  return new XyoArchivistLevelRepository()
 }
-
-export { ILevelDBArchivistRepositoryConfig } from './@types'

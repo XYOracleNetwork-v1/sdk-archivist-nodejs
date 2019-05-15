@@ -10,21 +10,21 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { XyoArchivistSqlRepository } from './xyo-sql-archivist-repository'
-import { SqlService } from './sql-service'
-import { ISqlArchivistRepositoryConfig } from './@types'
-import path from 'path'
+// import { XyoArchivistSqlRepository } from './xyo-sql-archivist-repository'
+// import { SqlService } from './sql-service'
+// import { ISqlArchivistRepositoryConfig } from './@types'
+// import path from 'path'
 
-export async function createArchivistSqlRepository(
-  config: ISqlArchivistRepositoryConfig
-) {
-  const sqlService = await SqlService.tryCreateSqlService(
-    config,
-    path.join(__dirname, '..', 'sql', 'resources', 'schema.sql')
-  )
+// export async function createArchivistSqlRepository(
+//   config: ISqlArchivistRepositoryConfig
+// ) {
+//   const sqlService = await SqlService.tryCreateSqlService(
+//     config,
+//     path.join(__dirname, '..', 'sql', 'resources', 'schema.sql')
+//   )
 
-  const repo = new XyoArchivistSqlRepository(sqlService)
-  return repo
-}
+//   const repo = new XyoArchivistSqlRepository(sqlService)
+//   return repo
+// }
 
-export { ISqlArchivistRepositoryConfig } from './@types'
+// export { ISqlArchivistRepositoryConfig } from './@types'

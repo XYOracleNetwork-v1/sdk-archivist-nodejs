@@ -10,25 +10,18 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import {
-  IXyoArchivistRepository
-} from '..'
-
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
-
-import _ from 'lodash'
 import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
-import crypto from 'crypto'
-import bs58 from 'bs58'
-import { XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
 import { XyoIterableStructure } from '@xyo-network/object-model'
+import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoBoundWitness, IXyoBlockByPublicKeyRepository, XyoBoundWitnessOriginGetter } from '@xyo-network/sdk-core-nodejs'
+import crypto from 'crypto'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
 
-export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivistRepository {
-
+export class XyoArchivistDynamoRepository extends XyoBase implements IXyoOriginBlockGetter, IXyoOriginBlockRepository, IXyoBlockByPublicKeyRepository {
+  private maxNumberOfBlockResults = 10_000
   private boundWitnessTable: BoundWitnessTable
   private publicKeyTable: PublicKeyTable
 
@@ -38,7 +31,8 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
   ) {
     super()
     this.boundWitnessTable = new BoundWitnessTable(`${tablePrefix}-boundwitness`, region)
-    this.publicKeyTable = new PublicKeyTable(`${tablePrefix}-publickey`, region)
+    this.publicKeyTable = new PublicKeyTable(`${tablePrefix}-chains`, region)
+
   }
 
   public async initialize() {
@@ -47,9 +41,13 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     return true
   }
 
-  public async getOriginBlocksByPublicKey(publicKey: Buffer): Promise<{items: Buffer[], total: number}> {
+  public async getOriginBlocksByPublicKey(publicKey: Buffer, index: number | undefined, limit: number | undefined, up: boolean) {
+    if ((limit || 100) > this.maxNumberOfBlockResults) {
+      throw new Error('Max number of blocks reached')
+    }
+
     const shortKey = this.sha1(publicKey)
-    const scanResult = await this.publicKeyTable.scanByKey(shortKey, 100)
+    const scanResult = await this.publicKeyTable.scanByKey(shortKey, limit || 100, index || 0, up)
 
     const result: Buffer[] = []
     for (const hash of scanResult.items) {
@@ -59,50 +57,54 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     return { items: result, total:scanResult.total }
   }
 
-  public async getIntersections(
-    publicKeyA: Buffer,
-    publicKeyB: Buffer,
-    limit: number,
-    cursor: Buffer | undefined
-  ): Promise<Buffer[]> {
-    throw new Error('getIntersections: Not Implemented')
-    return []
-  }
-
-  public async getEntities(limit: number, offsetCursor?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
-    throw new Error('getEntities: Not Implemented')
-    return { items: [], total: 0 }
-  }
-
   public async removeOriginBlock(hash: Buffer): Promise<void> {
     const shortHash = this.sha1(hash)
     return this.boundWitnessTable.deleteItem(shortHash)
   }
 
-  public async containsOriginBlock(hash: Buffer): Promise<boolean> {
-    const shortHash = this.sha1(hash)
-    return this.boundWitnessTable.getItem(shortHash)
-  }
-
-  public async getAllOriginBlockHashes(): Promise<Buffer[]> {
-    throw new Error('getAllOriginBlockHashes: Not Implemented')
-    return []
-  }
-
-  public async addOriginBlock(
-    hash: Buffer,
-    originBlock: Buffer
-  ): Promise<void> {
+  public async addOriginBlock(hash: Buffer, originBlock: Buffer): Promise<void> {
     try {
       const shortHash = this.sha1(hash)
+
       const bw = new XyoBoundWitness(originBlock)
-      for (const pks of bw.getPublicKeys()) {
+      const publicKeys = bw.getPublicKeys()
+      const origins = XyoBoundWitnessOriginGetter.getOriginInformation(bw)
+
+      for (let i = 0; i < origins.length; i++) {
+        const pks = publicKeys[i]
+        const origin = origins[i]
+
         for (const pk of pks) {
           const shortKey = this.sha1(pk.getAll().getContentsCopy())
-          await this.publicKeyTable.putItem(shortKey, shortHash)
+          await this.publicKeyTable.putItem(shortKey, shortHash, origin.index)
         }
       }
+
       return await this.boundWitnessTable.putItem(shortHash, originBlock)
+    } catch (ex) {
+      this.logError(ex)
+      throw ex
+    }
+  }
+
+  public async addOriginBlockPublicKeys(hash: Buffer, originBlock: Buffer): Promise<void> {
+    try {
+      const shortHash = this.sha1(hash)
+
+      const bw = new XyoBoundWitness(originBlock)
+      const publicKeys = bw.getPublicKeys()
+      const origins = XyoBoundWitnessOriginGetter.getOriginInformation(bw)
+
+      for (let i = 0; i < origins.length; i++) {
+        const pks = publicKeys[i]
+        const origin = origins[i]
+
+        for (const pk of pks) {
+          const shortKey = this.sha1(pk.getAll().getContentsCopy())
+          await this.publicKeyTable.putItem(shortKey, shortHash, origin.index)
+        }
+      }
+
     } catch (ex) {
       this.logError(ex)
       throw ex
@@ -114,12 +116,13 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     const hashesStructure = new XyoIterableStructure(hashes)
     const blockIt = blockStructure.newIterator()
     const hashIt = hashesStructure.newIterator()
+    let i = 0
 
     while (blockIt.hasNext()) {
+      i++
       const block = blockIt.next().value
       const hash = hashIt.next().value
-      this.logInfo(`Found nested block with hash: ${bs58.encode(hash.getAll().getContentsCopy())}`)
-      this.addOriginBlock(hash.getAll().getContentsCopy(), block.getAll().getContentsCopy())
+      await this.addOriginBlock(hash.getAll().getContentsCopy(), block.getAll().getContentsCopy())
     }
   }
 
@@ -135,9 +138,11 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoArchivi
     const shortOffsetHash = offsetHash ? this.sha1(offsetHash) : undefined
     const items = await this.boundWitnessTable.scan(limit, shortOffsetHash)
     const result: Buffer[] = []
+
     for (const item of items) {
       result.push(item)
     }
+
     return { items: result, total: (await this.boundWitnessTable.getRecordCount()) || -1 }
   }
 

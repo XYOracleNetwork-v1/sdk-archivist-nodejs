@@ -10,12 +10,12 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { IArchivistRepositoryConfig } from '../../@types'
+// import { IArchivistRepositoryConfig } from '../../@types'
 
-export interface ISqlArchivistRepositoryConfig extends IArchivistRepositoryConfig {
-  host: string,
-  user: string,
-  password: string,
-  database: string,
-  port: number
-}
+// export interface ISqlArchivistRepositoryConfig extends IArchivistRepositoryConfig {
+//   host: string,
+//   user: string,
+//   password: string,
+//   database: string,
+//   port: number
+// }

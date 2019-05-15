@@ -16,8 +16,7 @@ import { IDynamoDBArchivistRepositoryConfig } from './@types'
 export async function createArchivistDynamoDBRepository(
   config: IDynamoDBArchivistRepositoryConfig
 ) {
-  const repo = new XyoArchivistDynamoRepository(config.tableName)
-  return repo
+  return new XyoArchivistDynamoRepository(config.tableName)
 }
 
 export { IDynamoDBArchivistRepositoryConfig } from './@types'
