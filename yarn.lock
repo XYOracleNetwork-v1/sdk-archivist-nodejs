@@ -202,10 +202,10 @@
     fs-extra "^7.0.1"
     winston "3.2.1"
 
-"@xyo-network/sdk-core-nodejs@0.64.3-beta.2":
-  version "0.64.3-beta.2"
-  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.64.3-beta.2.tgz#291e213a1ae96d739e56b885e56f0488b33e873f"
-  integrity sha512-X/uZM0W40laeKB/DZdOG/CPkP3kz8xuPE4ouBx/WOL3KKyLAaHtXKreeriepkx+LTDsoxfGxu4o0+krP9WQcjQ==
+"@xyo-network/sdk-core-nodejs@0.64.3-beta.5":
+  version "0.64.3-beta.4"
+  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.64.3-beta.4.tgz#080412d15803a4775db4f770ff3df777ea4b6723"
+  integrity sha512-n8kmuXB8ESCVHKm1wOCVlwgwvqFjBSSSOd6EPLeCZ5xaGTg69z3uXyuaDpZdvHcmCmYkMegXmA2od8txEHsZMA==
   dependencies:
     "@xyo-network/object-model" "^0.5.11"
     "@xyo-network/sdk-base-nodejs" "0.2.23"
