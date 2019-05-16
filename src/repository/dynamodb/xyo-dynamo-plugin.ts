@@ -35,10 +35,6 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
     this.BLOCK_REPOSITORY_ADD = db
     this.BLOCK_REPOSITORY_PUBLIC_KEY = db
 
-    const r = await db.geoTable.getByGeohash('9yu', 100)
-
-    console.log(r.length)
-
     await db.initialize()
 
     return true
