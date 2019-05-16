@@ -14,8 +14,10 @@ import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
 import { XyoIterableStructure } from '@xyo-network/object-model'
-import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoBoundWitness, IXyoBlockByPublicKeyRepository, XyoBoundWitnessOriginGetter } from '@xyo-network/sdk-core-nodejs'
+import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoBoundWitness, IXyoBlockByPublicKeyRepository, XyoBoundWitnessOriginGetter, addAllDefaults, XyoObjectSchema, gpsResolver } from '@xyo-network/sdk-core-nodejs'
 import crypto from 'crypto'
+import ngeohash from 'ngeohash'
+import { GeohashTable } from './table/geo'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
@@ -24,6 +26,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoOriginB
   private maxNumberOfBlockResults = 10_000
   private boundWitnessTable: BoundWitnessTable
   private publicKeyTable: PublicKeyTable
+  public geoTable: GeohashTable
 
   constructor(
     tablePrefix: string = 'xyo-archivist',
@@ -32,12 +35,15 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoOriginB
     super()
     this.boundWitnessTable = new BoundWitnessTable(`${tablePrefix}-boundwitness`, region)
     this.publicKeyTable = new PublicKeyTable(`${tablePrefix}-chains`, region)
+    this.geoTable = new GeohashTable(`${tablePrefix}-geohash`, region)
 
+    addAllDefaults()
   }
 
   public async initialize() {
     this.boundWitnessTable.initialize()
     this.publicKeyTable.initialize()
+    this.geoTable.initialize()
     return true
   }
 
@@ -62,6 +68,22 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoOriginB
     return this.boundWitnessTable.deleteItem(shortHash)
   }
 
+  public async addGeoIndex(hash: Buffer, originBlock: Buffer): Promise<void> {
+    const bw = new XyoBoundWitness(originBlock)
+
+    for (const party of bw.getHeuristics()) {
+      for (const huerestic of party) {
+
+        if (huerestic.getSchema().id === XyoObjectSchema.GPS.id) {
+          const point = gpsResolver.resolve(huerestic.getAll().getContentsCopy()).value
+          const geohash = ngeohash.encode(point.lat, point.lng)
+          this.logInfo(`Adding geohash: ${geohash} at ${point.lat}, ${point.lng}`)
+          await this.geoTable.putItem(geohash, hash)
+        }
+      }
+    }
+  }
+
   public async addOriginBlock(hash: Buffer, originBlock: Buffer): Promise<void> {
     try {
       const shortHash = this.sha1(hash)
@@ -80,6 +102,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements IXyoOriginB
         }
       }
 
+      await this.addGeoIndex(hash, originBlock)
       return await this.boundWitnessTable.putItem(shortHash, originBlock)
     } catch (ex) {
       this.logError(ex)

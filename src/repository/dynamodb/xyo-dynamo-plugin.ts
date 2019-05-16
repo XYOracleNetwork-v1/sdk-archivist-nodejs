@@ -27,7 +27,7 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
     return []
   }
 
-  public initialize(deps: { [key: string]: any; }, config: any): Promise<boolean> {
+  public async initialize(deps: { [key: string]: any; }, config: any): Promise<boolean> {
     const dbConfig = config as IXyoDynamoRepositoryConfig
     const db = new XyoArchivistDynamoRepository(dbConfig.tablePrefix, dbConfig.region)
 
@@ -35,7 +35,13 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
     this.BLOCK_REPOSITORY_ADD = db
     this.BLOCK_REPOSITORY_PUBLIC_KEY = db
 
-    return db.initialize()
+    const r = await db.geoTable.getByGeohash('9yu', 100)
+
+    console.log(r.length)
+
+    await db.initialize()
+
+    return true
   }
 
 }

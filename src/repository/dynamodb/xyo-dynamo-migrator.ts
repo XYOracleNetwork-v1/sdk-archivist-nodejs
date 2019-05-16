@@ -24,13 +24,13 @@ class Migrator extends XyoBase {
           const bw = new XyoBoundWitness(block)
           const hash = bw.getHash(hasher).getAll().getContentsCopy()
           offset = hash
-          await this.db.addOriginBlockPublicKeys(hash, block)
+          await this.db.addGeoIndex(hash, block)
         } catch (e) {
           this.logError(`Error adding block ${e}`)
         }
       }))
 
-      if (blocks.length < 99) {
+      if (blocks.length < 49) {
         this.logInfo(`Finished migration ${blocks.length}`)
         break
       }
