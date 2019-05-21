@@ -3,6 +3,8 @@ import { XyoBoundWitnessInserter, XyoObjectSchema, XyoBoundWitness } from '@xyo-
 import { XyoCollectorStats } from './xyo-collecter-stats'
 import { XyoIterableStructure, XyoStructure, XyoSchema } from '@xyo-network/object-model'
 import { XyoCollecterStatsResolver } from './xyo-collecter-stats-resolver'
+import { XyoStatSnap } from './snapshot/xyo-stat-snapshoter'
+import { XyoSnapResolver } from './snapshot/xyo-snapshot-resolver'
 
 class XyoCollectorStatsPlugin implements IXyoPlugin {
   public BOUND_WITNESS_COLLECTOR_STATS: XyoCollectorStats | undefined
@@ -26,6 +28,8 @@ class XyoCollectorStatsPlugin implements IXyoPlugin {
     const inserter = deps.BOUND_WITNESS_INSERTER as XyoBoundWitnessInserter
     const stats = new XyoCollectorStats()
     const resolver = new XyoCollecterStatsResolver(stats)
+    const snapSaver = new XyoStatSnap(stats)
+    const snapResolver = new XyoSnapResolver(snapSaver)
 
     if (!graphql) {
       throw new Error('XyoCollectorStatsPlugin expecting graphql')
@@ -34,6 +38,9 @@ class XyoCollectorStatsPlugin implements IXyoPlugin {
     graphql.addQuery(XyoCollecterStatsResolver.query)
     graphql.addResolver(XyoCollecterStatsResolver.queryName, resolver)
     graphql.addType(XyoCollecterStatsResolver.type)
+
+    graphql.addQuery(XyoSnapResolver.query)
+    graphql.addResolver(XyoSnapResolver.queryName, snapResolver)
 
     inserter.addBlockListener('collector-stats', (boundWitness) => {
       let nestedBlockCount = 0
@@ -50,6 +57,7 @@ class XyoCollectorStatsPlugin implements IXyoPlugin {
     this.BOUND_WITNESS_COLLECTOR_STATS = stats
 
     await stats.restore()
+    await snapSaver.restore()
 
     return true
   }

@@ -12,6 +12,8 @@ export class XyoCollecterStatsResolver extends XyoBase  {
         runTimeBoundWitnesses: Int!
         runTimeCollectedBoundWitnesses: Int!
         runTimeCollectedPerBoundWitness: Float!
+        runTimeBoundWitnessMinute: Float!
+        runTimeCollectedPerBoundWitnessMinute: Float!
         lastBoundWitnessTime: String!
       }
     `
@@ -31,7 +33,9 @@ export class XyoCollecterStatsResolver extends XyoBase  {
       runTimeBoundWitnesses: this.stats.getRunTimeBoundWitnesses(),
       runTimeCollectedBoundWitnesses: this.stats.getRunTimeCollectedBoundWitnesses(),
       runTimeCollectedPerBoundWitness: this.stats.getMeanBridgeBlockRuntime(),
-      lastBoundWitnessTime: this.stats.getLastBoundWitnessTime().toString() // a string because graphql only supports 32bit
+      lastBoundWitnessTime: this.stats.getLastBoundWitnessTime().toString(), // a string because graphql only supports 32bit
+      runTimeBoundWitnessMinute: this.stats.getMeanBoundWitnessPerMinuteRuntime(),
+      runTimeCollectedPerBoundWitnessMinute: this.stats.getMeanCollectedBoundWitnessPerMinuteRuntime(),
     }
   }
 }

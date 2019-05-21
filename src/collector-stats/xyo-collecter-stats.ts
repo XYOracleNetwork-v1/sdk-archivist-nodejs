@@ -1,5 +1,6 @@
 import fs from 'fs'
 import os from 'os'
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
 // todo move this into a plugin config
 const statStorePth = `${os.homedir()}/.config/xyo/stats.json`
@@ -10,12 +11,19 @@ interface IXyoCollectorStatsState {
   lastBoundWitnessTime: number
 }
 
-export class XyoCollectorStats {
+export class XyoCollectorStats extends XyoBase {
+  private since: number
   private lastBoundWitnessTime = -1
   private allTimeBoundWitnesses = 0
   private allTimeCollectedBoundWitnesses = 0
   private runTimeBoundWitnesses = 0
   private runTimeCollectedBoundWitnesses = 0
+
+  constructor() {
+    super()
+
+    this.since = new Date().getTime()
+  }
 
   public didBoundWitness(numberOfBridgedBlocks: number) {
     this.runTimeBoundWitnesses += 1
@@ -25,6 +33,20 @@ export class XyoCollectorStats {
     this.allTimeCollectedBoundWitnesses += numberOfBridgedBlocks + 1
 
     this.lastBoundWitnessTime = new Date().getTime()
+  }
+
+  public getMeanBoundWitnessPerMinuteRuntime(): number {
+    const timeNow = new Date().getTime()
+    const timeDelta = timeNow - this.since
+    const mins = timeDelta / (1000 * 60)
+    return this.runTimeBoundWitnesses / mins
+  }
+
+  public getMeanCollectedBoundWitnessPerMinuteRuntime(): number {
+    const timeNow = new Date().getTime()
+    const timeDelta = timeNow - this.since
+    const mins = timeDelta / (1000 * 60)
+    return this.runTimeCollectedBoundWitnesses / mins
   }
 
   public getLastBoundWitnessTime(): number {
