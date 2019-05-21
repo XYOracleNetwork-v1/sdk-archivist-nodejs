@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,6 +28,7 @@
   },
   "xyoPlugins": [
     "dist/index.js",
+    "dist/collector-stats/index.js",
     "dist/repository/dynamodb/xyo-dynamo-plugin.js",
     "dist/endpoints/plugins/xyo-graphql-block-getter-plugin.js",
     "dist/endpoints/plugins/xyo-graphql-public-key-block-plugin.js"
@@ -57,7 +58,7 @@
     "@types/ngeohash": "^0.6.2",
     "@xyo-network/object-model": "^0.5.10",
     "@xyo-network/sdk-base-nodejs": "^0.3.10",
-    "@xyo-network/sdk-core-nodejs": "0.65.1",
+    "@xyo-network/sdk-core-nodejs": "0.66.1",
     "abstract-leveldown": "^6.0.3",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.5.1",
