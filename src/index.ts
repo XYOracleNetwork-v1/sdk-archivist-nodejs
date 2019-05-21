@@ -13,16 +13,20 @@
 import { XyoNode } from './archivist-collecter'
 import { IXyoPlugin, IXyoBoundWitnessMutexDelegate, IXyoGraphQlDelegate } from '@xyo-network/sdk-base-nodejs'
 import { IXyoArchivistConfig } from './archivist-collecter/@types'
-import { XyoOriginState, IXyoOriginBlockRepository, IXyoOriginBlockGetter, IXyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
+import { XyoOriginState, IXyoOriginBlockRepository, IXyoOriginBlockGetter, IXyoBlockByPublicKeyRepository, XyoBoundWitnessInserter } from '@xyo-network/sdk-core-nodejs'
 import { XyoArchivistInfoResolver } from './endpoints/archivist-info'
 
 class XyoArchivistPlugin implements IXyoPlugin {
+  public BOUND_WITNESS_INSERTER: XyoBoundWitnessInserter | undefined
+
   public getName(): string {
     return 'archivist'
   }
 
   public getProvides(): string[] {
-    return []
+    return [
+      'BOUND_WITNESS_INSERTER'
+    ]
   }
 
   public getPluginDependencies(): string[] {
@@ -61,6 +65,8 @@ class XyoArchivistPlugin implements IXyoPlugin {
 
     const node = new XyoNode(port, originState, blockRepositoryAdd, mutex)
     await node.start()
+
+    this.BOUND_WITNESS_INSERTER = node.inserter
 
     return true
   }
