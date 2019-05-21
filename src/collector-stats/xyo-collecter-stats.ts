@@ -6,10 +6,12 @@ const statStorePth = `${os.homedir()}/.config/xyo/stats.json`
 
 interface IXyoCollectorStatsState {
   allTimeBoundWitnesses: number,
-  allTimeCollectedBoundWitnesses: number
+  allTimeCollectedBoundWitnesses: number,
+  lastBoundWitnessTime: number
 }
 
 export class XyoCollectorStats {
+  private lastBoundWitnessTime = -1
   private allTimeBoundWitnesses = 0
   private allTimeCollectedBoundWitnesses = 0
   private runTimeBoundWitnesses = 0
@@ -21,6 +23,12 @@ export class XyoCollectorStats {
 
     this.allTimeBoundWitnesses += 1
     this.allTimeCollectedBoundWitnesses += numberOfBridgedBlocks + 1
+
+    this.lastBoundWitnessTime = new Date().getTime()
+  }
+
+  public getLastBoundWitnessTime(): number {
+    return this.lastBoundWitnessTime
   }
 
   public getRunTimeBoundWitnesses(): number {
@@ -58,7 +66,8 @@ export class XyoCollectorStats {
   public commit() {
     const state: IXyoCollectorStatsState = {
       allTimeBoundWitnesses: this.allTimeBoundWitnesses,
-      allTimeCollectedBoundWitnesses: this.allTimeCollectedBoundWitnesses
+      allTimeCollectedBoundWitnesses: this.allTimeCollectedBoundWitnesses,
+      lastBoundWitnessTime: this.lastBoundWitnessTime
     }
 
     const stateString = JSON.stringify(state)
@@ -71,6 +80,7 @@ export class XyoCollectorStats {
       const state = JSON.parse(file.toString('utf8')) as IXyoCollectorStatsState
       this.allTimeBoundWitnesses = state.allTimeBoundWitnesses
       this.allTimeCollectedBoundWitnesses = state.allTimeCollectedBoundWitnesses
+      this.lastBoundWitnessTime = state.lastBoundWitnessTime || -1
     } catch {
           // do nothing if file does not exist
     }

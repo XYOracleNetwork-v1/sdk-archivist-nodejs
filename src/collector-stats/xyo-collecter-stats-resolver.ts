@@ -12,6 +12,7 @@ export class XyoCollecterStatsResolver extends XyoBase  {
         runTimeBoundWitnesses: Int!
         runTimeCollectedBoundWitnesses: Int!
         runTimeCollectedPerBoundWitness: Float!
+        lastBoundWitnessTime: String!
       }
     `
   public static queryName = 'collectorStatsSummary'
@@ -29,7 +30,8 @@ export class XyoCollecterStatsResolver extends XyoBase  {
       allTimeCollectedPerBoundWitness: this.stats.getMeanBridgeBlockAllTime(),
       runTimeBoundWitnesses: this.stats.getRunTimeBoundWitnesses(),
       runTimeCollectedBoundWitnesses: this.stats.getRunTimeCollectedBoundWitnesses(),
-      runTimeCollectedPerBoundWitness: this.stats.getMeanBridgeBlockRuntime()
+      runTimeCollectedPerBoundWitness: this.stats.getMeanBridgeBlockRuntime(),
+      lastBoundWitnessTime: this.stats.getLastBoundWitnessTime().toString() // a string because graphql only supports 32bit
     }
   }
 }
