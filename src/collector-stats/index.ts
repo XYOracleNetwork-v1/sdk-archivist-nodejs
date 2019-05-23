@@ -51,8 +51,8 @@ class XyoCollectorStatsPlugin implements IXyoPlugin {
 
     this.BOUND_WITNESS_COLLECTOR_STATS = stats
 
-    await stats.restore()
-    await snapSaver.restore()
+    stats.restore()
+    snapSaver.restore()
 
     return true
   }
