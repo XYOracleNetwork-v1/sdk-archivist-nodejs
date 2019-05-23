@@ -1,6 +1,4 @@
-[logo]: https://cdn.xy.company/img/brand/XY_Logo_GitHub.png
-
-[![logo]](https://xy.company)
+[![logo]](https://xy.company) 
 
 # XYO ARCHIVIST SDK (sdk-archivist-nodejs)
 
@@ -125,3 +123,5 @@ Only for internal XY Company use at this time
 ## Credits
 
 <br><br><p align="center">Made with  ❤️  by [**XY - The Persistent Company**] (https://xy.company)</p>
+
+[logo]: https://cdn.xy.company/img/brand/XY_Logo_GitHub.png
