@@ -11,8 +11,7 @@
  */
 
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
-import { IXyoOriginBlockGetter, IXyoOriginBlockRepository } from '@xyo-network/sdk-core-nodejs'
-import { XyoIterableStructure } from '@xyo-network/object-model'
+import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoIterableStructure } from '@xyo-network/sdk-core-nodejs'
 import { AbstractIteratorOptions } from 'abstract-leveldown'
 import levelup, { LevelUp } from 'levelup'
 import leveldown from 'leveldown'

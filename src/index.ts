@@ -11,56 +11,48 @@
  */
 
 import { XyoNode } from './archivist-collecter'
-import { IXyoPlugin, IXyoBoundWitnessMutexDelegate, IXyoGraphQlDelegate } from '@xyo-network/sdk-base-nodejs'
+import { IXyoPlugin, IXyoBoundWitnessMutexDelegate, IXyoGraphQlDelegate, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
 import { IXyoArchivistConfig } from './archivist-collecter/@types'
-import { XyoOriginState, IXyoOriginBlockRepository, IXyoOriginBlockGetter, IXyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
+import { XyoOriginState, IXyoOriginBlockRepository, IXyoOriginBlockGetter, IXyoBlockByPublicKeyRepository, XyoBoundWitnessInserter } from '@xyo-network/sdk-core-nodejs'
 import { XyoArchivistInfoResolver } from './endpoints/archivist-info'
 
 class XyoArchivistPlugin implements IXyoPlugin {
+  public BOUND_WITNESS_INSERTER: XyoBoundWitnessInserter | undefined
+
   public getName(): string {
     return 'archivist'
   }
 
   public getProvides(): string[] {
-    return []
+    return [
+      XyoPluginProviders.BOUND_WITNESS_INSERTER
+    ]
   }
 
   public getPluginDependencies(): string[] {
     return [
       'ORIGIN_STATE', // for creating an origin chain
-      'BLOCK_REPOSITORY_ADD', // for adding blocks
-      'BASE_GRAPHQL_TYPES' // for about graphql
+      XyoPluginProviders.BLOCK_REPOSITORY_ADD
     ]
   }
 
-  public async initialize(
-    deps: { [key: string]: any; },
-    config: any,
-    graphql?: IXyoGraphQlDelegate | undefined,
-    mutex?: IXyoBoundWitnessMutexDelegate | undefined
-  ): Promise<boolean> {
-    const archivistConfig = config as IXyoArchivistConfig
+  public async initialize(delegate: IXyoPluginDelegate): Promise<boolean> {
+    const archivistConfig = delegate.config as IXyoArchivistConfig
     const port = archivistConfig.port || 11000
 
-    const originState = deps.ORIGIN_STATE as XyoOriginState
-    const blockRepositoryAdd = deps.BLOCK_REPOSITORY_ADD as IXyoOriginBlockRepository
-
-    if (!graphql) {
-      throw new Error('Expecting graphql')
-    }
-
-    if (!mutex) {
-      throw new Error('Expecting mutex')
-    }
+    const originState = delegate.deps.ORIGIN_STATE as XyoOriginState
+    const blockRepositoryAdd = delegate.deps.BLOCK_REPOSITORY_ADD as IXyoOriginBlockRepository
 
     const archivistQuery = new XyoArchivistInfoResolver(port)
 
-    graphql.addQuery(XyoArchivistInfoResolver.query)
-    graphql.addResolver(XyoArchivistInfoResolver.queryName, archivistQuery)
-    graphql.addType(XyoArchivistInfoResolver.type)
+    delegate.graphql.addQuery(XyoArchivistInfoResolver.query)
+    delegate.graphql.addResolver(XyoArchivistInfoResolver.queryName, archivistQuery)
+    delegate.graphql.addType(XyoArchivistInfoResolver.type)
 
-    const node = new XyoNode(port, originState, blockRepositoryAdd, mutex)
+    const node = new XyoNode(port, originState, blockRepositoryAdd, delegate.mutex)
     await node.start()
+
+    this.BOUND_WITNESS_INSERTER = node.inserter
 
     return true
   }

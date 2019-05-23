@@ -133,6 +133,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/ngeohash@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@types/ngeohash/-/ngeohash-0.6.2.tgz#356bb5e79294bc9f746ad89eb848eca2741a6e43"
+  integrity sha512-6nlq2eEh75JegDGUXis9wGTYIJpUvbori4qx++PRKQsV3YRkaqUNPNykzphniqPSZADXCouBuAnyptjUkMkhvw==
+
 "@types/node-fetch@^2.3.3":
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.3.3.tgz#eb9c2a0ce8e9424ebe0c0cbe6f1e8ea7576c1310"
@@ -176,16 +181,13 @@
     tslint-react "^4.0.0"
     tsutils "^3.5.0"
 
-"@xyo-network/object-model@^0.5.10", "@xyo-network/object-model@^0.5.11":
-  version "0.5.11"
-  resolved "https://registry.yarnpkg.com/@xyo-network/object-model/-/object-model-0.5.11.tgz#83fa7a7596ffdb5bac622d42b418e19b7ea1a119"
-  integrity sha512-3DiKSOquRYInJKggO1nsESkbIgqcGWzoqF0bfZaiJVEF4JwQEICIk9Qcvsd0KJCyDfuYsMNNoUeEIxz4EtP5gw==
-
-"@xyo-network/sdk-base-nodejs@0.2.23":
-  version "0.2.23"
-  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-base-nodejs/-/sdk-base-nodejs-0.2.23.tgz#337b3f3321975e65d96081896621bc3e1c2766e0"
-  integrity sha512-jqT150Re26p7N52WgOGcvo8UjeHjs7d0XUyQBUD7ebohICCrS8ftL4h7zuXMBQTKIiDqCQwoibx8m+xVEsgIcQ==
+"@xyo-network/sdk-base-nodejs@0.5.6":
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-base-nodejs/-/sdk-base-nodejs-0.5.6.tgz#d51dd3e29316b8d2e0b0af7beb00df5fcc987add"
+  integrity sha512-WSgaR3A+sCgK5A4YKgBMhWHbn+eu9F+96JibLwsMhzEpKhVOdr+qc5AkQ1cPSkda/nILopo/GX6FzWC+hi3m/A==
   dependencies:
+    chalk "^2.4.2"
+    fs-extra "^7.0.1"
     winston "3.2.1"
 
 "@xyo-network/sdk-base-nodejs@^0.3.10":
@@ -197,13 +199,12 @@
     fs-extra "^7.0.1"
     winston "3.2.1"
 
-"@xyo-network/sdk-core-nodejs@0.64.3-beta.2":
-  version "0.64.3-beta.2"
-  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.64.3-beta.2.tgz#291e213a1ae96d739e56b885e56f0488b33e873f"
-  integrity sha512-X/uZM0W40laeKB/DZdOG/CPkP3kz8xuPE4ouBx/WOL3KKyLAaHtXKreeriepkx+LTDsoxfGxu4o0+krP9WQcjQ==
+"@xyo-network/sdk-core-nodejs@0.70.1":
+  version "0.70.1"
+  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.70.1.tgz#5edc05b0633610e76009f6a2c4ff9fe5d4258cae"
+  integrity sha512-rbGEgcqVRRBNl+IUQjkLcQicoT/3WU6CsHEkFJAfnrMEqu4krw6Ht6nDdg7z67DEUwzsog2C9CwXq2Wukgp83w==
   dependencies:
-    "@xyo-network/object-model" "^0.5.11"
-    "@xyo-network/sdk-base-nodejs" "0.2.23"
+    "@xyo-network/sdk-base-nodejs" "^0.3.10"
     bs58 "4.0.1"
     elliptic "6.4.1"
 
@@ -1051,6 +1052,11 @@ napi-macros@~1.8.1:
   version "1.8.2"
   resolved "https://registry.yarnpkg.com/napi-macros/-/napi-macros-1.8.2.tgz#299265c1d8aa401351ad0675107d751228c03eda"
   integrity sha512-Tr0DNY4RzTaBG2W2m3l7ZtFuJChTH6VZhXVhkGGjF/4cZTt+i8GcM9ozD+30Lmr4mDoZ5Xx34t2o4GJqYWDGcg==
+
+ngeohash@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/ngeohash/-/ngeohash-0.6.3.tgz#10b1e80be5488262ec95c56cf2dbb6c45fbdf245"
+  integrity sha512-kltF0cOxgx1AbmVzKxYZaoB0aj7mOxZeHaerEtQV0YaqnkXNq26WWqMmJ6lTqShYxVRWZ/mwvvTrNeOwdslWiw==
 
 node-fetch@^2.5.0:
   version "2.5.0"

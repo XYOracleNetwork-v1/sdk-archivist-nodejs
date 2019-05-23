@@ -19,19 +19,19 @@ import {
     XyoSha256,
     XyoOriginPayloadConstructor,
     XyoZigZagBoundWitnessHander,
-    XyoSecp2556k1,
     XyoGenesisBlockCreator,
     XyoNetworkHandler,
     XyoBoundWitnessInserter,
     addAllDefaults,
-    IXyoOriginBlockRepository} from '@xyo-network/sdk-core-nodejs'
+    IXyoOriginBlockRepository,
+    IXyoNetworkPipe} from '@xyo-network/sdk-core-nodejs'
 import _ from 'lodash'
 import bs58 from 'bs58'
 
 export class XyoNode extends XyoBase {
 
   public network: XyoServerTcpNetwork
-  public blockRepo: IXyoOriginBlockRepository
+  public blockRepository: IXyoOriginBlockRepository
   public state: XyoOriginState
   public hasher: XyoSha256
   public inserter: XyoBoundWitnessInserter
@@ -41,17 +41,44 @@ export class XyoNode extends XyoBase {
 
   constructor(port: number, state: XyoOriginState, blockRepository: IXyoOriginBlockRepository, mutexHandler: IXyoBoundWitnessMutexDelegate) {
     super()
-    this.blockRepo = blockRepository
+    this.blockRepository = blockRepository
     this.state = state
     this.mutexHandler = mutexHandler
 
     this.network = new XyoServerTcpNetwork(port)
     this.hasher = new XyoSha256()
-    this.inserter = new XyoBoundWitnessInserter(this.hasher, this.state, this.blockRepo)
+    this.inserter = new XyoBoundWitnessInserter(this.hasher, this.state, this.blockRepository)
     this.payloadProvider = new XyoOriginPayloadConstructor(this.state)
     this.handler = new XyoZigZagBoundWitnessHander(this.payloadProvider)
 
     addAllDefaults()
+  }
+
+  private handlePipe = async(pipe: IXyoNetworkPipe) => {
+    this.network.stopListening()
+    this.logInfo('New archivist request!')
+
+    if (!this.mutexHandler.acquireMutex()) {
+      await pipe.close()
+      this.network.startListening()
+      return
+    }
+
+    try {
+      const networkHandle = new XyoNetworkHandler(pipe)
+      const boundWitness = await this.handler.boundWitness(networkHandle, receiveProcedureCatalog, this.state.getSigners())
+
+      if (boundWitness) {
+        await this.inserter.insert(boundWitness)
+      }
+
+    } catch (error) {
+      this.logWarning(`Error creating bound witness: ${error}`)
+    }
+
+    await pipe.close()
+    this.mutexHandler.releaseMutex()
+    this.network.startListening()
   }
 
   public async start() {
@@ -61,31 +88,9 @@ export class XyoNode extends XyoBase {
       await this.inserter.insert(genesisBlock)
     }
 
-    this.network.onPipeCreated = async(pipe) => {
-      this.network.stopListening()
-      this.logInfo('New archivist request!')
-
-      if (!this.mutexHandler.acquireMutex()) {
-        await pipe.close()
-        this.network.startListening()
-        return
-      }
-
-      try {
-        const networkHandle = new XyoNetworkHandler(pipe)
-        const boundWitness = await this.handler.boundWitness(networkHandle, receiveProcedureCatalog, this.state.getSigners())
-
-        if (boundWitness) {
-          await this.inserter.insert(boundWitness)
-        }
-
-      } catch (error) {
-        this.logWarning(`Error creating bound witness: ${error}`)
-      }
-
-      await pipe.close()
-      this.mutexHandler.releaseMutex()
-      this.network.startListening()
+    this.network.onPipeCreated = (pipe) => {
+      this.handlePipe(pipe)
+      return true
     }
 
     this.network.startListening()

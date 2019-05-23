@@ -13,31 +13,31 @@
 import { Table } from './table'
 import { DynamoDB } from 'aws-sdk'
 
-export class PublicKeyTable extends Table {
+export class GeohashTable extends Table {
 
   constructor(
-    tableName: string = 'xyo-archivist-chains',
+    tableName: string = 'xyo-archivist-geohash',
     region: string = 'us-east-1'
   ) {
     super(tableName, region)
     this.createTableInput = {
       AttributeDefinitions: [
         {
-          AttributeName: 'PublicKey',
-          AttributeType: 'B'
+          AttributeName: 'Geohash2',
+          AttributeType: 'S'
         },
         {
-          AttributeName: 'Index',
-          AttributeType: 'N'
+          AttributeName: 'BlockHash',
+          AttributeType: 'B'
         }
       ],
       KeySchema: [
         {
-          AttributeName: 'PublicKey',
+          AttributeName: 'Geohash2',
           KeyType: 'HASH'
         },
         {
-          AttributeName: 'Index',
+          AttributeName: 'BlockHash',
           KeyType: 'RANGE'
         }
       ],
@@ -49,22 +49,21 @@ export class PublicKeyTable extends Table {
     }
   }
 
-  public async putItem(key: Buffer, hash: Buffer, index: number): Promise<void> {
+  public async putItem(geohash: string, hash: Buffer): Promise<void> {
     return new Promise<void>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.PutItemInput = {
           Item: {
-            PublicKey: {
-              B: key
+            Geohash2: {
+              S: `${geohash[0]}${geohash[1]}`
             },
-            Index: {
-              N: index.toString()
+            Geohash: {
+              S: geohash
             },
             BlockHash: {
               B: hash
             }
           },
-          ReturnConsumedCapacity: 'TOTAL',
           TableName: this.tableName
         }
         this.dynamodb.putItem(params, (err: any, data: DynamoDB.Types.PutItemOutput) => {
@@ -80,41 +79,18 @@ export class PublicKeyTable extends Table {
     })
   }
 
-  public async scanByKey(key: Buffer, limit: number, index: number | undefined, up: boolean): Promise <{items: any[], total: number}> {
-    return new Promise<{items: any[], total: number}>((resolve: any, reject: any) => {
+  public async getByGeohash(geohash: string, limit: number): Promise <Buffer[]> {
+    return new Promise<Buffer[]>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.QueryInput = {
           Limit: limit,
-          KeyConditionExpression: 'PublicKey = :key',
+          IndexName: 'Geohash2',
+          KeyConditionExpression: 'Geohash2 = :geohash2 and begins_with(Geohash, :geohash)',
           ExpressionAttributeValues: {
-            ':key': { B: key },
-          },
-          ExpressionAttributeNames: {
-            '#index': 'Index'
+            ':geohash2': { S: `${geohash[0]}${geohash[1]}` },
+            ':geohash': { S: geohash }
           },
           TableName: this.tableName,
-          ScanIndexForward: true
-        }
-
-        if (index !== undefined) {
-          if (up) {
-            params.ExpressionAttributeValues![':low'] = { N: (index - 1).toString() }
-            params.ExpressionAttributeValues![':high'] = { N: (index + limit).toString() }
-            params.KeyConditionExpression = '(PublicKey = :key) and #index BETWEEN :low and :high'
-          } else {
-            params.ExpressionAttributeValues![':low'] = { N: (index).toString() }
-            params.ExpressionAttributeValues![':high'] = { N: (index - limit - 1).toString() }
-            params.KeyConditionExpression = '(PublicKey = :key) and #index BETWEEN :high and :low'
-          }
-
-          params.ExclusiveStartKey = {
-            Index: {
-              N: up ? (index - 1).toString() : (index - limit - 1).toString()
-            },
-            PublicKey: {
-              B: key
-            }
-          }
         }
 
         this.dynamodb.query(params, async(err: any, data: DynamoDB.Types.ScanOutput) => {
@@ -122,17 +98,18 @@ export class PublicKeyTable extends Table {
             this.logError(err)
             reject(err)
           }
+
           const result = []
           if (data && data.Items) {
             for (const item of data.Items) {
-              if (item.PublicKey && item.PublicKey.B && item.BlockHash && item.BlockHash.B) {
+              if (item.BlockHash && item.BlockHash.B) {
                 result.push(item.BlockHash.B)
               } else {
-                this.logError(`Result with Missing PublicKey or BlockHash: ${item}`)
+                this.logError(`Result with Missing BlockHash: ${item}`)
               }
             }
           }
-          resolve({ items: result, total: await this.getRecordCount() })
+          resolve(result)
         })
       } catch (ex) {
         this.logError(ex)

@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.3.10",
+  "version": "0.6.4",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,6 +28,7 @@
   },
   "xyoPlugins": [
     "dist/index.js",
+    "dist/collector-stats/index.js",
     "dist/repository/dynamodb/xyo-dynamo-plugin.js",
     "dist/endpoints/plugins/xyo-graphql-block-getter-plugin.js",
     "dist/endpoints/plugins/xyo-graphql-public-key-block-plugin.js"
@@ -43,6 +44,7 @@
     "@types/lodash": "^4.14.123",
     "@types/lru-cache": "^5.1.0",
     "@types/mysql": "^2.15.5",
+    "@types/ngeohash": "^0.6.2",
     "@types/node": "^11.13.8",
     "@types/node-fetch": "^2.3.3",
     "@types/yargs": "^13.0.0",
@@ -54,9 +56,8 @@
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "@xyo-network/object-model": "^0.5.10",
-    "@xyo-network/sdk-base-nodejs": "^0.3.10",
-    "@xyo-network/sdk-core-nodejs": "0.64.3-beta.2",
+    "@xyo-network/sdk-base-nodejs": "0.5.6",
+    "@xyo-network/sdk-core-nodejs": "0.70.1",
     "abstract-leveldown": "^6.0.3",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.5.1",
@@ -69,6 +70,7 @@
     "lodash": "^4.17.11",
     "lru-cache": "^5.1.1",
     "mysql": "^2.17.1",
+    "ngeohash": "^0.6.3",
     "node-fetch": "^2.5.0"
   }
 }

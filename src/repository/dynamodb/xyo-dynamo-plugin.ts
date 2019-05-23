@@ -1,6 +1,6 @@
-import { IXyoPlugin, IXyoGraphQlDelegate, IXyoBoundWitnessMutexDelegate } from '@xyo-network/sdk-base-nodejs'
+import { IXyoPlugin, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
 import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
-import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, IXyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
+import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, IXyoBlockByPublicKeyRepository, IXyoBlocksByGeohashRepository } from '@xyo-network/sdk-core-nodejs'
 
 interface IXyoDynamoRepositoryConfig {
   tablePrefix?: string,
@@ -11,6 +11,7 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
   public BLOCK_REPOSITORY_GET: IXyoOriginBlockGetter | undefined
   public BLOCK_REPOSITORY_ADD: IXyoOriginBlockRepository | undefined
   public BLOCK_REPOSITORY_PUBLIC_KEY: IXyoBlockByPublicKeyRepository | undefined
+  public BLOCK_REPOSITORY_PUBLIC_GEOHASH: IXyoBlocksByGeohashRepository | undefined
 
   public getName(): string {
     return 'archivist-dynamo-repository'
@@ -18,24 +19,28 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
 
   public getProvides(): string[] {
     return [
-      'BLOCK_REPOSITORY_GET',
-      'BLOCK_REPOSITORY_ADD',
-      'BLOCK_REPOSITORY_PUBLIC_KEY',
+      XyoPluginProviders.BLOCK_REPOSITORY_GET,
+      XyoPluginProviders.BLOCK_REPOSITORY_ADD,
+      XyoPluginProviders.BLOCK_REPOSITORY_PUBLIC_KEY,
+      XyoPluginProviders.BLOCK_REPOSITORY_PUBLIC_GEOHASH
     ]
   }
   public getPluginDependencies(): string[] {
     return []
   }
 
-  public initialize(deps: { [key: string]: any; }, config: any): Promise<boolean> {
-    const dbConfig = config as IXyoDynamoRepositoryConfig
+  public async initialize(delegate: IXyoPluginDelegate): Promise<boolean> {
+    const dbConfig = delegate.config as IXyoDynamoRepositoryConfig
     const db = new XyoArchivistDynamoRepository(dbConfig.tablePrefix, dbConfig.region)
 
     this.BLOCK_REPOSITORY_GET = db
     this.BLOCK_REPOSITORY_ADD = db
     this.BLOCK_REPOSITORY_PUBLIC_KEY = db
+    this.BLOCK_REPOSITORY_PUBLIC_GEOHASH = db
 
-    return db.initialize()
+    await db.initialize()
+
+    return true
   }
 
 }

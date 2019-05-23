@@ -1,5 +1,4 @@
-import { XyoStructure, XyoSchema } from '@xyo-network/object-model'
-import { XyoBoundWitness, XyoSha256, XyoHumanHeuristicResolver } from '@xyo-network/sdk-core-nodejs'
+import { XyoBoundWitness, XyoSha256, XyoHumanHeuristicResolver, XyoStructure  } from '@xyo-network/sdk-core-nodejs'
 import bs58 from 'bs58'
 
 const hasher = new XyoSha256()

@@ -1,4 +1,4 @@
-import { IXyoPlugin, IXyoGraphQlDelegate, IXyoBoundWitnessMutexDelegate } from '@xyo-network/sdk-base-nodejs'
+import { IXyoPlugin, IXyoGraphQlDelegate, IXyoBoundWitnessMutexDelegate, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
 import { IXyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
 import { XyoGetBlocksByPublicKeyResolver } from '../blocks-by-public-key'
 
@@ -14,21 +14,16 @@ export class XyoGraphQlBlockGetPlugin implements IXyoPlugin {
 
   public getPluginDependencies(): string[] {
     return [
-      'BLOCK_REPOSITORY_PUBLIC_KEY', // for getting the blocks by public key
-      'BASE_GRAPHQL_TYPES', // for base graphql types
+      XyoPluginProviders.BLOCK_REPOSITORY_PUBLIC_KEY
     ]
   }
 
-  public async initialize(deps: { [key: string]: any; }, config: any, graphql?: IXyoGraphQlDelegate | undefined): Promise<boolean> {
-    const blockRepositoryPublicKey = deps.BLOCK_REPOSITORY_PUBLIC_KEY as IXyoBlockByPublicKeyRepository
-
-    if (!graphql) {
-      throw new Error('XyoGraphQlBlockGetPlugin is expecting graphql')
-    }
+  public async initialize(delegate: IXyoPluginDelegate): Promise<boolean> {
+    const blockRepositoryPublicKey = delegate.deps.BLOCK_REPOSITORY_PUBLIC_KEY as IXyoBlockByPublicKeyRepository
 
     const resolverPublicKey = new XyoGetBlocksByPublicKeyResolver(blockRepositoryPublicKey)
-    graphql.addQuery(XyoGetBlocksByPublicKeyResolver.query)
-    graphql.addResolver(XyoGetBlocksByPublicKeyResolver.queryName, resolverPublicKey)
+    delegate.graphql.addQuery(XyoGetBlocksByPublicKeyResolver.query)
+    delegate.graphql.addResolver(XyoGetBlocksByPublicKeyResolver.queryName, resolverPublicKey)
 
     return true
   }
