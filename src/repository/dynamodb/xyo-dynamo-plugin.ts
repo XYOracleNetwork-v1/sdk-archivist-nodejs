@@ -1,4 +1,4 @@
-import { IXyoPlugin, IXyoGraphQlDelegate, IXyoBoundWitnessMutexDelegate } from '@xyo-network/sdk-base-nodejs'
+import { IXyoPlugin, IXyoGraphQlDelegate, IXyoBoundWitnessMutexDelegate, IXyoPluginDelegate } from '@xyo-network/sdk-base-nodejs'
 import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
 import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, IXyoBlockByPublicKeyRepository, IXyoBlocksByGeohashRepository } from '@xyo-network/sdk-core-nodejs'
 
@@ -29,8 +29,8 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
     return []
   }
 
-  public async initialize(deps: { [key: string]: any; }, config: any): Promise<boolean> {
-    const dbConfig = config as IXyoDynamoRepositoryConfig
+  public async initialize(delegate: IXyoPluginDelegate): Promise<boolean> {
+    const dbConfig = delegate.config as IXyoDynamoRepositoryConfig
     const db = new XyoArchivistDynamoRepository(dbConfig.tablePrefix, dbConfig.region)
 
     this.BLOCK_REPOSITORY_GET = db

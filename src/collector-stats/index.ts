@@ -1,7 +1,6 @@
-import { IXyoPlugin, IXyoGraphQlDelegate } from '@xyo-network/sdk-base-nodejs'
-import { XyoBoundWitnessInserter, XyoObjectSchema, XyoBoundWitness } from '@xyo-network/sdk-core-nodejs'
+import { IXyoPlugin, IXyoGraphQlDelegate, IXyoPluginDelegate } from '@xyo-network/sdk-base-nodejs'
+import { XyoBoundWitnessInserter, XyoObjectSchema, XyoBoundWitness, XyoIterableStructure, XyoStructure, XyoSchema } from '@xyo-network/sdk-core-nodejs'
 import { XyoCollectorStats } from './xyo-collecter-stats'
-import { XyoIterableStructure, XyoStructure, XyoSchema } from '@xyo-network/object-model'
 import { XyoCollecterStatsResolver } from './xyo-collecter-stats-resolver'
 import { XyoStatSnap } from './snapshot/xyo-stat-snapshoter'
 import { XyoSnapResolver } from './snapshot/xyo-snapshot-resolver'
@@ -24,23 +23,19 @@ class XyoCollectorStatsPlugin implements IXyoPlugin {
     ]
   }
 
-  public async initialize(deps: { [key: string]: any; }, config: any, graphql?: IXyoGraphQlDelegate | undefined): Promise<boolean> {
-    const inserter = deps.BOUND_WITNESS_INSERTER as XyoBoundWitnessInserter
+  public async initialize(delegate: IXyoPluginDelegate): Promise<boolean> {
+    const inserter = delegate.deps.BOUND_WITNESS_INSERTER as XyoBoundWitnessInserter
     const stats = new XyoCollectorStats()
     const resolver = new XyoCollecterStatsResolver(stats)
     const snapSaver = new XyoStatSnap(stats)
     const snapResolver = new XyoSnapResolver(snapSaver)
 
-    if (!graphql) {
-      throw new Error('XyoCollectorStatsPlugin expecting graphql')
-    }
+    delegate.graphql.addQuery(XyoCollecterStatsResolver.query)
+    delegate.graphql.addResolver(XyoCollecterStatsResolver.queryName, resolver)
+    delegate.graphql.addType(XyoCollecterStatsResolver.type)
 
-    graphql.addQuery(XyoCollecterStatsResolver.query)
-    graphql.addResolver(XyoCollecterStatsResolver.queryName, resolver)
-    graphql.addType(XyoCollecterStatsResolver.type)
-
-    graphql.addQuery(XyoSnapResolver.query)
-    graphql.addResolver(XyoSnapResolver.queryName, snapResolver)
+    delegate.graphql.addQuery(XyoSnapResolver.query)
+    delegate.graphql.addResolver(XyoSnapResolver.queryName, snapResolver)
 
     inserter.addBlockListener('collector-stats', (boundWitness) => {
       let nestedBlockCount = 0
