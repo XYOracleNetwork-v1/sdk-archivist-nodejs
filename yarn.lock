@@ -181,10 +181,10 @@
     tslint-react "^4.0.0"
     tsutils "^3.5.0"
 
-"@xyo-network/sdk-base-nodejs@0.5.2":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-base-nodejs/-/sdk-base-nodejs-0.5.2.tgz#7b3840a86f764dcca0977894e8819cd1902f0333"
-  integrity sha512-cvzm+F7or/QnkkUqlUhyumib5RVQLokuarGNIBboppp+TRnquxN/PHg2PLGIj/O/pWhTTJgVZ0VhhRGrGy9pDw==
+"@xyo-network/sdk-base-nodejs@0.5.6":
+  version "0.5.6"
+  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-base-nodejs/-/sdk-base-nodejs-0.5.6.tgz#d51dd3e29316b8d2e0b0af7beb00df5fcc987add"
+  integrity sha512-WSgaR3A+sCgK5A4YKgBMhWHbn+eu9F+96JibLwsMhzEpKhVOdr+qc5AkQ1cPSkda/nILopo/GX6FzWC+hi3m/A==
   dependencies:
     chalk "^2.4.2"
     fs-extra "^7.0.1"

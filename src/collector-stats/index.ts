@@ -1,4 +1,4 @@
-import { IXyoPlugin, IXyoGraphQlDelegate, IXyoPluginDelegate } from '@xyo-network/sdk-base-nodejs'
+import { IXyoPlugin, IXyoGraphQlDelegate, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
 import { XyoBoundWitnessInserter, XyoObjectSchema, XyoBoundWitness, XyoIterableStructure, XyoStructure, XyoSchema } from '@xyo-network/sdk-core-nodejs'
 import { XyoCollectorStats } from './xyo-collecter-stats'
 import { XyoCollecterStatsResolver } from './xyo-collecter-stats-resolver'
@@ -14,12 +14,12 @@ class XyoCollectorStatsPlugin implements IXyoPlugin {
 
   public getProvides(): string[] {
     return [
-      'BOUND_WITNESS_COLLECTOR_STATS'
+      XyoPluginProviders.BOUND_WITNESS_COLLECTOR_STATS
     ]
   }
   public getPluginDependencies(): string[] {
     return [
-      'BOUND_WITNESS_INSERTER'
+      XyoPluginProviders.BOUND_WITNESS_INSERTER
     ]
   }
 

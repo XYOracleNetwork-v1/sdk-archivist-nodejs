@@ -1,5 +1,5 @@
 
-import { IXyoPlugin, IXyoGraphQlDelegate, IXyoBoundWitnessMutexDelegate, IXyoPluginDelegate } from '@xyo-network/sdk-base-nodejs'
+import { IXyoPlugin, IXyoGraphQlDelegate, IXyoBoundWitnessMutexDelegate, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
 import { IXyoOriginBlockGetter } from '@xyo-network/sdk-core-nodejs'
 import { XyoGetBlockByHashResolver } from '../block-by-hash'
 import { XyoGetBlockList } from '../block-list'
@@ -16,8 +16,7 @@ export class XyoGraphQlBlockGetPlugin implements IXyoPlugin {
 
   public getPluginDependencies(): string[] {
     return [
-      'BLOCK_REPOSITORY_GET', // for getting the blocks
-      'BASE_GRAPHQL_TYPES', // for base graphql types
+      XyoPluginProviders.BLOCK_REPOSITORY_GET, // for getting the blocks
     ]
   }
 

@@ -1,4 +1,4 @@
-import { IXyoPlugin, IXyoGraphQlDelegate, IXyoBoundWitnessMutexDelegate, IXyoPluginDelegate } from '@xyo-network/sdk-base-nodejs'
+import { IXyoPlugin, IXyoGraphQlDelegate, IXyoBoundWitnessMutexDelegate, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
 import { IXyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
 import { XyoGetBlocksByPublicKeyResolver } from '../blocks-by-public-key'
 
@@ -14,8 +14,7 @@ export class XyoGraphQlBlockGetPlugin implements IXyoPlugin {
 
   public getPluginDependencies(): string[] {
     return [
-      'BLOCK_REPOSITORY_PUBLIC_KEY', // for getting the blocks by public key
-      'BASE_GRAPHQL_TYPES', // for base graphql types
+      XyoPluginProviders.BLOCK_REPOSITORY_PUBLIC_KEY
     ]
   }
 

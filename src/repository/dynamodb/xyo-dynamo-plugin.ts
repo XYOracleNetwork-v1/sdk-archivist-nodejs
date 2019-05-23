@@ -1,4 +1,4 @@
-import { IXyoPlugin, IXyoGraphQlDelegate, IXyoBoundWitnessMutexDelegate, IXyoPluginDelegate } from '@xyo-network/sdk-base-nodejs'
+import { IXyoPlugin, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
 import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
 import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, IXyoBlockByPublicKeyRepository, IXyoBlocksByGeohashRepository } from '@xyo-network/sdk-core-nodejs'
 
@@ -19,10 +19,10 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
 
   public getProvides(): string[] {
     return [
-      'BLOCK_REPOSITORY_GET',
-      'BLOCK_REPOSITORY_ADD',
-      'BLOCK_REPOSITORY_PUBLIC_KEY',
-      'BLOCK_REPOSITORY_PUBLIC_GEOHASH'
+      XyoPluginProviders.BLOCK_REPOSITORY_GET,
+      XyoPluginProviders.BLOCK_REPOSITORY_ADD,
+      XyoPluginProviders.BLOCK_REPOSITORY_PUBLIC_KEY,
+      XyoPluginProviders.BLOCK_REPOSITORY_PUBLIC_GEOHASH
     ]
   }
   public getPluginDependencies(): string[] {

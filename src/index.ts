@@ -11,7 +11,7 @@
  */
 
 import { XyoNode } from './archivist-collecter'
-import { IXyoPlugin, IXyoBoundWitnessMutexDelegate, IXyoGraphQlDelegate, IXyoPluginDelegate } from '@xyo-network/sdk-base-nodejs'
+import { IXyoPlugin, IXyoBoundWitnessMutexDelegate, IXyoGraphQlDelegate, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
 import { IXyoArchivistConfig } from './archivist-collecter/@types'
 import { XyoOriginState, IXyoOriginBlockRepository, IXyoOriginBlockGetter, IXyoBlockByPublicKeyRepository, XyoBoundWitnessInserter } from '@xyo-network/sdk-core-nodejs'
 import { XyoArchivistInfoResolver } from './endpoints/archivist-info'
@@ -25,15 +25,14 @@ class XyoArchivistPlugin implements IXyoPlugin {
 
   public getProvides(): string[] {
     return [
-      'BOUND_WITNESS_INSERTER'
+      XyoPluginProviders.BOUND_WITNESS_INSERTER
     ]
   }
 
   public getPluginDependencies(): string[] {
     return [
       'ORIGIN_STATE', // for creating an origin chain
-      'BLOCK_REPOSITORY_ADD', // for adding blocks
-      'BASE_GRAPHQL_TYPES' // for about graphql
+      XyoPluginProviders.BLOCK_REPOSITORY_ADD
     ]
   }
 
