@@ -64,6 +64,8 @@ export class XyoArchivistLevelRepository extends XyoBase implements IXyoOriginBl
         options.gt = offsetHash
       }
 
+      options.limit = limit
+
       const blocks: Buffer[] = []
 
       this.db.createReadStream(options
@@ -74,6 +76,7 @@ export class XyoArchivistLevelRepository extends XyoBase implements IXyoOriginBl
         }).on('close', () => {
           resolve({ items: blocks, total: blocks.length })
         })
+
     }) as Promise<{items: Buffer[], total: number}>
   }
 }
