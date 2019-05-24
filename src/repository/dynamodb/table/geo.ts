@@ -41,6 +41,24 @@ export class GeohashTable extends Table {
           KeyType: 'RANGE'
         }
       ],
+      LocalSecondaryIndexes: [
+        {
+          IndexName: 'Geohash2',
+          Projection: {
+            ProjectionType: 'ALL'
+          },
+          KeySchema: [
+            {
+              AttributeName: 'Geohash2',
+              KeyType: 'HASH'
+            },
+            {
+              AttributeName: 'Geohash',
+              KeyType: 'RANGE'
+            }
+          ]
+        }
+      ],
       ProvisionedThroughput: {
         ReadCapacityUnits: 5,
         WriteCapacityUnits: 5
