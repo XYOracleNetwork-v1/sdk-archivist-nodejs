@@ -24,7 +24,7 @@ class Migrator extends XyoBase {
         try {
           const bw = new XyoBoundWitness(block)
           const hash = bw.getHash(hasher).getAll().getContentsCopy()
-          await this.db.addGeoIndex(hash, block)
+          await this.db.addOriginBlock(hash, block)
         } catch (e) {
           this.logError(`Error adding block ${e}`)
         }
