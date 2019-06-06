@@ -93,26 +93,32 @@ export class PublicKeyTable extends Table {
             '#index': 'Index'
           },
           TableName: this.tableName,
-          ScanIndexForward: true
+          ScanIndexForward: index !== -1
         }
 
-        if (index !== undefined) {
+        if (index) {
+
           if (up) {
             params.ExpressionAttributeValues![':low'] = { N: (index - 1).toString() }
             params.ExpressionAttributeValues![':high'] = { N: (index + limit).toString() }
             params.KeyConditionExpression = '(PublicKey = :key) and #index BETWEEN :low and :high'
+          } else if (!up && index === -1) {
+            params.ExpressionAttributeValues![':high'] = { N: (Number.MAX_SAFE_INTEGER - 1).toString() }
+            params.KeyConditionExpression = '(PublicKey = :key) and #index < :high'
           } else {
             params.ExpressionAttributeValues![':low'] = { N: (index).toString() }
             params.ExpressionAttributeValues![':high'] = { N: (index - limit - 1).toString() }
             params.KeyConditionExpression = '(PublicKey = :key) and #index BETWEEN :high and :low'
           }
 
-          params.ExclusiveStartKey = {
-            Index: {
-              N: up ? (index - 1).toString() : (index - limit - 1).toString()
-            },
-            PublicKey: {
-              B: key
+          if (!(!up && index === -1)) {
+            params.ExclusiveStartKey = {
+              Index: {
+                N: up ? (index - 1).toString() : (index - limit - 1).toString()
+              },
+              PublicKey: {
+                B: key
+              }
             }
           }
         }
