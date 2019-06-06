@@ -93,10 +93,10 @@ export class PublicKeyTable extends Table {
             '#index': 'Index'
           },
           TableName: this.tableName,
-          ScanIndexForward: index !== -1
+          ScanIndexForward: up
         }
 
-        if (index) {
+        if (index !== undefined) {
 
           if (up) {
             params.ExpressionAttributeValues![':low'] = { N: (index - 1).toString() }
@@ -111,7 +111,7 @@ export class PublicKeyTable extends Table {
             params.KeyConditionExpression = '(PublicKey = :key) and #index BETWEEN :high and :low'
           }
 
-          if (!(!up && index === -1)) {
+          if (index !== -1) {
             params.ExclusiveStartKey = {
               Index: {
                 N: up ? (index - 1).toString() : (index - limit - 1).toString()
