@@ -2,6 +2,7 @@ import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
 import { XyoBoundWitness, XyoSha256 } from '@xyo-network/sdk-core-nodejs'
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import bs58 from 'bs58'
+import { ArchivistAbsorber } from '../../absorb/archivist-absorber'
 
 const hasher = new XyoSha256()
 class Migrator extends XyoBase {
@@ -13,18 +14,17 @@ class Migrator extends XyoBase {
   }
 
   public async migrate() {
-    let offset: Buffer | undefined = bs58.decode(process.argv[2])
+    const absorber = new ArchivistAbsorber(process.argv[2])
 
     while (true) {
-      this.logInfo(`Migrating 50 blocks starting at offset hash: ${offset && bs58.encode(offset)}`)
-      const blocks = (await this.db.getOriginBlocks(50, offset)).items as Buffer[]
+      // this.logInfo(`Migrating 50 blocks starting at offset hash: ${offset && bs58.encode(offset)}`)
+      const blocks = await absorber.readBlocks(50)
 
       await Promise.all(blocks.map(async(block) => {
         try {
           const bw = new XyoBoundWitness(block)
           const hash = bw.getHash(hasher).getAll().getContentsCopy()
-          offset = hash
-          await this.db.addGeoIndex(hash, block)
+          await this.db.addOriginBlock(hash, block)
         } catch (e) {
           this.logError(`Error adding block ${e}`)
         }
@@ -34,10 +34,6 @@ class Migrator extends XyoBase {
         this.logInfo(`Finished migration ${blocks.length}`)
         break
       }
-
-      const bw = new XyoBoundWitness(blocks[blocks.length - 1])
-      offset = bw.getHash(hasher).getAll().getContentsCopy()
-
     }
 
   }
