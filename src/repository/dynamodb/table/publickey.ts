@@ -93,7 +93,7 @@ export class PublicKeyTable extends Table {
             '#index': 'Index'
           },
           TableName: this.tableName,
-          ScanIndexForward: up
+          ScanIndexForward: index !== -1
         }
 
         if (index !== undefined) {
