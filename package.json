@@ -29,6 +29,7 @@
   "xyoPlugins": [
     "dist/index.js",
     "dist/collector-stats/index.js",
+    "dist/notify/xyo-websocket-notify.js",
     "dist/elastic-search/xyo-geohash-elastic-search.js",
     "dist/repository/dynamodb/xyo-dynamo-plugin.js",
     "dist/repository/leveldb/plugin/index.js",
@@ -59,6 +60,7 @@
   },
   "dependencies": {
     "@types/elasticsearch": "^5.0.34",
+    "@types/ws": "^6.0.1",
     "@xyo-network/sdk-base-nodejs": "0.5.6",
     "@xyo-network/sdk-core-nodejs": "0.70.1",
     "abstract-leveldown": "^6.0.3",
@@ -75,6 +77,7 @@
     "lru-cache": "^5.1.1",
     "mysql": "^2.17.1",
     "ngeohash": "^0.6.3",
-    "node-fetch": "^2.5.0"
+    "node-fetch": "^2.5.0",
+    "ws": "^7.0.1"
   }
 }
