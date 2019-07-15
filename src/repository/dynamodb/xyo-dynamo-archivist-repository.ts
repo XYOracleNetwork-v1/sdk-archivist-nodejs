@@ -17,6 +17,7 @@ import { XyoIterableStructure, IXyoOriginBlockGetter, IXyoOriginBlockRepository,
 import crypto from 'crypto'
 import ngeohash from 'ngeohash'
 import { GeohashTable } from './table/geo'
+import { TimeTable } from './table/time'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
@@ -30,6 +31,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
   private boundWitnessTable: BoundWitnessTable
   private publicKeyTable: PublicKeyTable
   public geoTable: GeohashTable
+  public timeTable: TimeTable
 
   constructor(
     tablePrefix: string = 'xyo-archivist',
@@ -39,6 +41,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
     this.boundWitnessTable = new BoundWitnessTable(`${tablePrefix}-boundwitness`, region)
     this.publicKeyTable = new PublicKeyTable(`${tablePrefix}-chains`, region)
     this.geoTable = new GeohashTable(`${tablePrefix}-geohash`, region)
+    this.timeTable = new TimeTable(`${tablePrefix}-time`, region)
 
     addAllDefaults()
   }
@@ -47,6 +50,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
     this.boundWitnessTable.initialize()
     this.publicKeyTable.initialize()
     this.geoTable.initialize()
+    this.timeTable.initialize()
     return true
   }
 
@@ -119,6 +123,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
       }
 
       await this.addGeoIndex(hash, originBlock)
+      await this.timeTable.putItem(originBlock)
       return await this.boundWitnessTable.putItem(shortHash, originBlock)
     } catch (ex) {
       this.logError(ex)
