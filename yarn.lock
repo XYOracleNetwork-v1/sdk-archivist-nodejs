@@ -219,10 +219,10 @@
     typescript "^3.4.5"
     winston "3.2.1"
 
-"@xyo-network/sdk-core-nodejs@0.70.5":
-  version "0.70.5"
-  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.70.5.tgz#7254c2502867a779b36506da20815465dec853a3"
-  integrity sha512-AmF/JtKutmo4N9YSqBUnOm8XXIlQiyM6xiJ6n0WuKCC1B3LB/UwqiWcgo5cN1fFSVWl7Tgqqb/uG9aihJZGYvw==
+"@xyo-network/sdk-core-nodejs@0.70.7":
+  version "0.70.7"
+  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.70.7.tgz#d8ac2a333cfd1d8f87de5cf70beb960e357d71ed"
+  integrity sha512-30KTncgaE1/m5LQA19v0TdnCoi/httNjt8CaVOE5f2YNsDwzLsTYyjwkHI41gFuA8zem1CIkhN0J+Xniiqz7WA==
   dependencies:
     "@xyo-network/sdk-base-nodejs" "^0.6.1"
     bs58 "4.0.1"

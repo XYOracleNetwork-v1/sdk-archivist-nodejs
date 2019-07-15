@@ -13,7 +13,7 @@
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
-import { XyoIterableStructure, IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoBoundWitness, IXyoBlockByPublicKeyRepository, XyoBoundWitnessOriginGetter, addAllDefaults, XyoObjectSchema, gpsResolver, IXyoBlocksByGeohashRepository } from '@xyo-network/sdk-core-nodejs'
+import { XyoIterableStructure, IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoBoundWitness, IXyoBlockByPublicKeyRepository, XyoBoundWitnessOriginGetter, addAllDefaults, XyoObjectSchema, gpsResolver, IXyoBlocksByTime } from '@xyo-network/sdk-core-nodejs'
 import crypto from 'crypto'
 import ngeohash from 'ngeohash'
 import { GeohashTable } from './table/geo'
@@ -25,7 +25,7 @@ import { TimeTable } from './table/time'
 export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOriginBlockGetter,
                                                                       IXyoOriginBlockRepository,
                                                                       IXyoBlockByPublicKeyRepository,
-                                                                      IXyoBlocksByGeohashRepository {
+                                                                      IXyoBlocksByTime {
 
   private maxNumberOfBlockResults = 10_000
   private boundWitnessTable: BoundWitnessTable
@@ -188,6 +188,28 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
     }
 
     return { items: result, total: (await this.boundWitnessTable.getRecordCount()) || -1 }
+  }
+
+  public async getOriginBlocksByTime(fromTime: number, limit: number): Promise<{ items: Buffer[]; lastTime: number; }> {
+    const hourBucket = Math.floor(fromTime / (1000 * 60 * 60))
+
+    const blocks = await this.timeTable.getByTime(hourBucket, fromTime, limit)
+
+    if (blocks.results.length >= limit || blocks.results.length === 0) {
+      return {
+        items: blocks.results,
+        lastTime: blocks.lastTime,
+      }
+    }
+
+    const delta = limit - blocks.results.length
+
+    const nextPageOfBlocks = await this.getOriginBlocksByTime(blocks.lastTime, delta)
+
+    return {
+      items: blocks.results.concat(nextPageOfBlocks.items),
+      lastTime: nextPageOfBlocks.lastTime
+    }
   }
 
   private sha1(data: Buffer) {
