@@ -16,7 +16,7 @@ import { DynamoDB } from 'aws-sdk'
 export class PublicKeyTable extends Table {
 
   constructor(
-    tableName: string = 'xyo-archivist-publickey',
+    tableName: string = 'xyo-archivist-chains',
     region: string = 'us-east-1'
   ) {
     super(tableName, region)
@@ -27,8 +27,8 @@ export class PublicKeyTable extends Table {
           AttributeType: 'B'
         },
         {
-          AttributeName: 'BlockHash',
-          AttributeType: 'B'
+          AttributeName: 'Index',
+          AttributeType: 'N'
         }
       ],
       KeySchema: [
@@ -37,7 +37,7 @@ export class PublicKeyTable extends Table {
           KeyType: 'HASH'
         },
         {
-          AttributeName: 'BlockHash',
+          AttributeName: 'Index',
           KeyType: 'RANGE'
         }
       ],
@@ -49,16 +49,16 @@ export class PublicKeyTable extends Table {
     }
   }
 
-  public async putItem(
-    key: Buffer,
-    hash: Buffer
-  ): Promise<void> {
+  public async putItem(key: Buffer, hash: Buffer, index: number): Promise<void> {
     return new Promise<void>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.PutItemInput = {
           Item: {
             PublicKey: {
               B: key
+            },
+            Index: {
+              N: index.toString()
             },
             BlockHash: {
               B: hash
@@ -80,24 +80,49 @@ export class PublicKeyTable extends Table {
     })
   }
 
-  public async scanByKey(key: Buffer, limit: number, offsetHash?: Buffer | undefined): Promise <{items: any[], total: number}> {
+  public async scanByKey(key: Buffer, limit: number, index: number | undefined, up: boolean): Promise <{items: any[], total: number}> {
     return new Promise<{items: any[], total: number}>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.QueryInput = {
           Limit: limit,
           KeyConditionExpression: 'PublicKey = :key',
           ExpressionAttributeValues: {
-            ':key': { B: key }
+            ':key': { B: key },
           },
-          TableName: this.tableName
+          ExpressionAttributeNames: {
+            '#index': 'Index'
+          },
+          TableName: this.tableName,
+          ScanIndexForward: index !== -1
         }
-        if (offsetHash) {
-          params.ExclusiveStartKey = {
-            BlockHash: {
-              B: offsetHash
+
+        if (index !== undefined) {
+
+          if (up) {
+            params.ExpressionAttributeValues![':low'] = { N: (index - 1).toString() }
+            params.ExpressionAttributeValues![':high'] = { N: (index + limit).toString() }
+            params.KeyConditionExpression = '(PublicKey = :key) and #index BETWEEN :low and :high'
+          } else if (!up && index === -1) {
+            params.ExpressionAttributeValues![':high'] = { N: (Number.MAX_SAFE_INTEGER - 1).toString() }
+            params.KeyConditionExpression = '(PublicKey = :key) and #index < :high'
+          } else {
+            params.ExpressionAttributeValues![':low'] = { N: (index).toString() }
+            params.ExpressionAttributeValues![':high'] = { N: (index - limit - 1).toString() }
+            params.KeyConditionExpression = '(PublicKey = :key) and #index BETWEEN :high and :low'
+          }
+
+          if (index !== -1) {
+            params.ExclusiveStartKey = {
+              Index: {
+                N: up ? (index - 1).toString() : (index - limit - 1).toString()
+              },
+              PublicKey: {
+                B: key
+              }
             }
           }
         }
+
         this.dynamodb.query(params, async(err: any, data: DynamoDB.Types.ScanOutput) => {
           if (err) {
             this.logError(err)

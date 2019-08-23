@@ -160,12 +160,15 @@ export class BoundWitnessTable extends Table {
             }
           }
         }
-        this.dynamodb.scan(params, (err: any, data: DynamoDB.Types.ScanOutput) => {
+
+        this.dynamodb.scan(params, async(err: any, data: DynamoDB.Types.ScanOutput) => {
           if (err) {
             this.logError(err)
             reject(err)
           }
-          const result = []
+
+          let result = []
+
           if (data.Items) {
             for (const item of data.Items) {
               if (item.BlockHash && item.BlockHash.B && item.Data && item.Data.B) {
@@ -177,6 +180,14 @@ export class BoundWitnessTable extends Table {
               }
             }
           }
+
+          // if there is a LastEvaluatedKey, we need to get the next page because dynamodb limits a scan to 1 megabyte
+          if (result.length < limit && data.LastEvaluatedKey) {
+            const delta = limit - result.length
+            const nextPage = await this.scan(delta, data.LastEvaluatedKey.BlockHash.B as Buffer)
+            result = result.concat(nextPage)
+          }
+
           resolve(result)
         })
       } catch (ex) {

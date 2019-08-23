@@ -61,6 +61,7 @@ export class Table extends XyoBase {
         if (this.createTableInput) {
           this.dynamodb.createTable(this.createTableInput, (createErr: any, tableData: DynamoDB.Types.CreateTableOutput) => {
             if (createErr) {
+              this.logError(createErr)
               reject(createErr)
               return
             }

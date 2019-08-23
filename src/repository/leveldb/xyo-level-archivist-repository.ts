@@ -10,99 +10,73 @@
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import {
-  IXyoArchivistRepository,
-  IXyoOriginBlocksByPublicKeyResult,
-  IXyoEntitiesList,
-  IXyoIntersectionsList
-} from '..'
-
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
-
-import _ from 'lodash'
-
+import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoIterableStructure } from '@xyo-network/sdk-core-nodejs'
+import { AbstractIteratorOptions } from 'abstract-leveldown'
 import levelup, { LevelUp } from 'levelup'
 import leveldown from 'leveldown'
-import { AbstractIteratorOptions } from 'abstract-leveldown'
 
-export class XyoArchivistLevelRepository extends XyoBase implements IXyoArchivistRepository {
+export class XyoArchivistLevelRepository extends XyoBase implements IXyoOriginBlockGetter, IXyoOriginBlockRepository {
 
   private db: LevelUp
 
-  constructor(
-  ) {
+  constructor(path: string = './xyo-block-store') {
     super()
-    this.db = levelup(leveldown('./xyo-blocks'))
+    this.db = levelup(leveldown(path))
   }
 
   public async initialize() {
     return true
   }
 
-  public async getOriginBlocksByPublicKey(publicKey: Buffer): Promise<{items: Buffer[], total: number}> {
-    this.logError('getEntities: Not Implemented')
-    return { items: [], total: 0 }
-  }
-
   public async removeOriginBlock(hash: Buffer): Promise<void> {
-    return
+    this.db.del(hash)
   }
 
-  public async containsOriginBlock(hash: Buffer): Promise<boolean> {
-    return false
-  }
-
-  public async getEntities(limit: number, offsetCursor?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
-    this.logError('getEntities: Not Implemented')
-    return { items: [], total: 0 }
-  }
-
-  public async getAllOriginBlockHashes(): Promise<Buffer[]> {
-    return []
-  }
-
-  public async addOriginBlock(
-    hash: Buffer,
-    originBlock: Buffer
-  ): Promise<void> {
+  public async addOriginBlock(hash: Buffer, originBlock: Buffer): Promise<void> {
     return this.db.put(hash, originBlock)
   }
 
   public async addOriginBlocks(hashes: Buffer, blocks: Buffer): Promise<void> {
-    return
+    const blockStructure = new XyoIterableStructure(blocks)
+    const hashesStructure = new XyoIterableStructure(hashes)
+    const blockIt = blockStructure.newIterator()
+    const hashIt = hashesStructure.newIterator()
+
+    while (blockIt.hasNext()) {
+      const block = blockIt.next().value
+      const hash = hashIt.next().value
+      await this.addOriginBlock(hash.getAll().getContentsCopy(), block.getAll().getContentsCopy())
+    }
   }
 
   public async getOriginBlock(hash: Buffer): Promise<Buffer | undefined> {
     return this.db.get(hash)
   }
 
-  public async getBlocksThatProviderAttribution(hash: Buffer): Promise<{[h: string]: Buffer}> {
-    return {
+  public getOriginBlocks(limit: number, offsetHash?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
+    return new Promise((resolve, reject) => {
+      const options: AbstractIteratorOptions = {
+        limit
+      }
 
-    }
-  }
+      if (offsetHash) {
+        options.gt = offsetHash
+      }
 
-  public async getOriginBlocks(limit: number, offsetHash?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
-    const options: AbstractIteratorOptions = {
-      limit
-    }
+      options.limit = limit
 
-    if (offsetHash) {
-      options.gt = offsetHash
-    }
+      const blocks: Buffer[] = []
 
-    const blocks: Buffer[] = []
+      this.db.createReadStream(options
+        ).on('data', (data: any) => {
+          blocks.push(data.value)
+        }).on('error', (err: any) => {
+          reject(err)
+        }).on('close', () => {
+          resolve({ items: blocks, total: blocks.length })
+        })
 
-    await this.db.createReadStream(options
-      ).on('data', (data: any) => {
-        blocks.push(data.value)
-      }).on('error', (err: any) => {
-        throw(err)
-      }).on('close', () => {
-        console.log('Stream closed')
-      }).on('end', () => {
-        console.log('Stream ended')
-      })
-    return { items: [], total: 0 }
+    }) as Promise<{items: Buffer[], total: number}>
   }
 }
