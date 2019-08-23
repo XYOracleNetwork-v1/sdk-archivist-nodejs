@@ -24,7 +24,9 @@
     "start": "node ./dist/index.js dynamodb",
     "build": "yarn xybuild && yarn copy",
     "copy": "copyfiles -u 1 src/**/*.sql dist/",
-    "develop": "ts-node --files src/cli.ts"
+    "develop": "ts-node --files src/cli.ts",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "xyoPlugins": [
     "dist/index.js",
@@ -81,6 +83,8 @@
     "ngeohash": "^0.6.3",
     "node-fetch": "^2.5.0",
     "redis": "^2.8.0",
-    "ws": "^7.0.1"
-  }
+    "ws": "^7.0.1",
+    "snyk": "^1.217.3"
+  },
+  "snyk": true
 }
