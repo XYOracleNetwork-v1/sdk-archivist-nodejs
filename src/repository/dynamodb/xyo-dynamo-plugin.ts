@@ -1,6 +1,6 @@
 import { IXyoPlugin, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
 import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
-import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, IXyoBlockByPublicKeyRepository, IXyoBlocksByGeohashRepository } from '@xyo-network/sdk-core-nodejs'
+import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, IXyoBlockByPublicKeyRepository, IXyoBlocksByGeohashRepository, IXyoBlocksByTime } from '@xyo-network/sdk-core-nodejs'
 
 interface IXyoDynamoRepositoryConfig {
   tablePrefix?: string,
@@ -12,6 +12,7 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
   public BLOCK_REPOSITORY_ADD: IXyoOriginBlockRepository | undefined
   public BLOCK_REPOSITORY_PUBLIC_KEY: IXyoBlockByPublicKeyRepository | undefined
   public BLOCK_REPOSITORY_PUBLIC_GEOHASH: IXyoBlocksByGeohashRepository | undefined
+  public BLOCK_REPOSITORY_TIME: IXyoBlocksByTime | undefined
 
   public getName(): string {
     return 'archivist-dynamo-repository'
@@ -22,7 +23,8 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
       XyoPluginProviders.BLOCK_REPOSITORY_GET,
       XyoPluginProviders.BLOCK_REPOSITORY_ADD,
       XyoPluginProviders.BLOCK_REPOSITORY_PUBLIC_KEY,
-      XyoPluginProviders.BLOCK_REPOSITORY_PUBLIC_GEOHASH
+      XyoPluginProviders.BLOCK_REPOSITORY_PUBLIC_GEOHASH,
+      'BLOCK_REPOSITORY_TIME'
     ]
   }
   public getPluginDependencies(): string[] {
@@ -37,6 +39,7 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
     this.BLOCK_REPOSITORY_ADD = db
     this.BLOCK_REPOSITORY_PUBLIC_KEY = db
     this.BLOCK_REPOSITORY_PUBLIC_GEOHASH = db
+    this.BLOCK_REPOSITORY_TIME = db
 
     await db.initialize()
 

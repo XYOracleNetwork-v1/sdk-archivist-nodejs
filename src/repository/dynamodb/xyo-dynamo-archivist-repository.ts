@@ -13,10 +13,11 @@
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
-import { XyoIterableStructure, IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoBoundWitness, IXyoBlockByPublicKeyRepository, XyoBoundWitnessOriginGetter, addAllDefaults, XyoObjectSchema, gpsResolver, IXyoBlocksByGeohashRepository } from '@xyo-network/sdk-core-nodejs'
+import { XyoIterableStructure, IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoBoundWitness, IXyoBlockByPublicKeyRepository, XyoBoundWitnessOriginGetter, addAllDefaults, XyoObjectSchema, gpsResolver, IXyoBlocksByTime } from '@xyo-network/sdk-core-nodejs'
 import crypto from 'crypto'
 import ngeohash from 'ngeohash'
 import { GeohashTable } from './table/geo'
+import { TimeTable } from './table/time'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
@@ -24,12 +25,13 @@ import { GeohashTable } from './table/geo'
 export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOriginBlockGetter,
                                                                       IXyoOriginBlockRepository,
                                                                       IXyoBlockByPublicKeyRepository,
-                                                                      IXyoBlocksByGeohashRepository {
+                                                                      IXyoBlocksByTime {
 
   private maxNumberOfBlockResults = 10_000
   private boundWitnessTable: BoundWitnessTable
   private publicKeyTable: PublicKeyTable
   public geoTable: GeohashTable
+  public timeTable: TimeTable
 
   constructor(
     tablePrefix: string = 'xyo-archivist',
@@ -39,6 +41,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
     this.boundWitnessTable = new BoundWitnessTable(`${tablePrefix}-boundwitness`, region)
     this.publicKeyTable = new PublicKeyTable(`${tablePrefix}-chains`, region)
     this.geoTable = new GeohashTable(`${tablePrefix}-geohash`, region)
+    this.timeTable = new TimeTable(`${tablePrefix}-time`, region)
 
     addAllDefaults()
   }
@@ -47,6 +50,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
     this.boundWitnessTable.initialize()
     this.publicKeyTable.initialize()
     this.geoTable.initialize()
+    this.timeTable.initialize()
     return true
   }
 
@@ -119,6 +123,7 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
       }
 
       await this.addGeoIndex(hash, originBlock)
+      await this.timeTable.putItem(originBlock)
       return await this.boundWitnessTable.putItem(shortHash, originBlock)
     } catch (ex) {
       this.logError(ex)
@@ -183,6 +188,28 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
     }
 
     return { items: result, total: (await this.boundWitnessTable.getRecordCount()) || -1 }
+  }
+
+  public async getOriginBlocksByTime(fromTime: number, limit: number): Promise<{ items: Buffer[]; lastTime: number; }> {
+    const hourBucket = Math.floor(fromTime / (1000 * 60 * 60))
+
+    const blocks = await this.timeTable.getByTime(hourBucket, fromTime, limit)
+
+    if (blocks.results.length >= limit || blocks.results.length === 0) {
+      return {
+        items: blocks.results,
+        lastTime: blocks.lastTime,
+      }
+    }
+
+    const delta = limit - blocks.results.length
+
+    const nextPageOfBlocks = await this.getOriginBlocksByTime(blocks.lastTime, delta)
+
+    return {
+      items: blocks.results.concat(nextPageOfBlocks.items),
+      lastTime: nextPageOfBlocks.lastTime
+    }
   }
 
   private sha1(data: Buffer) {
