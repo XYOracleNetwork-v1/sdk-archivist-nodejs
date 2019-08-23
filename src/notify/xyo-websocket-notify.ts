@@ -24,9 +24,9 @@ class XyoWebsocketNotify extends XyoBase implements IXyoPlugin {
   }
 
   private onConnection = (connection : ws) => {
-    this.clients[connection.url] = connection
-
     const key = Math.random().toString()
+
+    this.clients[key] = connection
 
     connection.on('close', () => {
       delete this.clients[key]
@@ -82,8 +82,8 @@ class XyoWebsocketNotify extends XyoBase implements IXyoPlugin {
       const hash = bs58.encode(block.getHash(new XyoSha256()).getAll().getContentsCopy())
       console.log(hash)
 
-      for (const url of Object.keys(this.clients)) {
-        const socket = this.clients[url]
+      for (const key of Object.keys(this.clients)) {
+        const socket = this.clients[key]
 
         socket.send(JSON.stringify({
           hash,
