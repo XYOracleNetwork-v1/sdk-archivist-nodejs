@@ -122,4 +122,4 @@ See the [LICENSE](LICENSE) file for license details.
 
 ## Credits
 
-Made with 🔥and ❄️ by [XYO]\(<https://www.xyo.network>
+Made with 🔥and ❄️ by [XYO](https://www.xyo.network)
