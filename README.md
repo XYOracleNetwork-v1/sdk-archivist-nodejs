@@ -1,13 +1,15 @@
-[![logo]](https://xy.company) 
+[logo]: https://cdn.xy.company/img/brand/XYO_full_colored.png
+
+[![logo]](https://xyo.network)
 
 # XYO ARCHIVIST SDK (sdk-archivist-nodejs)
 
 ![npm](https://img.shields.io/npm/v/@xyo-network/sdk-archivist-nodejs.svg?style=plastic)
  
 [![Build Status](https://travis-ci.com/XYOracleNetwork/sdk-archivist-nodejs.svg?branch=develop)](https://travis-ci.com/XYOracleNetwork/sdk-archivist-nodejs) [![Maintainability](https://api.codeclimate.com/v1/badges/f3dd4f4d35e1bd9eeabc/maintainability)](https://codeclimate.com/github/XYOracleNetwork/sdk-archivist-nodejs/maintainability) [![BCH compliance](https://bettercodehub.com/edge/badge/XYOracleNetwork/sdk-archivist-nodejs?branch=master)](https://bettercodehub.com/results/XYOracleNetwork/sdk-archivist-nodejs) [![DepShield Badge](https://depshield.sonatype.org/badges/XYOracleNetwork/sdk-archivist-nodejs/depshield.svg)](https://depshield.github.io) 
+
 ## Table of Contents
 
-- [Sections](#sections)
 - [Title](#xyo-archivist-sdk)
 - [Project Overview](#project-overview)
 - [Scope of features](#scope-of-features)
@@ -110,15 +112,14 @@ If you feel you may need to do a `hot-fix` directly to master, please communicat
 - Use `@type` dependencies
 
 ### Maintainers
+
 - Carter Harrison
 - Arie Trouw
 
 ## License
 
-Only for internal XY Company use at this time
+See the [LICENSE](LICENSE) file for license details.
 
 ## Credits
 
-<br><br><p align="center">Made with  ❤️  by [**XY - The Persistent Company**] (https://xy.company)</p>
-
-[logo]: https://cdn.xy.company/img/brand/XY_Logo_GitHub.png
+Made with 🔥and ❄️ by [XYO](https://www.xyo.network)
