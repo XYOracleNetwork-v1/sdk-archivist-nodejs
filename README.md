@@ -6,7 +6,7 @@
 
 ![npm](https://img.shields.io/npm/v/@xyo-network/sdk-archivist-nodejs.svg?style=plastic)
  
-![](https://github.com/XYOracleNetwork/app-xyo-nodejs/workflows/Build/badge.svg) [![Maintainability](https://api.codeclimate.com/v1/badges/f3dd4f4d35e1bd9eeabc/maintainability)](https://codeclimate.com/github/XYOracleNetwork/sdk-archivist-nodejs/maintainability) [![BCH compliance](https://bettercodehub.com/edge/badge/XYOracleNetwork/sdk-archivist-nodejs?branch=master)](https://bettercodehub.com/results/XYOracleNetwork/sdk-archivist-nodejs) [![DepShield Badge](https://depshield.sonatype.org/badges/XYOracleNetwork/sdk-archivist-nodejs/depshield.svg)](https://depshield.github.io)  [![Known Vulnerabilities](https://snyk.io/test/github/XYOracleNetwork/sdk-archivist-nodejs/badge.svg)](https://snyk.io/test/github/XYOracleNetwork/sdk-archivist-nodejs)
+![](https://github.com/XYOracleNetwork/sdk-archivist-nodejs/workflows/Build/badge.svg) [![Maintainability](https://api.codeclimate.com/v1/badges/f3dd4f4d35e1bd9eeabc/maintainability)](https://codeclimate.com/github/XYOracleNetwork/sdk-archivist-nodejs/maintainability) [![BCH compliance](https://bettercodehub.com/edge/badge/XYOracleNetwork/sdk-archivist-nodejs?branch=master)](https://bettercodehub.com/results/XYOracleNetwork/sdk-archivist-nodejs) [![DepShield Badge](https://depshield.sonatype.org/badges/XYOracleNetwork/sdk-archivist-nodejs/depshield.svg)](https://depshield.github.io)  [![Known Vulnerabilities](https://snyk.io/test/github/XYOracleNetwork/sdk-archivist-nodejs/badge.svg)](https://snyk.io/test/github/XYOracleNetwork/sdk-archivist-nodejs)
 
 ## Table of Contents
 
