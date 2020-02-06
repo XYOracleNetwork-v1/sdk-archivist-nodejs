@@ -30,9 +30,15 @@ jobs:
       - run: |
           yarn install 
           yarn build
-      - run: npm publish --access public --@xyo-network:registry=https://registry.npmjs.org
+      - run: |
+          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" > /home/runner/work/_temp/.npmrc
+          echo "_auth=$NODE_AUTH_TOKEN" >>  /home/runner/work/_temp/.npmrc
+          echo "email=$NPM_EMAIL" >>  /home/runner/work/_temp/.npmrc
+          echo "always-auth=true" >>  /home/runner/work/_temp/.npmrc
         env:
-          NODE_AUTH_TOKEN: $ {{ secrets.NPM_TOKEN }}
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+            NPM_EMAIL: ${{ secrets.NPM_EMAIL }}
+      - run: npm publish --access public
   
   publish-gpr:
     needs: build
