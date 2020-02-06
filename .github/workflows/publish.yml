@@ -10,15 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@master
+      - uses: actions/setup-node@v1
         with: 
           node-version: '10.x'
-          registry-url: 'https://registry.npmjs.org/'
-      - run: |
-          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
-          npm config set scope "@xyo-network"
-          npm config list
-          npm publish --access public
+          registry-url: https://registry.npmjs.org/
+          scope: '@xyo-network'
+      - run: yarn install
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: $ {{ secrets.NPM_TOKEN }}
         
