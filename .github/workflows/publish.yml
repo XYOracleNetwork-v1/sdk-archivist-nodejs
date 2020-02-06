@@ -39,21 +39,4 @@ jobs:
             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
             NPM_EMAIL: ${{ secrets.NPM_EMAIL }}
       - run: npm publish --access public
-  
-  publish-gpr:
-    needs: build
-    runs-on: ubuntu-latest
-    steps: 
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with: 
-          node-version: '10.x'
-          registry: https://npm.pkg.github.com
-          scope: '@xyoraclenetwork'
-      - run: |
-          yarn install 
-          yarn build
-      - run: npm publish
-        env: 
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN}}
         
