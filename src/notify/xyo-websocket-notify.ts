@@ -3,7 +3,7 @@ import { XyoBoundWitnessInserter, XyoObjectSchema, XyoBoundWitness, XyoIterableS
 import ngeohash from 'ngeohash'
 import bs58 from 'bs58'
 import ws from 'ws'
-import https from 'https'
+import http from 'http'
 import fs from 'fs'
 
 class XyoWebsocketNotify extends XyoBase implements IXyoPlugin {
@@ -47,11 +47,7 @@ class XyoWebsocketNotify extends XyoBase implements IXyoPlugin {
   public async initialize(delegate: IXyoPluginDelegate): Promise<boolean> {
     const inserter = delegate.deps.BOUND_WITNESS_INSERTER as XyoBoundWitnessInserter
 
-    const server = https.createServer({
-      cert: fs.readFileSync(delegate.config.cert),
-      key: fs.readFileSync(delegate.config.key)
-    })
-
+    const server = http.createServer()
     this.client = new ws.Server({ server })
     this.client.on('connection', this.onConnection)
 
