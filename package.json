@@ -1,5 +1,5 @@
 {
-  "name": "sdk-archivist-nodejs",
+  "name": "@xyo-network/sdk-archivist-nodejs",
   "version": "0.12.14",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
@@ -25,9 +25,6 @@
     "build": "yarn xybuild && yarn copy",
     "copy": "copyfiles -u 1 src/**/*.sql dist/",
     "develop": "ts-node --files src/cli.ts"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@XYOracleNetwork"
   },
   "xyoPlugins": [
     "dist/index.js",
