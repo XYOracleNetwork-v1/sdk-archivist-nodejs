@@ -2,8 +2,8 @@ import { createHttpLink } from 'apollo-link-http'
 import { ApolloClient } from 'apollo-client'
 import nodeFetch from 'node-fetch'
 import gql from 'graphql-tag'
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'
-import { XyoBase } from '@xyo-network/sdk-base-nodejs'
+// import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'
+// import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
 export class ArchivistAbsorber extends XyoBase {
   private cursorHash: string | undefined
