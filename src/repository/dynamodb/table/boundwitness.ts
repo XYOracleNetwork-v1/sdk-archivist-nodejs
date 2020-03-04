@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * File: main-table.ts
  * Project: @xyo-network/sdk-archivist-nodejs
@@ -15,13 +17,9 @@ import { DynamoDB } from 'aws-sdk'
 import lruCache from 'lru-cache'
 
 export class BoundWitnessTable extends Table {
-
   private cache: lruCache<string, Buffer>
 
-  constructor(
-    tableName: string = 'xyo-archivist-boundwitness',
-    region: string = 'us-east-1'
-  ) {
+  constructor(tableName = 'xyo-archivist-boundwitness', region = 'us-east-1') {
     super(tableName, region)
 
     this.cache = new lruCache({
@@ -67,18 +65,21 @@ export class BoundWitnessTable extends Table {
           ReturnConsumedCapacity: 'TOTAL',
           TableName: this.tableName
         }
-        this.dynamodb.getItem(params, (err: any, data: DynamoDB.Types.GetItemOutput) => {
-          if (err) {
-            reject(err)
+        this.dynamodb.getItem(
+          params,
+          (err: any, data: DynamoDB.Types.GetItemOutput) => {
+            if (err) {
+              reject(err)
+            }
+            if (data.Item) {
+              const result = data.Item.Data.B as Buffer
+              this.cache.set(hash.toString(), result)
+              resolve(result)
+              return
+            }
+            resolve()
           }
-          if (data.Item) {
-            const result = data.Item.Data.B as Buffer
-            this.cache.set(hash.toString(), result)
-            resolve(result)
-            return
-          }
-          resolve()
-        })
+        )
       } catch (ex) {
         this.logError(ex)
         reject(ex)
@@ -86,10 +87,7 @@ export class BoundWitnessTable extends Table {
     })
   }
 
-  public async putItem(
-    hash: Buffer,
-    originBlock: Buffer
-  ): Promise<void> {
+  public async putItem(hash: Buffer, originBlock: Buffer): Promise<void> {
     return new Promise<void>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.PutItemInput = {
@@ -104,13 +102,16 @@ export class BoundWitnessTable extends Table {
           ReturnConsumedCapacity: 'TOTAL',
           TableName: this.tableName
         }
-        this.dynamodb.putItem(params, (err: any, data: DynamoDB.Types.PutItemOutput) => {
-          if (err) {
-            reject(err)
+        this.dynamodb.putItem(
+          params,
+          (err: any, data: DynamoDB.Types.PutItemOutput) => {
+            if (err) {
+              reject(err)
+            }
+            this.cache.set(hash.toString(), originBlock)
+            resolve()
           }
-          this.cache.set(hash.toString(), originBlock)
-          resolve()
-        })
+        )
       } catch (ex) {
         this.logError(ex)
         reject(ex)
@@ -130,14 +131,17 @@ export class BoundWitnessTable extends Table {
           ReturnConsumedCapacity: 'TOTAL',
           TableName: this.tableName
         }
-        this.dynamodb.deleteItem(params, (err: any, data: DynamoDB.Types.DeleteItemOutput) => {
-          if (err) {
-            this.logError(err)
-            reject(err)
+        this.dynamodb.deleteItem(
+          params,
+          (err: any, data: DynamoDB.Types.DeleteItemOutput) => {
+            if (err) {
+              this.logError(err)
+              reject(err)
+            }
+            this.cache.del(hash.toString())
+            resolve()
           }
-          this.cache.del(hash.toString())
-          resolve()
-        })
+        )
       } catch (ex) {
         this.logError(ex)
         reject(ex)
@@ -145,7 +149,10 @@ export class BoundWitnessTable extends Table {
     })
   }
 
-  public async scan(limit: number, offsetHash ?: Buffer | undefined): Promise <any[]> {
+  public async scan(
+    limit: number,
+    offsetHash?: Buffer | undefined
+  ): Promise<any[]> {
     return new Promise<[]>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.ScanInput = {
@@ -161,35 +168,48 @@ export class BoundWitnessTable extends Table {
           }
         }
 
-        this.dynamodb.scan(params, async(err: any, data: DynamoDB.Types.ScanOutput) => {
-          if (err) {
-            this.logError(err)
-            reject(err)
-          }
+        this.dynamodb.scan(
+          params,
+          async (err: any, data: DynamoDB.Types.ScanOutput) => {
+            if (err) {
+              this.logError(err)
+              reject(err)
+            }
 
-          let result = []
+            let result = []
 
-          if (data.Items) {
-            for (const item of data.Items) {
-              if (item.BlockHash && item.BlockHash.B && item.Data && item.Data.B) {
-                const payload = item.Data.B as Buffer
-                this.cache.set(item.BlockHash.B.toString(), payload)
-                result.push(payload)
-              } else {
-                this.logError(`Result with Missing BlockHash or Data: ${item}`)
+            if (data.Items) {
+              for (const item of data.Items) {
+                if (
+                  item.BlockHash &&
+                  item.BlockHash.B &&
+                  item.Data &&
+                  item.Data.B
+                ) {
+                  const payload = item.Data.B as Buffer
+                  this.cache.set(item.BlockHash.B.toString(), payload)
+                  result.push(payload)
+                } else {
+                  this.logError(
+                    `Result with Missing BlockHash or Data: ${item}`
+                  )
+                }
               }
             }
-          }
 
-          // if there is a LastEvaluatedKey, we need to get the next page because dynamodb limits a scan to 1 megabyte
-          if (result.length < limit && data.LastEvaluatedKey) {
-            const delta = limit - result.length
-            const nextPage = await this.scan(delta, data.LastEvaluatedKey.BlockHash.B as Buffer)
-            result = result.concat(nextPage)
-          }
+            // if there is a LastEvaluatedKey, we need to get the next page because dynamodb limits a scan to 1 megabyte
+            if (result.length < limit && data.LastEvaluatedKey) {
+              const delta = limit - result.length
+              const nextPage = await this.scan(
+                delta,
+                data.LastEvaluatedKey.BlockHash.B as Buffer
+              )
+              result = result.concat(nextPage)
+            }
 
-          resolve(result)
-        })
+            resolve(result)
+          }
+        )
       } catch (ex) {
         this.logError(ex)
         reject(ex)

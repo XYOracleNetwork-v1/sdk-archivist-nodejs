@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/interface-name-prefix */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/member-delimiter-style */
 import fs from 'fs'
 import os from 'os'
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
@@ -6,8 +9,8 @@ import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 const statStorePth = `${os.homedir()}/.config/xyo/stats.json`
 
 interface IXyoCollectorStatsState {
-  allTimeBoundWitnesses: number,
-  allTimeCollectedBoundWitnesses: number,
+  allTimeBoundWitnesses: number
+  allTimeCollectedBoundWitnesses: number
   lastBoundWitnessTime: number
 }
 
@@ -66,7 +69,10 @@ export class XyoCollectorStats extends XyoBase {
       return 0
     }
 
-    return (this.runTimeCollectedBoundWitnesses - this.runTimeBoundWitnesses) / this.runTimeBoundWitnesses
+    return (
+      (this.runTimeCollectedBoundWitnesses - this.runTimeBoundWitnesses) /
+      this.runTimeBoundWitnesses
+    )
   }
 
   public geAllTimeBoundWitnesses(): number {
@@ -82,7 +88,10 @@ export class XyoCollectorStats extends XyoBase {
       return 0
     }
 
-    return (this.allTimeCollectedBoundWitnesses - this.allTimeBoundWitnesses) / this.allTimeBoundWitnesses
+    return (
+      (this.allTimeCollectedBoundWitnesses - this.allTimeBoundWitnesses) /
+      this.allTimeBoundWitnesses
+    )
   }
 
   public commit() {
@@ -104,7 +113,7 @@ export class XyoCollectorStats extends XyoBase {
       this.allTimeCollectedBoundWitnesses = state.allTimeCollectedBoundWitnesses
       this.lastBoundWitnessTime = state.lastBoundWitnessTime || -1
     } catch {
-          // do nothing if file does not exist
+      // do nothing if file does not exist
     }
   }
 }

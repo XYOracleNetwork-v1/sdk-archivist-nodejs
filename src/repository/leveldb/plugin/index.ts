@@ -1,5 +1,15 @@
-import { IXyoPlugin, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
-import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, IXyoBlockByPublicKeyRepository, IXyoBlocksByGeohashRepository } from '@xyo-network/sdk-core-nodejs'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  IXyoPlugin,
+  IXyoPluginDelegate,
+  XyoPluginProviders
+} from '@xyo-network/sdk-base-nodejs'
+import {
+  IXyoOriginBlockGetter,
+  IXyoOriginBlockRepository,
+  IXyoBlockByPublicKeyRepository,
+  IXyoBlocksByGeohashRepository
+} from '@xyo-network/sdk-core-nodejs'
 import { XyoArchivistLevelRepository } from '../xyo-level-archivist-repository'
 
 class XyoArchivistLevelRepositoryPlugin implements IXyoPlugin {
@@ -30,7 +40,6 @@ class XyoArchivistLevelRepositoryPlugin implements IXyoPlugin {
 
     return true
   }
-
 }
 
 module.exports = new XyoArchivistLevelRepositoryPlugin()

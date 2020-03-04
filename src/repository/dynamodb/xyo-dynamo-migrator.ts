@@ -1,5 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
-import { XyoBoundWitness, XyoSha256, XyoObjectSchema, gpsResolver } from '@xyo-network/sdk-core-nodejs'
+import {
+  XyoBoundWitness,
+  XyoSha256,
+  XyoObjectSchema,
+  gpsResolver
+} from '@xyo-network/sdk-core-nodejs'
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import bs58 from 'bs58'
 import ngeohash from 'ngeohash'
@@ -10,7 +19,7 @@ const hasher = new XyoSha256()
 class Migrator extends XyoBase {
   private db: XyoArchivistDynamoRepository
 
-  constructor(db: XyoArchivistDynamoRepository)  {
+  constructor(db: XyoArchivistDynamoRepository) {
     super()
     this.db = db
   }
@@ -22,18 +31,26 @@ class Migrator extends XyoBase {
       const blocks = await absorber.readBlocks(1000)
 
       const client = new Client({
-        host: 'https://search-xyo-archivist-geohash-dswz22xbqpqxte3fls5fzpuf5u.us-east-1.es.amazonaws.com'
+        host:
+          'https://search-xyo-archivist-geohash-dswz22xbqpqxte3fls5fzpuf5u.us-east-1.es.amazonaws.com'
       })
 
       const bulks: any[] = []
 
-      blocks.forEach((block) => {
+      blocks.forEach(block => {
         const bw = new XyoBoundWitness(block)
         const geohash = getGeohash(bw)
 
         if (geohash) {
-          const hash = bs58.encode(bw.getHash(hasher).getAll().getContentsCopy())
-          bulks.push({ index:  { _index: 'geohash', _type: 'bound_witness', _id: hash } })
+          const hash = bs58.encode(
+            bw
+              .getHash(hasher)
+              .getAll()
+              .getContentsCopy()
+          )
+          bulks.push({
+            index: { _index: 'geohash', _type: 'bound_witness', _id: hash }
+          })
           bulks.push({
             geohash,
             g1: geohash[0],
@@ -41,7 +58,13 @@ class Migrator extends XyoBase {
             g3: geohash[0] + geohash[1] + geohash[2],
             g4: geohash[0] + geohash[1] + geohash[2] + geohash[3],
             g5: geohash[0] + geohash[1] + geohash[2] + geohash[3] + geohash[4],
-            g6: geohash[0] + geohash[1] + geohash[2] + geohash[3] + geohash[4]  + geohash[5],
+            g6:
+              geohash[0] +
+              geohash[1] +
+              geohash[2] +
+              geohash[3] +
+              geohash[4] +
+              geohash[5]
           })
         }
       })
@@ -81,16 +104,15 @@ class Migrator extends XyoBase {
     //     break
     //   }
     // }
-
   }
 }
 
 const getGeohash = (boundWitness: XyoBoundWitness): string | undefined => {
   for (const party of boundWitness.getHeuristics()) {
     for (const huerestic of party) {
-
       if (huerestic.getSchema().id === XyoObjectSchema.GPS.id) {
-        const point = gpsResolver.resolve(huerestic.getAll().getContentsCopy()).value
+        const point = gpsResolver.resolve(huerestic.getAll().getContentsCopy())
+          .value
         const geohash = ngeohash.encode(point.lat, point.lng)
         // this.logInfo(`Adding geohash: ${geohash} at ${point.lat}, ${point.lng}`)
         return geohash
@@ -104,7 +126,6 @@ async function main() {
   await db.initialize()
   const migrator = new Migrator(db)
   migrator.migrate()
-
 }
 
 // main()

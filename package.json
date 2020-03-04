@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.12.15",
+  "version": "0.12.16",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,6 +20,7 @@
   },
   "scripts": {
     "pretest": "yarn install",
+    "lint": "yarn eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "yarn lint && yarn licensecheck",
     "start": "node ./dist/index.js dynamodb",
     "build": "yarn xybuild && yarn copy",
@@ -37,6 +38,11 @@
     "dist/endpoints/plugins/xyo-graphql-block-getter-plugin.js",
     "dist/endpoints/plugins/xyo-graphql-public-key-block-plugin.js"
   ],
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "jsxSingleQuote": true
+  },
   "devDependencies": {
     "@types/bs58": "^4.0.0",
     "@types/elliptic": "^6.4.6",
@@ -49,22 +55,22 @@
     "@types/lru-cache": "^5.1.0",
     "@types/mysql": "^2.15.5",
     "@types/ngeohash": "^0.6.2",
-    "@types/node": "^11.13.8",
+    "@types/node": "^13.7.1",
     "@types/node-fetch": "^2.3.3",
     "@types/yargs": "^15.0.0",
-    "@xyo-network/config-tslint": "^0.1.31",
     "copyfiles": "^2.2.0",
     "license-checker": "^25.0.1",
     "ts-node": "^8.1.0",
-    "tslint": "^5.16.0",
     "typescript": "^3.4.5"
   },
   "dependencies": {
     "@types/elasticsearch": "^5.0.34",
     "@types/redis": "^2.8.13",
     "@types/ws": "^6.0.1",
-    "@xyo-network/sdk-base-nodejs": "0.5.6",
-    "@xyo-network/sdk-core-nodejs": "0.70.7",
+    "@typescript-eslint/eslint-plugin": "^2.19.2",
+    "@typescript-eslint/parser": "^2.19.2",
+    "@xyo-network/sdk-base-nodejs": "0.6.6",
+    "@xyo-network/sdk-core-nodejs": "0.70.22",
     "abstract-leveldown": "^6.0.3",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.5.1",
@@ -72,6 +78,11 @@
     "aws-sdk": "^2.446.0",
     "bs58": "^4.0.1",
     "elasticsearch": "^16.1.1",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-typescript": "^7.0.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-prettier": "^3.1.2",
     "graphql-tag": "^2.10.1",
     "leveldown": "^5.0.3",
     "levelup": "^4.0.1",
@@ -80,6 +91,7 @@
     "mysql": "^2.17.1",
     "ngeohash": "^0.6.3",
     "node-fetch": "^2.5.0",
+    "prettier": "^1.19.1",
     "redis": "^2.8.0",
     "ws": "^7.0.1"
   }

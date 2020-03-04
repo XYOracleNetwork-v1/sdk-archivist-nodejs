@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /*
  * File: main-table.ts
  * Project: @xyo-network/sdk-archivist-nodejs
@@ -14,11 +16,7 @@ import { Table } from './table'
 import { DynamoDB } from 'aws-sdk'
 
 export class GeohashTable extends Table {
-
-  constructor(
-    tableName: string = 'xyo-archivist-geohash',
-    region: string = 'us-east-1'
-  ) {
+  constructor(tableName = 'xyo-archivist-geohash', region = 'us-east-1') {
     super(tableName, region)
     this.createTableInput = {
       AttributeDefinitions: [
@@ -84,12 +82,15 @@ export class GeohashTable extends Table {
           },
           TableName: this.tableName
         }
-        this.dynamodb.putItem(params, (err: any, data: DynamoDB.Types.PutItemOutput) => {
-          if (err) {
-            reject(err)
+        this.dynamodb.putItem(
+          params,
+          (err: any, data: DynamoDB.Types.PutItemOutput) => {
+            if (err) {
+              reject(err)
+            }
+            resolve()
           }
-          resolve()
-        })
+        )
       } catch (ex) {
         this.logError(ex)
         reject(ex)
@@ -97,38 +98,42 @@ export class GeohashTable extends Table {
     })
   }
 
-  public async getByGeohash(geohash: string, limit: number): Promise <Buffer[]> {
+  public async getByGeohash(geohash: string, limit: number): Promise<Buffer[]> {
     return new Promise<Buffer[]>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.QueryInput = {
           Limit: limit,
           IndexName: 'Geohash2',
-          KeyConditionExpression: 'Geohash2 = :geohash2 and begins_with(Geohash, :geohash)',
+          KeyConditionExpression:
+            'Geohash2 = :geohash2 and begins_with(Geohash, :geohash)',
           ExpressionAttributeValues: {
             ':geohash2': { S: `${geohash[0]}${geohash[1]}` },
             ':geohash': { S: geohash }
           },
-          TableName: this.tableName,
+          TableName: this.tableName
         }
 
-        this.dynamodb.query(params, async(err: any, data: DynamoDB.Types.ScanOutput) => {
-          if (err) {
-            this.logError(err)
-            reject(err)
-          }
+        this.dynamodb.query(
+          params,
+          async (err: any, data: DynamoDB.Types.ScanOutput) => {
+            if (err) {
+              this.logError(err)
+              reject(err)
+            }
 
-          const result = []
-          if (data && data.Items) {
-            for (const item of data.Items) {
-              if (item.BlockHash && item.BlockHash.B) {
-                result.push(item.BlockHash.B)
-              } else {
-                this.logError(`Result with Missing BlockHash: ${item}`)
+            const result = []
+            if (data && data.Items) {
+              for (const item of data.Items) {
+                if (item.BlockHash && item.BlockHash.B) {
+                  result.push(item.BlockHash.B)
+                } else {
+                  this.logError(`Result with Missing BlockHash: ${item}`)
+                }
               }
             }
+            resolve(result)
           }
-          resolve(result)
-        })
+        )
       } catch (ex) {
         this.logError(ex)
         reject(ex)

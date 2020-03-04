@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /*
  * File: index.ts
  * Project: sdk-archivist-nodejs

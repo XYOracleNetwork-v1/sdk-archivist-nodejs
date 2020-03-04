@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /*
  * File: xyo-neo4j-archivist-repository.ts
  * Project: sdk-archivist-nodejs
@@ -13,12 +15,14 @@
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
 import _ from 'lodash'
-import { IXyoOriginBlockGetter, IXyoOriginBlockRepository } from '@xyo-network/sdk-core-nodejs'
+import {
+  IXyoOriginBlockGetter,
+  IXyoOriginBlockRepository
+} from '@xyo-network/sdk-core-nodejs'
 
-export class XyoArchivistNeo4jRepository extends XyoBase implements IXyoOriginBlockGetter, IXyoOriginBlockRepository {
-
-  constructor(
-  ) {
+export class XyoArchivistNeo4jRepository extends XyoBase
+  implements IXyoOriginBlockGetter, IXyoOriginBlockRepository {
+  constructor() {
     super()
   }
 
@@ -26,12 +30,17 @@ export class XyoArchivistNeo4jRepository extends XyoBase implements IXyoOriginBl
     return true
   }
 
-  public async getOriginBlocksByPublicKey(publicKey: Buffer): Promise<{items: Buffer[], total: number}> {
-    return { items:[], total: 0 }
+  public async getOriginBlocksByPublicKey(
+    publicKey: Buffer
+  ): Promise<{ items: Buffer[]; total: number }> {
+    return { items: [], total: 0 }
   }
 
-  public async getEntities(limit: number, offsetCursor?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
-    return { items:[], total: 0 }
+  public async getEntities(
+    limit: number,
+    offsetCursor?: Buffer | undefined
+  ): Promise<{ items: Buffer[]; total: number }> {
+    return { items: [], total: 0 }
   }
 
   public async addOriginBlocks(hashes: Buffer, blocks: Buffer): Promise<void> {
@@ -61,17 +70,25 @@ export class XyoArchivistNeo4jRepository extends XyoBase implements IXyoOriginBl
     return undefined
   }
 
-  public async traceChain(publicKey: Buffer, limit: number, offsetHash: Buffer | undefined, up: boolean): Promise<Buffer[]> {
+  public async traceChain(
+    publicKey: Buffer,
+    limit: number,
+    offsetHash: Buffer | undefined,
+    up: boolean
+  ): Promise<Buffer[]> {
     return []
   }
 
-  public async getBlocksThatProviderAttribution(hash: Buffer): Promise<{[h: string]: Buffer}> {
-    return {
-
-    }
+  public async getBlocksThatProviderAttribution(
+    hash: Buffer
+  ): Promise<{ [h: string]: Buffer }> {
+    return {}
   }
 
-  public async getOriginBlocks(limit: number, offsetHash?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
+  public async getOriginBlocks(
+    limit: number,
+    offsetHash?: Buffer | undefined
+  ): Promise<{ items: Buffer[]; total: number }> {
     return { items: [], total: 0 }
   }
 }

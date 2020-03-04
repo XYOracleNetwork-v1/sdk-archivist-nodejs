@@ -1,4 +1,5 @@
-
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Table } from './table'
 import { DynamoDB } from 'aws-sdk'
 
@@ -6,11 +7,7 @@ const TIME_MINUTE = 1000 * 60
 const TIME_HOUR = TIME_MINUTE * 60
 
 export class TimeTable extends Table {
-
-  constructor(
-    tableName: string = 'xyo-archivist-time',
-    region: string = 'us-east-1'
-  ) {
+  constructor(tableName = 'xyo-archivist-time', region = 'us-east-1') {
     super(tableName, region)
     this.createTableInput = {
       AttributeDefinitions: [
@@ -21,7 +18,7 @@ export class TimeTable extends Table {
         {
           AttributeName: 'Time',
           AttributeType: 'N'
-        },
+        }
       ],
       KeySchema: [
         {
@@ -42,7 +39,7 @@ export class TimeTable extends Table {
   }
 
   public async putItem(bytes: Buffer): Promise<void> {
-    const currentTime = (new Date()).getTime()
+    const currentTime = new Date().getTime()
 
     return new Promise<void>((resolve: any, reject: any) => {
       try {
@@ -60,12 +57,15 @@ export class TimeTable extends Table {
           },
           TableName: this.tableName
         }
-        this.dynamodb.putItem(params, (err: any, data: DynamoDB.Types.PutItemOutput) => {
-          if (err) {
-            reject(err)
+        this.dynamodb.putItem(
+          params,
+          (err: any, data: DynamoDB.Types.PutItemOutput) => {
+            if (err) {
+              reject(err)
+            }
+            resolve()
           }
-          resolve()
-        })
+        )
       } catch (ex) {
         this.logError(ex)
         reject(ex)
@@ -73,48 +73,57 @@ export class TimeTable extends Table {
     })
   }
 
-  public async getByTime(hour: number, cursor: number, limit: number): Promise <{results: Buffer[], lastTime: number}> {
-    return new Promise<{results: Buffer[], lastTime: number}>((resolve: any, reject: any) => {
-      try {
-        const params: DynamoDB.Types.QueryInput = {
-          Limit: limit,
-          KeyConditionExpression: '#hour = :hour and #time < :time',
-          ExpressionAttributeValues: {
-            ':hour': { N: hour.toString() },
-            ':time': { N: cursor.toString() }
-          },
-          ExpressionAttributeNames: {
-            '#hour': 'Hour',
-            '#time': 'Time'
-          },
-          ScanIndexForward: false,
-          TableName: this.tableName,
-        }
-
-        this.dynamodb.query(params, async(err: any, data: DynamoDB.Types.ScanOutput) => {
-          if (err) {
-            this.logError(err)
-            reject(err)
+  public async getByTime(
+    hour: number,
+    cursor: number,
+    limit: number
+  ): Promise<{ results: Buffer[]; lastTime: number }> {
+    return new Promise<{ results: Buffer[]; lastTime: number }>(
+      (resolve: any, reject: any) => {
+        try {
+          const params: DynamoDB.Types.QueryInput = {
+            Limit: limit,
+            KeyConditionExpression: '#hour = :hour and #time < :time',
+            ExpressionAttributeValues: {
+              ':hour': { N: hour.toString() },
+              ':time': { N: cursor.toString() }
+            },
+            ExpressionAttributeNames: {
+              '#hour': 'Hour',
+              '#time': 'Time'
+            },
+            ScanIndexForward: false,
+            TableName: this.tableName
           }
 
-          const result = []
-          let lastTime = 0
-          if (data && data.Items) {
-            for (const item of data.Items) {
-              if (item.Bytes && item.Bytes.B && item.Time && item.Time.N) {
-                result.push(item.Bytes.B)
-                lastTime = parseInt(item.Time.N, 10)
-              } else {
-                this.logError(`Result with Missing Bytes: ${item}`)
+          this.dynamodb.query(
+            params,
+            async (err: any, data: DynamoDB.Types.ScanOutput) => {
+              if (err) {
+                this.logError(err)
+                reject(err)
               }
+
+              const result = []
+              let lastTime = 0
+              if (data && data.Items) {
+                for (const item of data.Items) {
+                  if (item.Bytes && item.Bytes.B && item.Time && item.Time.N) {
+                    result.push(item.Bytes.B)
+                    lastTime = parseInt(item.Time.N, 10)
+                  } else {
+                    this.logError(`Result with Missing Bytes: ${item}`)
+                  }
+                }
+              }
+              resolve({ lastTime, results: result })
             }
-          }
-          resolve({ lastTime, results: result })
-        })
-      } catch (ex) {
-        this.logError(ex)
-        reject(ex)
+          )
+        } catch (ex) {
+          this.logError(ex)
+          reject(ex)
+        }
       }
-    })
+    )
   }
 }

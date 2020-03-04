@@ -1,11 +1,16 @@
-
-import { IXyoPlugin, IXyoGraphQlDelegate, IXyoBoundWitnessMutexDelegate, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  IXyoPlugin,
+  IXyoGraphQlDelegate,
+  IXyoBoundWitnessMutexDelegate,
+  IXyoPluginDelegate,
+  XyoPluginProviders
+} from '@xyo-network/sdk-base-nodejs'
 import { IXyoOriginBlockGetter } from '@xyo-network/sdk-core-nodejs'
 import { XyoGetBlockByHashResolver } from '../block-by-hash'
 import { XyoGetBlockList } from '../block-list'
 
 export class XyoGraphQlBlockGetPlugin implements IXyoPlugin {
-
   public getName(): string {
     return 'graphql-block-getter'
   }
@@ -16,16 +21,20 @@ export class XyoGraphQlBlockGetPlugin implements IXyoPlugin {
 
   public getPluginDependencies(): string[] {
     return [
-      XyoPluginProviders.BLOCK_REPOSITORY_GET, // for getting the blocks
+      XyoPluginProviders.BLOCK_REPOSITORY_GET // for getting the blocks
     ]
   }
 
   public async initialize(delegate: IXyoPluginDelegate): Promise<boolean> {
-    const blockRepositoryGet = delegate.deps.BLOCK_REPOSITORY_GET as IXyoOriginBlockGetter
+    const blockRepositoryGet = delegate.deps
+      .BLOCK_REPOSITORY_GET as IXyoOriginBlockGetter
 
     const resolverHash = new XyoGetBlockByHashResolver(blockRepositoryGet)
     delegate.graphql.addQuery(XyoGetBlockByHashResolver.query)
-    delegate.graphql.addResolver(XyoGetBlockByHashResolver.queryName, resolverHash)
+    delegate.graphql.addResolver(
+      XyoGetBlockByHashResolver.queryName,
+      resolverHash
+    )
 
     const resolverAll = new XyoGetBlockList(blockRepositoryGet)
     delegate.graphql.addQuery(XyoGetBlockList.query)
@@ -33,7 +42,6 @@ export class XyoGraphQlBlockGetPlugin implements IXyoPlugin {
 
     return true
   }
-
 }
 
 module.exports = new XyoGraphQlBlockGetPlugin()

@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { XyoCollectorStats } from './xyo-collecter-stats'
 
-export class XyoCollecterStatsResolver extends XyoBase  {
-
+export class XyoCollecterStatsResolver extends XyoBase {
   public static query = 'collectorStatsSummary: CollectorStatsSummary!'
   public static type = `
       type CollectorStatsSummary {
@@ -19,9 +19,7 @@ export class XyoCollecterStatsResolver extends XyoBase  {
     `
   public static queryName = 'collectorStatsSummary'
 
-  constructor(
-      private readonly stats: XyoCollectorStats
-    ) {
+  constructor(private readonly stats: XyoCollectorStats) {
     super()
   }
 
@@ -35,7 +33,7 @@ export class XyoCollecterStatsResolver extends XyoBase  {
       runTimeCollectedPerBoundWitness: this.stats.getMeanBridgeBlockRuntime(),
       lastBoundWitnessTime: this.stats.getLastBoundWitnessTime().toString(), // a string because graphql only supports 32bit
       runTimeBoundWitnessMinute: this.stats.getMeanBoundWitnessPerMinuteRuntime(),
-      runTimeCollectedPerBoundWitnessMinute: this.stats.getMeanCollectedBoundWitnessPerMinuteRuntime(),
+      runTimeCollectedPerBoundWitnessMinute: this.stats.getMeanCollectedBoundWitnessPerMinuteRuntime()
     }
   }
 }

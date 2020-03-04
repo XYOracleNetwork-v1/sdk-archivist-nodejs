@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createHttpLink } from 'apollo-link-http'
 import { ApolloClient } from 'apollo-client'
 import nodeFetch from 'node-fetch'
@@ -26,19 +28,20 @@ export class ArchivistAbsorber extends XyoBase {
       query: this.blockQuery(n, this.cursorHash)
     })
 
-    const resultArray = (result.data.blockList.items as any[])
+    const resultArray = result.data.blockList.items as any[]
 
     if (resultArray.length === 0) {
       return []
     }
 
     this.cursorHash = resultArray[resultArray.length - 1].signedHash
-    this.logInfo(`Read ${resultArray.length}, Absorber cursor hash set to: ${this.cursorHash}`)
+    this.logInfo(
+      `Read ${resultArray.length}, Absorber cursor hash set to: ${this.cursorHash}`
+    )
 
-    return resultArray.map((item) => {
+    return resultArray.map(item => {
       return Buffer.from(item.bytes, 'base64')
     })
-
   }
 
   public resetCursor(cursor: string | undefined) {
