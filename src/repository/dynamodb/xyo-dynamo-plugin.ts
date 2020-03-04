@@ -1,9 +1,21 @@
-import { IXyoPlugin, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
+/* eslint-disable @typescript-eslint/member-delimiter-style */
+/* eslint-disable @typescript-eslint/interface-name-prefix */
+import {
+  IXyoPlugin,
+  IXyoPluginDelegate,
+  XyoPluginProviders
+} from '@xyo-network/sdk-base-nodejs'
 import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
-import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, IXyoBlockByPublicKeyRepository, IXyoBlocksByGeohashRepository, IXyoBlocksByTime } from '@xyo-network/sdk-core-nodejs'
+import {
+  IXyoOriginBlockGetter,
+  IXyoOriginBlockRepository,
+  IXyoBlockByPublicKeyRepository,
+  IXyoBlocksByGeohashRepository,
+  IXyoBlocksByTime
+} from '@xyo-network/sdk-core-nodejs'
 
 interface IXyoDynamoRepositoryConfig {
-  tablePrefix?: string,
+  tablePrefix?: string
   region?: string
 }
 
@@ -11,7 +23,9 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
   public BLOCK_REPOSITORY_GET: IXyoOriginBlockGetter | undefined
   public BLOCK_REPOSITORY_ADD: IXyoOriginBlockRepository | undefined
   public BLOCK_REPOSITORY_PUBLIC_KEY: IXyoBlockByPublicKeyRepository | undefined
-  public BLOCK_REPOSITORY_PUBLIC_GEOHASH: IXyoBlocksByGeohashRepository | undefined
+  public BLOCK_REPOSITORY_PUBLIC_GEOHASH:
+    | IXyoBlocksByGeohashRepository
+    | undefined
   public BLOCK_REPOSITORY_TIME: IXyoBlocksByTime | undefined
 
   public getName(): string {
@@ -33,7 +47,10 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
 
   public async initialize(delegate: IXyoPluginDelegate): Promise<boolean> {
     const dbConfig = delegate.config as IXyoDynamoRepositoryConfig
-    const db = new XyoArchivistDynamoRepository(dbConfig.tablePrefix, dbConfig.region)
+    const db = new XyoArchivistDynamoRepository(
+      dbConfig.tablePrefix,
+      dbConfig.region
+    )
 
     this.BLOCK_REPOSITORY_GET = db
     this.BLOCK_REPOSITORY_ADD = db
@@ -45,7 +62,6 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
 
     return true
   }
-
 }
 
 module.exports = new XyoArchivistDynamoRepositoryPlugin()

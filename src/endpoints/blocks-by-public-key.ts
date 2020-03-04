@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * @Author: XY | The Findables Company <xyo-network>
  * @Date:   Thursday, 14th February 2019 2:50:26 pm
@@ -15,8 +17,8 @@ import { IXyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
 import bs58 from 'bs58'
 
 export class XyoGetBlocksByPublicKeyResolver extends XyoBase {
-
-  public static query = 'blocksByPublicKey(publicKey: String!, up: Boolean!, limit: Int, index: Int): XyoBlockCollection'
+  public static query =
+    'blocksByPublicKey(publicKey: String!, up: Boolean!, limit: Int, index: Int): XyoBlockCollection'
   public static queryName = 'blocksByPublicKey'
 
   constructor(
@@ -30,26 +32,44 @@ export class XyoGetBlocksByPublicKeyResolver extends XyoBase {
       return []
     }
 
-    const innerBlocks = await this.getBlockCollectionForPublicKey(args.publicKey, args.limit, args.index, args.up)
+    const innerBlocks = await this.getBlockCollectionForPublicKey(
+      args.publicKey,
+      args.limit,
+      args.index,
+      args.up
+    )
 
     return innerBlocks
   }
 
-  private async getBlockCollectionForPublicKey(publicKey: string, limit: number | undefined, index: number | undefined, up: boolean) {
+  private async getBlockCollectionForPublicKey(
+    publicKey: string,
+    limit: number | undefined,
+    index: number | undefined,
+    up: boolean
+  ) {
     try {
-      const blocksByPublicKeySet = await this.archivistRepository.getOriginBlocksByPublicKey(bs58.decode(publicKey), index, limit, up)
+      const blocksByPublicKeySet = await this.archivistRepository.getOriginBlocksByPublicKey(
+        bs58.decode(publicKey),
+        index,
+        limit,
+        up
+      )
 
-      const serializedBoundWitnesses = await blocksByPublicKeySet.items.map((block: Buffer) => {
-        return bufferToGraphQlBlock(block)
-      })
+      const serializedBoundWitnesses = await blocksByPublicKeySet.items.map(
+        (block: Buffer) => {
+          return bufferToGraphQlBlock(block)
+        }
+      )
 
       return {
         blocks: serializedBoundWitnesses,
         keySet: [publicKey]
       }
-
     } catch (e) {
-      this.logError(`There was an error getting block-collection from public-key ${e}`)
+      this.logError(
+        `There was an error getting block-collection from public-key ${e}`
+      )
       return {
         blocks: [],
         keySet: [publicKey]

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/interface-name-prefix */
+/* eslint-disable @typescript-eslint/member-delimiter-style */
 /*
  * File: index.ts
  * Project: @xyo-network/sdk-archivist-nodejs

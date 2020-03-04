@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /*
  * File: index.ts
  * Project: @xyo-network/sdk-archivist-nodejs
@@ -11,9 +12,21 @@
  */
 
 import { XyoNode } from './archivist-collecter'
-import { IXyoPlugin, IXyoBoundWitnessMutexDelegate, IXyoGraphQlDelegate, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
+import {
+  IXyoPlugin,
+  IXyoBoundWitnessMutexDelegate,
+  IXyoGraphQlDelegate,
+  IXyoPluginDelegate,
+  XyoPluginProviders
+} from '@xyo-network/sdk-base-nodejs'
 import { IXyoArchivistConfig } from './archivist-collecter/@types'
-import { XyoOriginState, IXyoOriginBlockRepository, IXyoOriginBlockGetter, IXyoBlockByPublicKeyRepository, XyoBoundWitnessInserter } from '@xyo-network/sdk-core-nodejs'
+import {
+  XyoOriginState,
+  IXyoOriginBlockRepository,
+  IXyoOriginBlockGetter,
+  IXyoBlockByPublicKeyRepository,
+  XyoBoundWitnessInserter
+} from '@xyo-network/sdk-core-nodejs'
 import { XyoArchivistInfoResolver } from './endpoints/archivist-info'
 
 class XyoArchivistPlugin implements IXyoPlugin {
@@ -24,9 +37,7 @@ class XyoArchivistPlugin implements IXyoPlugin {
   }
 
   public getProvides(): string[] {
-    return [
-      XyoPluginProviders.BOUND_WITNESS_INSERTER
-    ]
+    return [XyoPluginProviders.BOUND_WITNESS_INSERTER]
   }
 
   public getPluginDependencies(): string[] {
@@ -41,22 +52,30 @@ class XyoArchivistPlugin implements IXyoPlugin {
     const port = archivistConfig.port || 11000
 
     const originState = delegate.deps.ORIGIN_STATE as XyoOriginState
-    const blockRepositoryAdd = delegate.deps.BLOCK_REPOSITORY_ADD as IXyoOriginBlockRepository
+    const blockRepositoryAdd = delegate.deps
+      .BLOCK_REPOSITORY_ADD as IXyoOriginBlockRepository
 
     const archivistQuery = new XyoArchivistInfoResolver(port)
 
     delegate.graphql.addQuery(XyoArchivistInfoResolver.query)
-    delegate.graphql.addResolver(XyoArchivistInfoResolver.queryName, archivistQuery)
+    delegate.graphql.addResolver(
+      XyoArchivistInfoResolver.queryName,
+      archivistQuery
+    )
     delegate.graphql.addType(XyoArchivistInfoResolver.type)
 
-    const node = new XyoNode(port, originState, blockRepositoryAdd, delegate.mutex)
+    const node = new XyoNode(
+      port,
+      originState,
+      blockRepositoryAdd,
+      delegate.mutex
+    )
     await node.start()
 
     this.BOUND_WITNESS_INSERTER = node.inserter
 
     return true
   }
-
 }
 
 module.exports = new XyoArchivistPlugin()

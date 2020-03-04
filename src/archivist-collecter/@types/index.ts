@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/member-delimiter-style */
+/* eslint-disable @typescript-eslint/interface-name-prefix */
 /*
  * @Author: XY | The Findables Company <xyo-network>
  * @Date:   Friday, 8th February 2019 12:54:30 pm

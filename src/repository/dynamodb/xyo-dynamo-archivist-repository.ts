@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /*
  * File: xyo-dynamo-archivist-repository.ts
  * Project: sdk-archivist-nodejs
@@ -13,7 +15,18 @@
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import { BoundWitnessTable } from './table/boundwitness'
 import { PublicKeyTable } from './table/publickey'
-import { XyoIterableStructure, IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoBoundWitness, IXyoBlockByPublicKeyRepository, XyoBoundWitnessOriginGetter, addAllDefaults, XyoObjectSchema, gpsResolver, IXyoBlocksByTime } from '@xyo-network/sdk-core-nodejs'
+import {
+  XyoIterableStructure,
+  IXyoOriginBlockGetter,
+  IXyoOriginBlockRepository,
+  XyoBoundWitness,
+  IXyoBlockByPublicKeyRepository,
+  XyoBoundWitnessOriginGetter,
+  addAllDefaults,
+  XyoObjectSchema,
+  gpsResolver,
+  IXyoBlocksByTime
+} from '@xyo-network/sdk-core-nodejs'
 import crypto from 'crypto'
 import ngeohash from 'ngeohash'
 import { GeohashTable } from './table/geo'
@@ -22,23 +35,24 @@ import { TimeTable } from './table/time'
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
 
-export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOriginBlockGetter,
-                                                                      IXyoOriginBlockRepository,
-                                                                      IXyoBlockByPublicKeyRepository,
-                                                                      IXyoBlocksByTime {
-
+export class XyoArchivistDynamoRepository extends XyoBase
+  implements
+    IXyoOriginBlockGetter,
+    IXyoOriginBlockRepository,
+    IXyoBlockByPublicKeyRepository,
+    IXyoBlocksByTime {
   private maxNumberOfBlockResults = 10_000
   private boundWitnessTable: BoundWitnessTable
   private publicKeyTable: PublicKeyTable
   public geoTable: GeohashTable
   public timeTable: TimeTable
 
-  constructor(
-    tablePrefix: string = 'xyo-archivist',
-    region: string = 'us-east-1'
-  ) {
+  constructor(tablePrefix = 'xyo-archivist', region = 'us-east-1') {
     super()
-    this.boundWitnessTable = new BoundWitnessTable(`${tablePrefix}-boundwitness`, region)
+    this.boundWitnessTable = new BoundWitnessTable(
+      `${tablePrefix}-boundwitness`,
+      region
+    )
     this.publicKeyTable = new PublicKeyTable(`${tablePrefix}-chains`, region)
     this.geoTable = new GeohashTable(`${tablePrefix}-geohash`, region)
     this.timeTable = new TimeTable(`${tablePrefix}-time`, region)
@@ -54,20 +68,30 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
     return true
   }
 
-  public async getOriginBlocksByPublicKey(publicKey: Buffer, index: number | undefined, limit: number | undefined, up: boolean): Promise<{ items: Buffer[]; total: number; }> {
+  public async getOriginBlocksByPublicKey(
+    publicKey: Buffer,
+    index: number | undefined,
+    limit: number | undefined,
+    up: boolean
+  ): Promise<{ items: Buffer[]; total: number }> {
     if ((limit || 100) > this.maxNumberOfBlockResults) {
       throw new Error('Max number of blocks reached')
     }
 
     const shortKey = this.sha1(publicKey)
-    const scanResult = await this.publicKeyTable.scanByKey(shortKey, limit || 100, index || 0, up)
+    const scanResult = await this.publicKeyTable.scanByKey(
+      shortKey,
+      limit || 100,
+      index || 0,
+      up
+    )
 
     const result: Buffer[] = []
     for (const hash of scanResult.items) {
       const data = await this.boundWitnessTable.getItem(hash)
       result.push(data)
     }
-    return { items: result, total:scanResult.total }
+    return { items: result, total: scanResult.total }
   }
 
   public async removeOriginBlock(hash: Buffer): Promise<void> {
@@ -75,7 +99,10 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
     return this.boundWitnessTable.deleteItem(shortHash)
   }
 
-  public async getOriginBlocksByGeohash(geohash: string, limit: number): Promise<Buffer[]> {
+  public async getOriginBlocksByGeohash(
+    geohash: string,
+    limit: number
+  ): Promise<Buffer[]> {
     const hashes = await this.geoTable.getByGeohash(geohash, limit)
 
     const result: Buffer[] = []
@@ -93,18 +120,24 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
 
     for (const party of bw.getHeuristics()) {
       for (const huerestic of party) {
-
         if (huerestic.getSchema().id === XyoObjectSchema.GPS.id) {
-          const point = gpsResolver.resolve(huerestic.getAll().getContentsCopy()).value
+          const point = gpsResolver.resolve(
+            huerestic.getAll().getContentsCopy()
+          ).value
           const geohash = ngeohash.encode(point.lat, point.lng)
-          this.logInfo(`Adding geohash: ${geohash} at ${point.lat}, ${point.lng}`)
+          this.logInfo(
+            `Adding geohash: ${geohash} at ${point.lat}, ${point.lng}`
+          )
           await this.geoTable.putItem(geohash, hash)
         }
       }
     }
   }
 
-  public async addOriginBlock(hash: Buffer, originBlock: Buffer): Promise<void> {
+  public async addOriginBlock(
+    hash: Buffer,
+    originBlock: Buffer
+  ): Promise<void> {
     try {
       const shortHash = this.sha1(hash)
 
@@ -131,7 +164,10 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
     }
   }
 
-  public async addOriginBlockPublicKeys(hash: Buffer, originBlock: Buffer): Promise<void> {
+  public async addOriginBlockPublicKeys(
+    hash: Buffer,
+    originBlock: Buffer
+  ): Promise<void> {
     try {
       const shortHash = this.sha1(hash)
 
@@ -148,7 +184,6 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
           await this.publicKeyTable.putItem(shortKey, shortHash, origin.index)
         }
       }
-
     } catch (ex) {
       this.logError(ex)
       throw ex
@@ -166,11 +201,14 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
       i++
       const block = blockIt.next().value
       const hash = hashIt.next().value
-      await this.addOriginBlock(hash.getAll().getContentsCopy(), block.getAll().getContentsCopy())
+      await this.addOriginBlock(
+        hash.getAll().getContentsCopy(),
+        block.getAll().getContentsCopy()
+      )
     }
   }
 
-  public async getOriginBlock(hash: Buffer): Promise < Buffer | undefined > {
+  public async getOriginBlock(hash: Buffer): Promise<Buffer | undefined> {
     const shortHash = this.sha1(hash)
     const data = await this.boundWitnessTable.getItem(shortHash)
     if (data) {
@@ -178,7 +216,10 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
     }
   }
 
-  public async getOriginBlocks(limit: number, offsetHash ?: Buffer | undefined): Promise < {items: Buffer[], total: number} > {
+  public async getOriginBlocks(
+    limit: number,
+    offsetHash?: Buffer | undefined
+  ): Promise<{ items: Buffer[]; total: number }> {
     const shortOffsetHash = offsetHash ? this.sha1(offsetHash) : undefined
     const items = await this.boundWitnessTable.scan(limit, shortOffsetHash)
     const result: Buffer[] = []
@@ -187,10 +228,16 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
       result.push(item)
     }
 
-    return { items: result, total: (await this.boundWitnessTable.getRecordCount()) || -1 }
+    return {
+      items: result,
+      total: (await this.boundWitnessTable.getRecordCount()) || -1
+    }
   }
 
-  public async getOriginBlocksByTime(fromTime: number, limit: number): Promise<{ items: Buffer[]; lastTime: number; }> {
+  public async getOriginBlocksByTime(
+    fromTime: number,
+    limit: number
+  ): Promise<{ items: Buffer[]; lastTime: number }> {
     const hourBucket = Math.floor(fromTime / (1000 * 60 * 60))
 
     const blocks = await this.timeTable.getByTime(hourBucket, fromTime, limit)
@@ -198,13 +245,16 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
     if (blocks.results.length >= limit || blocks.results.length === 0) {
       return {
         items: blocks.results,
-        lastTime: blocks.lastTime,
+        lastTime: blocks.lastTime
       }
     }
 
     const delta = limit - blocks.results.length
 
-    const nextPageOfBlocks = await this.getOriginBlocksByTime(blocks.lastTime, delta)
+    const nextPageOfBlocks = await this.getOriginBlocksByTime(
+      blocks.lastTime,
+      delta
+    )
 
     return {
       items: blocks.results.concat(nextPageOfBlocks.items),
@@ -213,6 +263,9 @@ export class XyoArchivistDynamoRepository extends XyoBase implements  IXyoOrigin
   }
 
   private sha1(data: Buffer) {
-    return crypto.createHash('sha1').update(data).digest()
+    return crypto
+      .createHash('sha1')
+      .update(data)
+      .digest()
   }
 }

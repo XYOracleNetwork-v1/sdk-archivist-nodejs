@@ -1,8 +1,7 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
-export class XyoArchivistInfoResolver extends XyoBase  {
-
+export class XyoArchivistInfoResolver extends XyoBase {
   public static query = 'archivist: ArchivistInfo!'
   public static type = `
     type ArchivistInfo {
@@ -11,9 +10,7 @@ export class XyoArchivistInfoResolver extends XyoBase  {
   `
   public static queryName = 'archivist'
 
-  constructor(
-    private readonly serverPort: number
-  ) {
+  constructor(private readonly serverPort: number) {
     super()
   }
 

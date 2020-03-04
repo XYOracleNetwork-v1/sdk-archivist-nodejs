@@ -1,5 +1,18 @@
-import { IXyoPlugin, IXyoGraphQlDelegate, IXyoPluginDelegate, XyoPluginProviders } from '@xyo-network/sdk-base-nodejs'
-import { XyoBoundWitnessInserter, XyoObjectSchema, XyoBoundWitness, XyoIterableStructure, XyoStructure, XyoSchema } from '@xyo-network/sdk-core-nodejs'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  IXyoPlugin,
+  IXyoGraphQlDelegate,
+  IXyoPluginDelegate,
+  XyoPluginProviders
+} from '@xyo-network/sdk-base-nodejs'
+import {
+  XyoBoundWitnessInserter,
+  XyoObjectSchema,
+  XyoBoundWitness,
+  XyoIterableStructure,
+  XyoStructure,
+  XyoSchema
+} from '@xyo-network/sdk-core-nodejs'
 import { XyoCollectorStats } from './xyo-collecter-stats'
 import { XyoCollecterStatsResolver } from './xyo-collecter-stats-resolver'
 import { XyoStatSnap } from './snapshot/xyo-stat-snapshoter'
@@ -13,18 +26,15 @@ class XyoCollectorStatsPlugin implements IXyoPlugin {
   }
 
   public getProvides(): string[] {
-    return [
-      XyoPluginProviders.BOUND_WITNESS_COLLECTOR_STATS
-    ]
+    return [XyoPluginProviders.BOUND_WITNESS_COLLECTOR_STATS]
   }
   public getPluginDependencies(): string[] {
-    return [
-      XyoPluginProviders.BOUND_WITNESS_INSERTER
-    ]
+    return [XyoPluginProviders.BOUND_WITNESS_INSERTER]
   }
 
   public async initialize(delegate: IXyoPluginDelegate): Promise<boolean> {
-    const inserter = delegate.deps.BOUND_WITNESS_INSERTER as XyoBoundWitnessInserter
+    const inserter = delegate.deps
+      .BOUND_WITNESS_INSERTER as XyoBoundWitnessInserter
     const stats = new XyoCollectorStats()
     const resolver = new XyoCollecterStatsResolver(stats)
     const snapSaver = new XyoStatSnap(stats)
@@ -37,9 +47,13 @@ class XyoCollectorStatsPlugin implements IXyoPlugin {
     delegate.graphql.addQuery(XyoSnapResolver.query)
     delegate.graphql.addResolver(XyoSnapResolver.queryName, snapResolver)
 
-    inserter.addBlockListener('collector-stats', (boundWitness) => {
+    inserter.addBlockListener('collector-stats', boundWitness => {
       let nestedBlockCount = 0
-      const hashSet = this.getNestedObjectType(new XyoBoundWitness(boundWitness), XyoObjectSchema.FETTER, XyoObjectSchema.BRIDGE_HASH_SET)
+      const hashSet = this.getNestedObjectType(
+        new XyoBoundWitness(boundWitness),
+        XyoObjectSchema.FETTER,
+        XyoObjectSchema.BRIDGE_HASH_SET
+      )
 
       if (hashSet) {
         nestedBlockCount = (hashSet as XyoIterableStructure).getCount()
@@ -57,13 +71,20 @@ class XyoCollectorStatsPlugin implements IXyoPlugin {
     return true
   }
 
-  private getNestedObjectType(boundWitness: XyoBoundWitness, rootSchema: XyoSchema, subSchema: XyoSchema): XyoStructure | undefined {
+  private getNestedObjectType(
+    boundWitness: XyoBoundWitness,
+    rootSchema: XyoSchema,
+    subSchema: XyoSchema
+  ): XyoStructure | undefined {
     const it = boundWitness.newIterator()
 
     while (it.hasNext()) {
       const bwItem = it.next().value
 
-      if (bwItem.getSchema().id === rootSchema.id && bwItem instanceof XyoIterableStructure) {
+      if (
+        bwItem.getSchema().id === rootSchema.id &&
+        bwItem instanceof XyoIterableStructure
+      ) {
         const fetterIt = bwItem.newIterator()
 
         while (fetterIt.hasNext()) {
@@ -78,7 +99,6 @@ class XyoCollectorStatsPlugin implements IXyoPlugin {
 
     return
   }
-
 }
 
 module.exports = new XyoCollectorStatsPlugin()

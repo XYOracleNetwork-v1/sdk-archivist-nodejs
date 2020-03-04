@@ -1,8 +1,13 @@
-import { IXyoProcedureCatalog, XyoCatalogFlags } from '@xyo-network/sdk-core-nodejs'
+import {
+  IXyoProcedureCatalog,
+  XyoCatalogFlags
+} from '@xyo-network/sdk-core-nodejs'
 
 export const receiveProcedureCatalog: IXyoProcedureCatalog = {
   getEncodedCanDo: () => {
-    return Buffer.from([XyoCatalogFlags.TAKE_ORIGIN_CHAIN | XyoCatalogFlags.BOUND_WITNESS])
+    return Buffer.from([
+      XyoCatalogFlags.TAKE_ORIGIN_CHAIN | XyoCatalogFlags.BOUND_WITNESS
+    ])
   },
   choose: (catalog: Buffer): Buffer => {
     if (catalog.length < 1) {
@@ -24,6 +29,10 @@ export const receiveProcedureCatalog: IXyoProcedureCatalog = {
     }
 
     const catalogueInt = buffer.readUInt8(0)
-    return (catalogueInt & (XyoCatalogFlags.GIVE_ORIGIN_CHAIN | XyoCatalogFlags.BOUND_WITNESS)) !== 0
+    return (
+      (catalogueInt &
+        (XyoCatalogFlags.GIVE_ORIGIN_CHAIN | XyoCatalogFlags.BOUND_WITNESS)) !==
+      0
+    )
   }
 }

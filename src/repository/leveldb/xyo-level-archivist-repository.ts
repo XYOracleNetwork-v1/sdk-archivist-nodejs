@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /*
  * File: xyo-level-archivist-repository.ts
  * Project: sdk-archivist-nodejs
@@ -11,16 +13,20 @@
  */
 
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
-import { IXyoOriginBlockGetter, IXyoOriginBlockRepository, XyoIterableStructure } from '@xyo-network/sdk-core-nodejs'
+import {
+  IXyoOriginBlockGetter,
+  IXyoOriginBlockRepository,
+  XyoIterableStructure
+} from '@xyo-network/sdk-core-nodejs'
 import { AbstractIteratorOptions } from 'abstract-leveldown'
 import levelup, { LevelUp } from 'levelup'
 import leveldown from 'leveldown'
 
-export class XyoArchivistLevelRepository extends XyoBase implements IXyoOriginBlockGetter, IXyoOriginBlockRepository {
-
+export class XyoArchivistLevelRepository extends XyoBase
+  implements IXyoOriginBlockGetter, IXyoOriginBlockRepository {
   private db: LevelUp
 
-  constructor(path: string = './xyo-block-store') {
+  constructor(path = './xyo-block-store') {
     super()
     this.db = levelup(leveldown(path))
   }
@@ -33,7 +39,10 @@ export class XyoArchivistLevelRepository extends XyoBase implements IXyoOriginBl
     this.db.del(hash)
   }
 
-  public async addOriginBlock(hash: Buffer, originBlock: Buffer): Promise<void> {
+  public async addOriginBlock(
+    hash: Buffer,
+    originBlock: Buffer
+  ): Promise<void> {
     return this.db.put(hash, originBlock)
   }
 
@@ -46,7 +55,10 @@ export class XyoArchivistLevelRepository extends XyoBase implements IXyoOriginBl
     while (blockIt.hasNext()) {
       const block = blockIt.next().value
       const hash = hashIt.next().value
-      await this.addOriginBlock(hash.getAll().getContentsCopy(), block.getAll().getContentsCopy())
+      await this.addOriginBlock(
+        hash.getAll().getContentsCopy(),
+        block.getAll().getContentsCopy()
+      )
     }
   }
 
@@ -54,7 +66,10 @@ export class XyoArchivistLevelRepository extends XyoBase implements IXyoOriginBl
     return this.db.get(hash)
   }
 
-  public getOriginBlocks(limit: number, offsetHash?: Buffer | undefined): Promise<{items: Buffer[], total: number}> {
+  public getOriginBlocks(
+    limit: number,
+    offsetHash?: Buffer | undefined
+  ): Promise<{ items: Buffer[]; total: number }> {
     return new Promise((resolve, reject) => {
       const options: AbstractIteratorOptions = {
         limit
@@ -68,15 +83,17 @@ export class XyoArchivistLevelRepository extends XyoBase implements IXyoOriginBl
 
       const blocks: Buffer[] = []
 
-      this.db.createReadStream(options
-        ).on('data', (data: any) => {
+      this.db
+        .createReadStream(options)
+        .on('data', (data: any) => {
           blocks.push(data.value)
-        }).on('error', (err: any) => {
+        })
+        .on('error', (err: any) => {
           reject(err)
-        }).on('close', () => {
+        })
+        .on('close', () => {
           resolve({ items: blocks, total: blocks.length })
         })
-
-    }) as Promise<{items: Buffer[], total: number}>
+    }) as Promise<{ items: Buffer[]; total: number }>
   }
 }

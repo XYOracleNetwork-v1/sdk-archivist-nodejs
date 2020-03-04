@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /*
  * File: index.ts
  * Project: sdk-archivist-nodejs
