@@ -4,7 +4,7 @@
 
 # XYO ARCHIVIST SDK (sdk-archivist-nodejs)
 
-![npm](https://img.shields.io/npm/v/@xyo-network/sdk-archivist-nodejs.svg?style=plastic)
+[![NPM](https://img.shields.io/npm/v/@xyo-network/sdk-archivist-nodejs.svg?style=plastic)](https://www.npmjs.com/package/@xyo-network/sdk-archivist-nodejs)
  
 ![](https://github.com/XYOracleNetwork/sdk-archivist-nodejs/workflows/Build/badge.svg) [![Maintainability](https://api.codeclimate.com/v1/badges/f3dd4f4d35e1bd9eeabc/maintainability)](https://codeclimate.com/github/XYOracleNetwork/sdk-archivist-nodejs/maintainability) [![BCH compliance](https://bettercodehub.com/edge/badge/XYOracleNetwork/sdk-archivist-nodejs?branch=master)](https://bettercodehub.com/results/XYOracleNetwork/sdk-archivist-nodejs) [![DepShield Badge](https://depshield.sonatype.org/badges/XYOracleNetwork/sdk-archivist-nodejs/depshield.svg)](https://depshield.github.io) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=XYOracleNetwork_sdk-archivist-nodejs&metric=alert_status)](https://sonarcloud.io/dashboard?id=XYOracleNetwork_sdk-archivist-nodejs) [![Known Vulnerabilities](https://snyk.io/test/github/XYOracleNetwork/sdk-archivist-nodejs/badge.svg)](https://snyk.io/test/github/XYOracleNetwork/sdk-archivist-nodejs)
 
