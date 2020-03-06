@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.12.18",
+  "version": "0.12.19",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -30,7 +30,6 @@
   "xyoPlugins": [
     "dist/index.js",
     "dist/collector-stats/index.js",
-    "dist/insight/index.js",
     "dist/notify/xyo-websocket-notify.js",
     "dist/elastic-search/xyo-geohash-elastic-search.js",
     "dist/repository/dynamodb/xyo-dynamo-plugin.js",
