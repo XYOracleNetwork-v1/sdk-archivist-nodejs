@@ -8,6 +8,8 @@
  
 ![](https://github.com/XYOracleNetwork/sdk-archivist-nodejs/workflows/Build/badge.svg) [![Maintainability](https://api.codeclimate.com/v1/badges/f3dd4f4d35e1bd9eeabc/maintainability)](https://codeclimate.com/github/XYOracleNetwork/sdk-archivist-nodejs/maintainability) [![BCH compliance](https://bettercodehub.com/edge/badge/XYOracleNetwork/sdk-archivist-nodejs?branch=master)](https://bettercodehub.com/results/XYOracleNetwork/sdk-archivist-nodejs) [![DepShield Badge](https://depshield.sonatype.org/badges/XYOracleNetwork/sdk-archivist-nodejs/depshield.svg)](https://depshield.github.io) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=XYOracleNetwork_sdk-archivist-nodejs&metric=alert_status)](https://sonarcloud.io/dashboard?id=XYOracleNetwork_sdk-archivist-nodejs) [![Known Vulnerabilities](https://snyk.io/test/github/XYOracleNetwork/sdk-archivist-nodejs/badge.svg)](https://snyk.io/test/github/XYOracleNetwork/sdk-archivist-nodejs)
 
+> The XYO Foundation provides this source code available in our efforts to advance the understanding of the XYO Procotol and its possible uses. We continue to maintain this software in the interest of developer education. Usage of this source code is not intended for production.
+
 ## Table of Contents
 
 - [Title](#xyo-archivist-sdk)
