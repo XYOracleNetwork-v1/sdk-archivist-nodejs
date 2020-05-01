@@ -1,0 +1,28 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.14.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - eslint > lodash:
+        patched: '2020-05-01T06:23:33.026Z'
+    - '@typescript-eslint/parser > @typescript-eslint/typescript-estree > lodash':
+        patched: '2020-05-01T06:23:33.026Z'
+    - eslint > inquirer > lodash:
+        patched: '2020-05-01T06:23:33.026Z'
+    - eslint > table > lodash:
+        patched: '2020-05-01T06:23:33.026Z'
+    - '@typescript-eslint/parser > @typescript-eslint/experimental-utils > @typescript-eslint/typescript-estree > lodash':
+        patched: '2020-05-01T06:23:33.026Z'
+    - eslint-config-airbnb-typescript > @typescript-eslint/parser > @typescript-eslint/typescript-estree > lodash:
+        patched: '2020-05-01T06:23:33.026Z'
+    - eslint-config-airbnb-typescript > @typescript-eslint/parser > @typescript-eslint/experimental-utils > @typescript-eslint/typescript-estree > lodash:
+        patched: '2020-05-01T06:23:33.026Z'
+    - lodash:
+        patched: '2020-05-01T06:23:33.026Z'
+    - elasticsearch > lodash:
+        patched: '2020-05-01T06:23:33.026Z'
+    - '@xyo-network/sdk-base-nodejs > winston > async > lodash':
+        patched: '2020-05-01T06:23:33.026Z'
+    - '@xyo-network/sdk-core-nodejs > @xyo-network/sdk-base-nodejs > winston > async > lodash':
+        patched: '2020-05-01T06:23:33.026Z'
