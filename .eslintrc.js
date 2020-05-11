@@ -14,5 +14,5 @@ module.exports = {
     singleQuote: 0,
     trailingComma: 0,
     semiColon: 0
-  },
+  }
 }
