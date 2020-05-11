@@ -23,7 +23,7 @@
     "lint": "yarn eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "yarn lint && yarn licensecheck",
     "start": "node ./dist/index.js dynamodb",
-    "build": "yarn xybuild && yarn copy",
+    "build": "yarn xybuild",
     "copy": "copyfiles -u 1 src/**/*.sql dist/",
     "develop": "ts-node --files src/cli.ts",
     "snyk-protect": "snyk protect",
