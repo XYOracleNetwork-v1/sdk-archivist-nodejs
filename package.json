@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.12.25",
+  "version": "0.12.26",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
