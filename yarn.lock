@@ -455,7 +455,7 @@
   resolved "https://registry.yarnpkg.com/@types/zen-observable/-/zen-observable-0.8.0.tgz#8b63ab7f1aa5321248aad5ac890a485656dcea4d"
   integrity sha512-te5lMAWii1uEJ4FwLjzdlbw3+n0FZNOvFXHxQDKeT0dilh7HOzdMzV2TrJVUzq8ep7J4Na8OUYPRLSQkJHAlrg==
 
-"@typescript-eslint/eslint-plugin@^2.32.0":
+"@typescript-eslint/eslint-plugin@^2.19.2":
   version "2.32.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-2.32.0.tgz#5d5cc2e00b1d4a4b848cc68bfdd3aede1ef0ad16"
   integrity sha512-nb1kSUa8cd22hGgxpGdVT6/iyP7IKyrnyZEGYo+tN8iyDdXvXa+nfsX03tJVeFfhbkwR/0CDk910zPbqSflAsg==
@@ -475,7 +475,7 @@
     eslint-scope "^5.0.0"
     eslint-utils "^2.0.0"
 
-"@typescript-eslint/parser@^2.32.0":
+"@typescript-eslint/parser@^2.19.2", "@typescript-eslint/parser@^2.24.0":
   version "2.32.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-2.32.0.tgz#a1ace8ab1af529580bfb6cc2cd55fd8d8b1e68ab"
   integrity sha512-swRtH835fUfm2khchiOVNchU3gVNaZNj2pY92QSx4kXan+RzaGNrwIRaCyX8uqzmK0xNPzseaUYHP8CsmrsjFw==
@@ -513,7 +513,21 @@
   dependencies:
     tslib "^1.9.3"
 
-"@xyo-network/sdk-base-nodejs@0.6.9", "@xyo-network/sdk-base-nodejs@^0.6.6":
+"@xyo-network/sdk-base-nodejs@0.6.6":
+  version "0.6.6"
+  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-base-nodejs/-/sdk-base-nodejs-0.6.6.tgz#a9cc849bec37f5304438658ff687a983b04b72db"
+  integrity sha512-T7ukfVIpzGe0eeQwc9Ph+O8iKAay8Wd2WkWRm+gjN5WVFGmvZBr5g4ZwSuhaZqELgHk0oG7tu/d0Nrl1/UUn3A==
+  dependencies:
+    "@types/node" "^13.7.1"
+    chalk "^3.0.0"
+    fs-extra "^8.1.0"
+    global "^4.4.0"
+    license-checker "^25.0.1"
+    ts-node "^8.6.2"
+    typescript "^3.7.5"
+    winston "^3.2.1"
+
+"@xyo-network/sdk-base-nodejs@^0.6.6":
   version "0.6.9"
   resolved "https://registry.yarnpkg.com/@xyo-network/sdk-base-nodejs/-/sdk-base-nodejs-0.6.9.tgz#89ab858712394e685a6e4df7a0251ee119f6d61a"
   integrity sha512-aM61X+JHiRHhOw+h8dvs6SXqTMhmL37aOGfFTF0kN/f0vso5Cdkh3DS34AOMCdqcGle7ItPiAn7P86/vYEMu0Q==
@@ -527,10 +541,10 @@
     typescript "^3.7.5"
     winston "^3.2.1"
 
-"@xyo-network/sdk-core-nodejs@0.70.23":
-  version "0.70.23"
-  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.70.23.tgz#9ef91c5d4c5265da189bcbbb03cf6c141b8b2dfd"
-  integrity sha512-o+mjcu878qggCp0R4suzaLlJv5HIRJpfcEzRbDBo9bXLp0q1hFONWjucQviI6FKdSCgsK9qBKSzJNLVCzRUDBA==
+"@xyo-network/sdk-core-nodejs@0.70.22":
+  version "0.70.22"
+  resolved "https://registry.yarnpkg.com/@xyo-network/sdk-core-nodejs/-/sdk-core-nodejs-0.70.22.tgz#f6aee1e492b543712eaf14d9875f094718386217"
+  integrity sha512-+XD6+w9zLSG87jUygb6+GSOW5cIp/48nrNX+YMxZt8Uzjcx5gNcF6Ix6ZlgYSTzmz9QhFgWgO+OGgePyGYJbhg==
   dependencies:
     "@xyo-network/sdk-base-nodejs" "^0.6.6"
     bs58 "4.0.1"
@@ -1121,6 +1135,11 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
+confusing-browser-globals@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/confusing-browser-globals/-/confusing-browser-globals-1.0.9.tgz#72bc13b483c0276801681871d4898516f8f54fdd"
+  integrity sha512-KbS1Y0jMtyPgIxjO7ZzMAuUpAKMt1SzCL9fsrKsX6b0zJPTaT0SiSPmewwVZg9UAO83HVIlEhZF84LIjZ0lmAw==
+
 contains-path@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/contains-path/-/contains-path-0.1.0.tgz#fe8cf184ff6670b6baef01a9d4861a5cbec4120a"
@@ -1483,6 +1502,33 @@ escodegen@1.x.x:
     optionator "^0.8.1"
   optionalDependencies:
     source-map "~0.6.1"
+
+eslint-config-airbnb-base@^14.1.0:
+  version "14.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-airbnb-base/-/eslint-config-airbnb-base-14.1.0.tgz#2ba4592dd6843258221d9bff2b6831bd77c874e4"
+  integrity sha512-+XCcfGyCnbzOnktDVhwsCAx+9DmrzEmuwxyHUJpw+kqBVT744OUBrB09khgFKlK1lshVww6qXGsYPZpavoNjJw==
+  dependencies:
+    confusing-browser-globals "^1.0.9"
+    object.assign "^4.1.0"
+    object.entries "^1.1.1"
+
+eslint-config-airbnb-typescript@^7.0.0:
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/eslint-config-airbnb-typescript/-/eslint-config-airbnb-typescript-7.2.1.tgz#bce3f02fa894d1ec2f31ac527992e03761a9b7d4"
+  integrity sha512-D3elVKUbdsCfkOVstSyWuiu+KGCVTrYxJPoenPIqZtL6Li/R4xBeVTXjZIui8B8D17bDN3Pz5dSr7jRLY5HqIg==
+  dependencies:
+    "@typescript-eslint/parser" "^2.24.0"
+    eslint-config-airbnb "^18.1.0"
+    eslint-config-airbnb-base "^14.1.0"
+
+eslint-config-airbnb@^18.1.0:
+  version "18.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-airbnb/-/eslint-config-airbnb-18.1.0.tgz#724d7e93dadd2169492ff5363c5aaa779e01257d"
+  integrity sha512-kZFuQC/MPnH7KJp6v95xsLBf63G/w7YqdPfQ0MUanxQ7zcKUNG8j+sSY860g3NwCBOa62apw16J6pRN+AOgXzw==
+  dependencies:
+    eslint-config-airbnb-base "^14.1.0"
+    object.assign "^4.1.0"
+    object.entries "^1.1.1"
 
 eslint-config-prettier@^6.10.0:
   version "6.11.0"
@@ -2801,6 +2847,16 @@ object.assign@^4.1.0:
     function-bind "^1.1.1"
     has-symbols "^1.0.0"
     object-keys "^1.0.11"
+
+object.entries@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/object.entries/-/object.entries-1.1.1.tgz#ee1cf04153de02bb093fec33683900f57ce5399b"
+  integrity sha512-ilqR7BgdyZetJutmDPfXCDffGa0/Yzl2ivVNpbx/g4UeWrCdRnFDUBrKJGLhGieRHDATnyZXWBeCb29k9CJysQ==
+  dependencies:
+    define-properties "^1.1.3"
+    es-abstract "^1.17.0-next.1"
+    function-bind "^1.1.1"
+    has "^1.0.3"
 
 object.values@^1.1.0:
   version "1.1.1"
@@ -4240,7 +4296,7 @@ type-fest@^0.8.1:
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.8.1.tgz#09e249ebde851d3b1e48d27c105444667f17b83d"
   integrity sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==
 
-typescript@3.8.3, typescript@^3.7.5, typescript@^3.8.3:
+typescript@3.8.3, typescript@^3.4.5, typescript@^3.7.5:
   version "3.8.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.8.3.tgz#409eb8544ea0335711205869ec458ab109ee1061"
   integrity sha512-MYlEfn5VrLNsgudQTVJeNaQFUAI7DkhnOjdpAp4T+ku1TfQClewlbSuTVHiA+8skNBgaf02TL/kLOvig4y3G8w==
