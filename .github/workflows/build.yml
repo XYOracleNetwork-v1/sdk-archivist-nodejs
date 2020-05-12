@@ -10,17 +10,20 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x, 12.x]    
+
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
-      with: 
-        node-version: 10.15.0
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
     - uses: sonarsource/sonarcloud-github-action@master
       env: 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_2}}
-    - name: Cache Clean
-      run: yarn cache clean
     - name: Install
       run: yarn install
     - name: Build
