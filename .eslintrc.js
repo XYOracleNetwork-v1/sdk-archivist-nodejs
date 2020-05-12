@@ -8,11 +8,12 @@ module.exports = {
     'plugin:@typescript-eslint/recommended'
   ],
   parserOptions: {
+    tsconfigRootDir: __dirname,
     project: './tsconfig.json'
   },
   rules: {
     singleQuote: 0,
     trailingComma: 0,
     semiColon: 0
-  },
+  }
 }
