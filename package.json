@@ -64,14 +64,13 @@
     "@typescript-eslint/parser": "^2.31.0",
     "copyfiles": "^2.2.0",
     "eslint": "^6.8.0",
-    "eslint-config-airbnb-typescript": "^7.0.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-prettier": "^3.1.2",
     "license-checker": "^25.0.1",
     "prettier": "^1.19.1",
-    "ts-node": "^8.0.3",
-    "typescript": "^3.4.5"
+    "ts-node": "^8.1.0",
+    "typescript": "^3.8.3"
   },
   "dependencies": {
     "@types/elasticsearch": "^5.0.34",
@@ -89,7 +88,7 @@
     "graphql-tag": "^2.10.1",
     "leveldown": "^5.0.3",
     "levelup": "^4.0.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.14",
     "lru-cache": "^5.1.1",
     "mysql": "^2.17.1",
     "ngeohash": "^0.6.3",
