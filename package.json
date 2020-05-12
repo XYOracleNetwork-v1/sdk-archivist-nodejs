@@ -1,6 +1,6 @@
 {
   "name": "@xyo-network/sdk-archivist-nodejs",
-  "version": "0.12.26",
+  "version": "0.12.21",
   "description": "XYO Archivist SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -76,8 +76,8 @@
     "@types/elasticsearch": "^5.0.34",
     "@types/redis": "^2.8.13",
     "@types/ws": "^6.0.1",
-    "@xyo-network/sdk-base-nodejs": "0.6.6",
-    "@xyo-network/sdk-core-nodejs": "0.70.22",
+    "@xyo-network/sdk-base-nodejs": "0.6.9",
+    "@xyo-network/sdk-core-nodejs": "0.70.23",
     "abstract-leveldown": "^6.0.3",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.5.1",
