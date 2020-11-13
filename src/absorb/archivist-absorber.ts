@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { createHttpLink } from 'apollo-link-http'
-import { ApolloClient } from 'apollo-client'
-import nodeFetch from 'node-fetch'
-import gql from 'graphql-tag'
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
+import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'
+import { ApolloClient } from 'apollo-client'
+import { createHttpLink } from 'apollo-link-http'
+import gql from 'graphql-tag'
+import nodeFetch from 'node-fetch'
 
 export class ArchivistAbsorber extends XyoBase {
   private cursorHash: string | undefined
@@ -15,17 +13,17 @@ export class ArchivistAbsorber extends XyoBase {
     super()
 
     this.client = new ApolloClient({
+      cache: new InMemoryCache(),
       link: createHttpLink({
         fetch: nodeFetch as any,
-        uri: endpoint
+        uri: endpoint,
       }),
-      cache: new InMemoryCache()
     })
   }
 
   public async readBlocks(n: number): Promise<Buffer[]> {
     const result = await this.client.query({
-      query: this.blockQuery(n, this.cursorHash)
+      query: this.blockQuery(n, this.cursorHash),
     })
 
     const resultArray = result.data.blockList.items as any[]
@@ -39,7 +37,7 @@ export class ArchivistAbsorber extends XyoBase {
       `Read ${resultArray.length}, Absorber cursor hash set to: ${this.cursorHash}`
     )
 
-    return resultArray.map(item => {
+    return resultArray.map((item) => {
       return Buffer.from(item.bytes, 'base64')
     })
   }

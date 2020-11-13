@@ -1,27 +1,25 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable require-await */
 /*
  * File: xyo-neo4j-archivist-repository.ts
  * Project: sdk-archivist-nodejs
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 25th April 2019 3:21:52 pm
+ * Last Modified: Friday, 13th November 2020 2:48:01 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
-
-import _ from 'lodash'
 import {
-  IXyoOriginBlockGetter,
-  IXyoOriginBlockRepository
+  XyoOriginBlockGetter,
+  XyoOriginBlockRepository,
 } from '@xyo-network/sdk-core-nodejs'
 
-export class XyoArchivistNeo4jRepository extends XyoBase
-  implements IXyoOriginBlockGetter, IXyoOriginBlockRepository {
+export class XyoArchivistNeo4jRepository
+  extends XyoBase
+  implements XyoOriginBlockGetter, XyoOriginBlockRepository {
   constructor() {
     super()
   }
@@ -31,27 +29,30 @@ export class XyoArchivistNeo4jRepository extends XyoBase
   }
 
   public async getOriginBlocksByPublicKey(
-    publicKey: Buffer
+    _publicKey: Buffer
   ): Promise<{ items: Buffer[]; total: number }> {
     return { items: [], total: 0 }
   }
 
   public async getEntities(
-    limit: number,
-    offsetCursor?: Buffer | undefined
+    _limit: number,
+    _offsetCursor?: Buffer | undefined
   ): Promise<{ items: Buffer[]; total: number }> {
     return { items: [], total: 0 }
   }
 
-  public async addOriginBlocks(hashes: Buffer, blocks: Buffer): Promise<void> {
+  public async addOriginBlocks(
+    _hashes: Buffer,
+    _blocks: Buffer
+  ): Promise<void> {
     return
   }
 
-  public async removeOriginBlock(hash: Buffer): Promise<void> {
+  public async removeOriginBlock(_hash: Buffer): Promise<void> {
     return
   }
 
-  public async containsOriginBlock(hash: Buffer): Promise<boolean> {
+  public async containsOriginBlock(_hash: Buffer): Promise<boolean> {
     return false
   }
 
@@ -60,34 +61,34 @@ export class XyoArchivistNeo4jRepository extends XyoBase
   }
 
   public async addOriginBlock(
-    hash: Buffer,
-    originBlock: Buffer
+    _hash: Buffer,
+    _originBlock: Buffer
   ): Promise<void> {
     return
   }
 
-  public async getOriginBlock(hash: Buffer): Promise<Buffer | undefined> {
+  public async getOriginBlock(_hash: Buffer): Promise<Buffer | undefined> {
     return undefined
   }
 
   public async traceChain(
-    publicKey: Buffer,
-    limit: number,
-    offsetHash: Buffer | undefined,
-    up: boolean
+    _publicKey: Buffer,
+    _limit: number,
+    _offsetHash: Buffer | undefined,
+    _up: boolean
   ): Promise<Buffer[]> {
     return []
   }
 
   public async getBlocksThatProviderAttribution(
-    hash: Buffer
+    _hash: Buffer
   ): Promise<{ [h: string]: Buffer }> {
     return {}
   }
 
   public async getOriginBlocks(
-    limit: number,
-    offsetHash?: Buffer | undefined
+    _limit: number,
+    _offsetHash?: Buffer | undefined
   ): Promise<{ items: Buffer[]; total: number }> {
     return { items: [], total: 0 }
   }

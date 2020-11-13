@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
-import { XyoCollectorStats } from '../xyo-collecter-stats'
-import fs, { writeFileSync, readFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import os from 'os'
+
+import { XyoCollectorStats } from '../xyo-collecter-stats'
 
 const TIME_MINUTE = 1000 * 60
 const TIME_HOUR = TIME_MINUTE * 60

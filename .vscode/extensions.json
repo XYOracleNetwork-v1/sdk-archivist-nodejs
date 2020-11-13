@@ -1,0 +1,15 @@
+/*
+ * File: extensions.json
+ * Project: @xyo-network/sdk-archivist-nodejs
+ * File Created: Friday, 13th November 2020 2:39:17 pm
+ * Author: XYO Development Team (support@xyo.network)
+ * -----
+ * Last Modified: Friday, 13th November 2020 2:39:20 pm
+ * Modified By: XYO Development Team (support@xyo.network>)
+ * -----
+ * Copyright 2017 - 2020 XY - The Persistent Company
+ */
+
+{
+  "recommendations": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+}

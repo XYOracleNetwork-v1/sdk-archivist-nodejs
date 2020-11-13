@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/interface-name-prefix */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/member-delimiter-style */
+import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import fs from 'fs'
 import os from 'os'
-import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
 // todo move this into a plugin config
 const statStorePth = `${os.homedir()}/.config/xyo/stats.json`
@@ -98,7 +95,7 @@ export class XyoCollectorStats extends XyoBase {
     const state: IXyoCollectorStatsState = {
       allTimeBoundWitnesses: this.allTimeBoundWitnesses,
       allTimeCollectedBoundWitnesses: this.allTimeCollectedBoundWitnesses,
-      lastBoundWitnessTime: this.lastBoundWitnessTime
+      lastBoundWitnessTime: this.lastBoundWitnessTime,
     }
 
     const stateString = JSON.stringify(state)

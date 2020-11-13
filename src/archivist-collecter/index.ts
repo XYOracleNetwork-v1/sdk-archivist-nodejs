@@ -1,3 +1,4 @@
+export * from './default-node-config'
 /*
  * File: index.ts
  * Project: @xyo-network/base-node
@@ -9,6 +10,4 @@
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
-
 export * from './xyo-node'
-export * from './default-node-config'

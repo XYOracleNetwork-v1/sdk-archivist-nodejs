@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable require-await */
 /*
  * File: main-table.ts
  * Project: @xyo-network/sdk-archivist-nodejs
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 25th April 2019 3:24:48 pm
+ * Last Modified: Friday, 13th November 2020 2:58:50 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { Table } from './table'
 import { DynamoDB } from 'aws-sdk'
+
+import { Table } from './table'
 
 export class PublicKeyTable extends Table {
   constructor(tableName = 'xyo-archivist-chains', region = 'us-east-1') {
@@ -23,28 +23,28 @@ export class PublicKeyTable extends Table {
       AttributeDefinitions: [
         {
           AttributeName: 'PublicKey',
-          AttributeType: 'B'
+          AttributeType: 'B',
         },
         {
           AttributeName: 'Index',
-          AttributeType: 'N'
-        }
+          AttributeType: 'N',
+        },
       ],
       KeySchema: [
         {
           AttributeName: 'PublicKey',
-          KeyType: 'HASH'
+          KeyType: 'HASH',
         },
         {
           AttributeName: 'Index',
-          KeyType: 'RANGE'
-        }
+          KeyType: 'RANGE',
+        },
       ],
       ProvisionedThroughput: {
         ReadCapacityUnits: 5,
-        WriteCapacityUnits: 5
+        WriteCapacityUnits: 5,
       },
-      TableName: tableName
+      TableName: tableName,
     }
   }
 
@@ -57,22 +57,22 @@ export class PublicKeyTable extends Table {
       try {
         const params: DynamoDB.Types.PutItemInput = {
           Item: {
-            PublicKey: {
-              B: key
+            BlockHash: {
+              B: hash,
             },
             Index: {
-              N: index.toString()
+              N: index.toString(),
             },
-            BlockHash: {
-              B: hash
-            }
+            PublicKey: {
+              B: key,
+            },
           },
           ReturnConsumedCapacity: 'TOTAL',
-          TableName: this.tableName
+          TableName: this.tableName,
         }
         this.dynamodb.putItem(
           params,
-          (err: any, data: DynamoDB.Types.PutItemOutput) => {
+          (err: any, _data: DynamoDB.Types.PutItemOutput) => {
             if (err) {
               reject(err)
             }
@@ -96,40 +96,40 @@ export class PublicKeyTable extends Table {
       (resolve: any, reject: any) => {
         try {
           const params: DynamoDB.Types.QueryInput = {
-            Limit: limit,
-            KeyConditionExpression: 'PublicKey = :key',
-            ExpressionAttributeValues: {
-              ':key': { B: key }
-            },
             ExpressionAttributeNames: {
-              '#index': 'Index'
+              '#index': 'Index',
             },
+            ExpressionAttributeValues: {
+              ':key': { B: key },
+            },
+            KeyConditionExpression: 'PublicKey = :key',
+            Limit: limit,
+            ScanIndexForward: index !== -1,
             TableName: this.tableName,
-            ScanIndexForward: index !== -1
           }
 
           if (index !== undefined) {
             if (up) {
               params.ExpressionAttributeValues![':low'] = {
-                N: (index - 1).toString()
+                N: (index - 1).toString(),
               }
               params.ExpressionAttributeValues![':high'] = {
-                N: (index + limit).toString()
+                N: (index + limit).toString(),
               }
               params.KeyConditionExpression =
                 '(PublicKey = :key) and #index BETWEEN :low and :high'
             } else if (!up && index === -1) {
               params.ExpressionAttributeValues![':high'] = {
-                N: (Number.MAX_SAFE_INTEGER - 1).toString()
+                N: (Number.MAX_SAFE_INTEGER - 1).toString(),
               }
               params.KeyConditionExpression =
                 '(PublicKey = :key) and #index < :high'
             } else {
               params.ExpressionAttributeValues![':low'] = {
-                N: index.toString()
+                N: index.toString(),
               }
               params.ExpressionAttributeValues![':high'] = {
-                N: (index - limit - 1).toString()
+                N: (index - limit - 1).toString(),
               }
               params.KeyConditionExpression =
                 '(PublicKey = :key) and #index BETWEEN :high and :low'
@@ -140,11 +140,11 @@ export class PublicKeyTable extends Table {
                 Index: {
                   N: up
                     ? (index - 1).toString()
-                    : (index - limit - 1).toString()
+                    : (index - limit - 1).toString(),
                 },
                 PublicKey: {
-                  B: key
-                }
+                  B: key,
+                },
               }
             }
           }

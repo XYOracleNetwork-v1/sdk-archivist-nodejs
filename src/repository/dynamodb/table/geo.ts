@@ -1,19 +1,19 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable require-await */
 /*
  * File: main-table.ts
  * Project: @xyo-network/sdk-archivist-nodejs
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 25th April 2019 3:24:48 pm
+ * Last Modified: Friday, 13th November 2020 2:59:38 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { Table } from './table'
 import { DynamoDB } from 'aws-sdk'
+
+import { Table } from './table'
 
 export class GeohashTable extends Table {
   constructor(tableName = 'xyo-archivist-geohash', region = 'us-east-1') {
@@ -22,46 +22,46 @@ export class GeohashTable extends Table {
       AttributeDefinitions: [
         {
           AttributeName: 'Geohash2',
-          AttributeType: 'S'
+          AttributeType: 'S',
         },
         {
           AttributeName: 'BlockHash',
-          AttributeType: 'B'
-        }
+          AttributeType: 'B',
+        },
       ],
       KeySchema: [
         {
           AttributeName: 'Geohash2',
-          KeyType: 'HASH'
+          KeyType: 'HASH',
         },
         {
           AttributeName: 'BlockHash',
-          KeyType: 'RANGE'
-        }
+          KeyType: 'RANGE',
+        },
       ],
       LocalSecondaryIndexes: [
         {
           IndexName: 'Geohash2',
-          Projection: {
-            ProjectionType: 'ALL'
-          },
           KeySchema: [
             {
               AttributeName: 'Geohash2',
-              KeyType: 'HASH'
+              KeyType: 'HASH',
             },
             {
               AttributeName: 'Geohash',
-              KeyType: 'RANGE'
-            }
-          ]
-        }
+              KeyType: 'RANGE',
+            },
+          ],
+          Projection: {
+            ProjectionType: 'ALL',
+          },
+        },
       ],
       ProvisionedThroughput: {
         ReadCapacityUnits: 5,
-        WriteCapacityUnits: 5
+        WriteCapacityUnits: 5,
       },
-      TableName: tableName
+      TableName: tableName,
     }
   }
 
@@ -70,21 +70,21 @@ export class GeohashTable extends Table {
       try {
         const params: DynamoDB.Types.PutItemInput = {
           Item: {
-            Geohash2: {
-              S: `${geohash[0]}${geohash[1]}`
+            BlockHash: {
+              B: hash,
             },
             Geohash: {
-              S: geohash
+              S: geohash,
             },
-            BlockHash: {
-              B: hash
-            }
+            Geohash2: {
+              S: `${geohash[0]}${geohash[1]}`,
+            },
           },
-          TableName: this.tableName
+          TableName: this.tableName,
         }
         this.dynamodb.putItem(
           params,
-          (err: any, data: DynamoDB.Types.PutItemOutput) => {
+          (err: any, _data: DynamoDB.Types.PutItemOutput) => {
             if (err) {
               reject(err)
             }
@@ -102,15 +102,15 @@ export class GeohashTable extends Table {
     return new Promise<Buffer[]>((resolve: any, reject: any) => {
       try {
         const params: DynamoDB.Types.QueryInput = {
-          Limit: limit,
+          ExpressionAttributeValues: {
+            ':geohash': { S: geohash },
+            ':geohash2': { S: `${geohash[0]}${geohash[1]}` },
+          },
           IndexName: 'Geohash2',
           KeyConditionExpression:
             'Geohash2 = :geohash2 and begins_with(Geohash, :geohash)',
-          ExpressionAttributeValues: {
-            ':geohash2': { S: `${geohash[0]}${geohash[1]}` },
-            ':geohash': { S: geohash }
-          },
-          TableName: this.tableName
+          Limit: limit,
+          TableName: this.tableName,
         }
 
         this.dynamodb.query(

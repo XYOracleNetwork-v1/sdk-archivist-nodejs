@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable require-await */
 /*
  * File: xyo-level-archivist-repository.ts
  * Project: sdk-archivist-nodejs
  * File Created: Tuesday, 16th April 2019 9:19:05 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 25th April 2019 3:22:06 pm
+ * Last Modified: Friday, 13th November 2020 2:51:46 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
@@ -14,16 +13,17 @@
 
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 import {
-  IXyoOriginBlockGetter,
-  IXyoOriginBlockRepository,
-  XyoIterableStructure
+  XyoIterableStructure,
+  XyoOriginBlockGetter,
+  XyoOriginBlockRepository,
 } from '@xyo-network/sdk-core-nodejs'
 import { AbstractIteratorOptions } from 'abstract-leveldown'
-import levelup, { LevelUp } from 'levelup'
 import leveldown from 'leveldown'
+import levelup, { LevelUp } from 'levelup'
 
-export class XyoArchivistLevelRepository extends XyoBase
-  implements IXyoOriginBlockGetter, IXyoOriginBlockRepository {
+export class XyoArchivistLevelRepository
+  extends XyoBase
+  implements XyoOriginBlockGetter, XyoOriginBlockRepository {
   private db: LevelUp
 
   constructor(path = './xyo-block-store') {
@@ -72,7 +72,7 @@ export class XyoArchivistLevelRepository extends XyoBase
   ): Promise<{ items: Buffer[]; total: number }> {
     return new Promise((resolve, reject) => {
       const options: AbstractIteratorOptions = {
-        limit
+        limit,
       }
 
       if (offsetHash) {

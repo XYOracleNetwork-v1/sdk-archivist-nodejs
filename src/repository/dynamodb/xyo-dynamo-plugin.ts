@@ -1,18 +1,17 @@
-/* eslint-disable @typescript-eslint/member-delimiter-style */
-/* eslint-disable @typescript-eslint/interface-name-prefix */
 import {
   IXyoPlugin,
   IXyoPluginDelegate,
-  XyoPluginProviders
+  XyoPluginProviders,
 } from '@xyo-network/sdk-base-nodejs'
-import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
 import {
-  IXyoOriginBlockGetter,
-  IXyoOriginBlockRepository,
-  IXyoBlockByPublicKeyRepository,
-  IXyoBlocksByGeohashRepository,
-  IXyoBlocksByTime
+  XyoBlockByPublicKeyRepository,
+  XyoBlocksByGeohashRepository,
+  XyoBlocksByTime,
+  XyoOriginBlockGetter,
+  XyoOriginBlockRepository,
 } from '@xyo-network/sdk-core-nodejs'
+
+import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
 
 interface IXyoDynamoRepositoryConfig {
   tablePrefix?: string
@@ -20,13 +19,13 @@ interface IXyoDynamoRepositoryConfig {
 }
 
 export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
-  public BLOCK_REPOSITORY_GET: IXyoOriginBlockGetter | undefined
-  public BLOCK_REPOSITORY_ADD: IXyoOriginBlockRepository | undefined
-  public BLOCK_REPOSITORY_PUBLIC_KEY: IXyoBlockByPublicKeyRepository | undefined
+  public BLOCK_REPOSITORY_GET: XyoOriginBlockGetter | undefined
+  public BLOCK_REPOSITORY_ADD: XyoOriginBlockRepository | undefined
+  public BLOCK_REPOSITORY_PUBLIC_KEY: XyoBlockByPublicKeyRepository | undefined
   public BLOCK_REPOSITORY_PUBLIC_GEOHASH:
-    | IXyoBlocksByGeohashRepository
+    | XyoBlocksByGeohashRepository
     | undefined
-  public BLOCK_REPOSITORY_TIME: IXyoBlocksByTime | undefined
+  public BLOCK_REPOSITORY_TIME: XyoBlocksByTime | undefined
 
   public getName(): string {
     return 'archivist-dynamo-repository'
@@ -38,7 +37,7 @@ export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {
       XyoPluginProviders.BLOCK_REPOSITORY_ADD,
       XyoPluginProviders.BLOCK_REPOSITORY_PUBLIC_KEY,
       XyoPluginProviders.BLOCK_REPOSITORY_PUBLIC_GEOHASH,
-      'BLOCK_REPOSITORY_TIME'
+      'BLOCK_REPOSITORY_TIME',
     ]
   }
   public getPluginDependencies(): string[] {

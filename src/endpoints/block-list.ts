@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /*
  * @Author: XY | The Findables Company <xyo-network>
  * @Date:   Thursday, 14th February 2019 2:11:32 pm
@@ -12,19 +10,19 @@
  */
 
 import {
-  IXyoOriginBlockRepository,
-  XyoSha256,
   XyoBoundWitness,
-  IXyoOriginBlockGetter
+  XyoOriginBlockGetter,
+  XyoSha256,
 } from '@xyo-network/sdk-core-nodejs'
-import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
 import bs58 from 'bs58'
+
+import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
 
 export class XyoGetBlockList {
   public static query = 'blockList(limit: Int!, cursor: String): XyoBlockList!'
   public static queryName = 'blockList'
 
-  constructor(private readonly originBlockRepository: IXyoOriginBlockGetter) {}
+  constructor(private readonly originBlockRepository: XyoOriginBlockGetter) {}
 
   public async resolve(obj: any, args: any): Promise<any> {
     const cursor = args.cursor as string | undefined
@@ -40,16 +38,12 @@ export class XyoGetBlockList {
       const signingData = new XyoBoundWitness(
         result.items[result.items.length - 1]
       ).getSigningData()
-      endCursor = hasher
-        .hash(signingData)
-        .getAll()
-        .getContentsCopy()
-        .toString()
+      endCursor = hasher.hash(signingData).getAll().getContentsCopy().toString()
     }
 
     const items: any[] = []
 
-    result.items.forEach(buffer => {
+    result.items.forEach((buffer) => {
       try {
         items.push(bufferToGraphQlBlock(buffer))
       } catch {
@@ -61,8 +55,8 @@ export class XyoGetBlockList {
       items,
       meta: {
         endCursor,
-        totalCount: result.total
-      }
+        totalCount: result.total,
+      },
     }
   }
 }

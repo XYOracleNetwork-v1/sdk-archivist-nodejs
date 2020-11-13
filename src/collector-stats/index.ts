@@ -1,22 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   IXyoPlugin,
-  IXyoGraphQlDelegate,
   IXyoPluginDelegate,
-  XyoPluginProviders
+  XyoPluginProviders,
 } from '@xyo-network/sdk-base-nodejs'
 import {
-  XyoBoundWitnessInserter,
-  XyoObjectSchema,
   XyoBoundWitness,
+  XyoBoundWitnessInserter,
   XyoIterableStructure,
+  XyoObjectSchema,
+  XyoSchema,
   XyoStructure,
-  XyoSchema
 } from '@xyo-network/sdk-core-nodejs'
+
+import { XyoSnapResolver } from './snapshot/xyo-snapshot-resolver'
+import { XyoStatSnap } from './snapshot/xyo-stat-snapshoter'
 import { XyoCollectorStats } from './xyo-collecter-stats'
 import { XyoCollecterStatsResolver } from './xyo-collecter-stats-resolver'
-import { XyoStatSnap } from './snapshot/xyo-stat-snapshoter'
-import { XyoSnapResolver } from './snapshot/xyo-snapshot-resolver'
 
 class XyoCollectorStatsPlugin implements IXyoPlugin {
   public BOUND_WITNESS_COLLECTOR_STATS: XyoCollectorStats | undefined
@@ -32,6 +31,7 @@ class XyoCollectorStatsPlugin implements IXyoPlugin {
     return [XyoPluginProviders.BOUND_WITNESS_INSERTER]
   }
 
+  // eslint-disable-next-line require-await
   public async initialize(delegate: IXyoPluginDelegate): Promise<boolean> {
     const inserter = delegate.deps
       .BOUND_WITNESS_INSERTER as XyoBoundWitnessInserter
@@ -47,7 +47,7 @@ class XyoCollectorStatsPlugin implements IXyoPlugin {
     delegate.graphql.addQuery(XyoSnapResolver.query)
     delegate.graphql.addResolver(XyoSnapResolver.queryName, snapResolver)
 
-    inserter.addBlockListener('collector-stats', boundWitness => {
+    inserter.addBlockListener('collector-stats', (boundWitness) => {
       let nestedBlockCount = 0
       const hashSet = this.getNestedObjectType(
         new XyoBoundWitness(boundWitness),

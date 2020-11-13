@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
 
 export class XyoArchivistInfoResolver extends XyoBase {
@@ -14,9 +13,10 @@ export class XyoArchivistInfoResolver extends XyoBase {
     super()
   }
 
+  // eslint-disable-next-line require-await
   public async resolve(): Promise<any> {
     return {
-      boundWitnessServerPort: this.serverPort
+      boundWitnessServerPort: this.serverPort,
     }
   }
 }

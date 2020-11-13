@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable require-await */
 import {
   IXyoPlugin,
-  IXyoGraphQlDelegate,
-  IXyoBoundWitnessMutexDelegate,
   IXyoPluginDelegate,
-  XyoPluginProviders
+  XyoPluginProviders,
 } from '@xyo-network/sdk-base-nodejs'
-import { IXyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
+import { XyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
+
 import { XyoGetBlocksByPublicKeyResolver } from '../blocks-by-public-key'
 
 export class XyoGraphQlBlockGetPlugin implements IXyoPlugin {
@@ -24,7 +23,7 @@ export class XyoGraphQlBlockGetPlugin implements IXyoPlugin {
 
   public async initialize(delegate: IXyoPluginDelegate): Promise<boolean> {
     const blockRepositoryPublicKey = delegate.deps
-      .BLOCK_REPOSITORY_PUBLIC_KEY as IXyoBlockByPublicKeyRepository
+      .BLOCK_REPOSITORY_PUBLIC_KEY as XyoBlockByPublicKeyRepository
 
     const resolverPublicKey = new XyoGetBlocksByPublicKeyResolver(
       blockRepositoryPublicKey

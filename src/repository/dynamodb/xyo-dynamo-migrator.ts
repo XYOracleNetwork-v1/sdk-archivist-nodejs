@@ -1,19 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
-import {
-  XyoBoundWitness,
-  XyoSha256,
-  XyoObjectSchema,
-  gpsResolver
-} from '@xyo-network/sdk-core-nodejs'
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
+import {
+  gpsResolver,
+  XyoBoundWitness,
+  XyoObjectSchema,
+  XyoSha256,
+} from '@xyo-network/sdk-core-nodejs'
 import bs58 from 'bs58'
+import { BulkIndexDocumentsParams, Client } from 'elasticsearch'
 import ngeohash from 'ngeohash'
+
 import { ArchivistAbsorber } from '../../absorb/archivist-absorber'
-import { Client, BulkIndexDocumentsParams } from 'elasticsearch'
+import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
 
 const hasher = new XyoSha256()
 class Migrator extends XyoBase {
@@ -27,32 +24,29 @@ class Migrator extends XyoBase {
   public async migrate() {
     const absorber = new ArchivistAbsorber(process.argv[2])
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const blocks = await absorber.readBlocks(1000)
 
       const client = new Client({
         host:
-          'https://search-xyo-archivist-geohash-dswz22xbqpqxte3fls5fzpuf5u.us-east-1.es.amazonaws.com'
+          'https://search-xyo-archivist-geohash-dswz22xbqpqxte3fls5fzpuf5u.us-east-1.es.amazonaws.com',
       })
 
       const bulks: any[] = []
 
-      blocks.forEach(block => {
+      blocks.forEach((block) => {
         const bw = new XyoBoundWitness(block)
         const geohash = getGeohash(bw)
 
         if (geohash) {
           const hash = bs58.encode(
-            bw
-              .getHash(hasher)
-              .getAll()
-              .getContentsCopy()
+            bw.getHash(hasher).getAll().getContentsCopy()
           )
           bulks.push({
-            index: { _index: 'geohash', _type: 'bound_witness', _id: hash }
+            index: { _id: hash, _index: 'geohash', _type: 'bound_witness' },
           })
           bulks.push({
-            geohash,
             g1: geohash[0],
             g2: geohash[0] + geohash[1],
             g3: geohash[0] + geohash[1] + geohash[2],
@@ -64,14 +58,15 @@ class Migrator extends XyoBase {
               geohash[2] +
               geohash[3] +
               geohash[4] +
-              geohash[5]
+              geohash[5],
+            geohash,
           })
         }
       })
 
       const insert: BulkIndexDocumentsParams = {
+        body: bulks,
         index: 'geohash',
-        body: bulks
       }
 
       await new Promise((resolve, reject) => {
@@ -121,11 +116,14 @@ const getGeohash = (boundWitness: XyoBoundWitness): string | undefined => {
   }
 }
 
-async function main() {
+/*async function main() {
   const db = new XyoArchivistDynamoRepository()
   await db.initialize()
   const migrator = new Migrator(db)
   migrator.migrate()
 }
 
-// main()
+main()
+*/
+
+export default Migrator
