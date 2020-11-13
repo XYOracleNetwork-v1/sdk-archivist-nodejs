@@ -1,27 +1,24 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable require-await */
 import {
   IXyoPlugin,
-  IXyoGraphQlDelegate,
   IXyoPluginDelegate,
+  XyoBase,
   XyoPluginProviders,
-  XyoBase
 } from '@xyo-network/sdk-base-nodejs'
 import {
-  XyoBoundWitnessInserter,
-  XyoObjectSchema,
-  XyoBoundWitness,
-  XyoIterableStructure,
-  XyoStructure,
-  XyoSchema,
   gpsResolver,
-  XyoSha256
+  XyoBoundWitness,
+  XyoBoundWitnessInserter,
+  XyoIterableStructure,
+  XyoObjectSchema,
+  XyoSchema,
+  XyoSha256,
+  XyoStructure,
 } from '@xyo-network/sdk-core-nodejs'
-import ngeohash from 'ngeohash'
 import bs58 from 'bs58'
-import ws from 'ws'
 import http from 'http'
-import fs from 'fs'
+import ngeohash from 'ngeohash'
+import ws from 'ws'
 
 class XyoWebsocketNotify extends XyoBase implements IXyoPlugin {
   private clients: { [key: string]: ws } = {}
@@ -69,7 +66,7 @@ class XyoWebsocketNotify extends XyoBase implements IXyoPlugin {
 
     server.listen(11002)
 
-    inserter.addBlockListener('notify-on-location', async boundWitness => {
+    inserter.addBlockListener('notify-on-location', async (boundWitness) => {
       const bridgeBlocks = this.getNestedObjectType(
         new XyoBoundWitness(boundWitness),
         XyoObjectSchema.WITNESS,
@@ -98,10 +95,7 @@ class XyoWebsocketNotify extends XyoBase implements IXyoPlugin {
 
     if (geohash) {
       const hash = bs58.encode(
-        block
-          .getHash(new XyoSha256())
-          .getAll()
-          .getContentsCopy()
+        block.getHash(new XyoSha256()).getAll().getContentsCopy()
       )
       console.log(hash)
 
@@ -110,9 +104,9 @@ class XyoWebsocketNotify extends XyoBase implements IXyoPlugin {
 
         socket.send(
           JSON.stringify({
-            hash,
             geohash,
-            isBridge
+            hash,
+            isBridge,
           })
         )
       }

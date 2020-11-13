@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * @Author: XY | The Findables Company <xyo-network>
  * @Date:   Thursday, 14th February 2019 1:52:34 pm
@@ -10,15 +9,16 @@
  * @Copyright: Copyright XY | The Findables Company
  */
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
-import { IXyoOriginBlockGetter } from '@xyo-network/sdk-core-nodejs'
-import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
+import { XyoOriginBlockGetter } from '@xyo-network/sdk-core-nodejs'
 import bs58 from 'bs58'
+
+import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
 
 export class XyoGetBlockByHashResolver extends XyoBase {
   public static query = 'blockByHash(hash: String!): XyoBlock'
   public static queryName = 'blockByHash'
 
-  constructor(private readonly originBlockRepository: IXyoOriginBlockGetter) {
+  constructor(private readonly originBlockRepository: XyoOriginBlockGetter) {
     super()
   }
 

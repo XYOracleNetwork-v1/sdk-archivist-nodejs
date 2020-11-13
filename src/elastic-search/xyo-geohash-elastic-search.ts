@@ -1,27 +1,23 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable require-await */
 import {
   IXyoPlugin,
-  IXyoGraphQlDelegate,
   IXyoPluginDelegate,
+  XyoBase,
   XyoPluginProviders,
-  XyoBase
 } from '@xyo-network/sdk-base-nodejs'
 import {
-  XyoBoundWitnessInserter,
-  XyoObjectSchema,
-  XyoBoundWitness,
-  XyoIterableStructure,
-  XyoStructure,
-  XyoSchema,
   gpsResolver,
-  XyoSha256
+  XyoBoundWitness,
+  XyoBoundWitnessInserter,
+  XyoIterableStructure,
+  XyoObjectSchema,
+  XyoSchema,
+  XyoSha256,
+  XyoStructure,
 } from '@xyo-network/sdk-core-nodejs'
-import ngeohash from 'ngeohash'
 import bs58 from 'bs58'
 import { Client } from 'elasticsearch'
+import ngeohash from 'ngeohash'
 
 class XyoElasticGeohash extends XyoBase implements IXyoPlugin {
   private blockQueue: any[] = []
@@ -42,10 +38,10 @@ class XyoElasticGeohash extends XyoBase implements IXyoPlugin {
     const inserter = delegate.deps
       .BOUND_WITNESS_INSERTER as XyoBoundWitnessInserter
     this.client = new Client({
-      host: delegate.config.host
+      host: delegate.config.host,
     })
 
-    inserter.addBlockListener('elastic-geohash', async boundWitness => {
+    inserter.addBlockListener('elastic-geohash', async (boundWitness) => {
       const bridgeBlocks = this.getNestedObjectType(
         new XyoBoundWitness(boundWitness),
         XyoObjectSchema.WITNESS,
@@ -73,12 +69,12 @@ class XyoElasticGeohash extends XyoBase implements IXyoPlugin {
     if (this.blockQueue.length > 500) {
       this.logInfo(`Elastic inserting records: ${this.blockQueue.length / 2}`)
       await new Promise((resolve, reject) => {
-        this.client!.bulk(
+        this.client?.bulk(
           {
+            body: this.blockQueue,
             index: 'geohash',
-            body: this.blockQueue
           },
-          error => {
+          (error) => {
             if (error) {
               this.logError(`Elastic inserting records error: ${error}`)
 
@@ -101,16 +97,12 @@ class XyoElasticGeohash extends XyoBase implements IXyoPlugin {
 
     if (geohash) {
       const hash = bs58.encode(
-        block
-          .getHash(new XyoSha256())
-          .getAll()
-          .getContentsCopy()
+        block.getHash(new XyoSha256()).getAll().getContentsCopy()
       )
       this.blockQueue.push({
-        index: { _index: 'geohash', _type: 'bound_witness', _id: hash }
+        index: { _id: hash, _index: 'geohash', _type: 'bound_witness' },
       })
       this.blockQueue.push({
-        geohash,
         g1: geohash[0],
         g2: geohash[0] + geohash[1],
         g3: geohash[0] + geohash[1] + geohash[2],
@@ -122,7 +114,8 @@ class XyoElasticGeohash extends XyoBase implements IXyoPlugin {
           geohash[2] +
           geohash[3] +
           geohash[4] +
-          geohash[5]
+          geohash[5],
+        geohash,
       })
     }
   }

@@ -1,19 +1,18 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable require-await */
 /*
  * File: main-table.ts
  * Project: @xyo-network/sdk-archivist-nodejs
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Thursday, 25th April 2019 3:24:51 pm
+ * Last Modified: Friday, 13th November 2020 2:55:01 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { DynamoDB } from 'aws-sdk'
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
+import { DynamoDB } from 'aws-sdk'
 
 export class Table extends XyoBase {
   protected createTableInput?: DynamoDB.Types.CreateTableInput
@@ -23,7 +22,7 @@ export class Table extends XyoBase {
   constructor(protected readonly tableName: string, region = 'us-east-1') {
     super()
     this.dynamodb = new DynamoDB({
-      region
+      region,
     })
   }
 

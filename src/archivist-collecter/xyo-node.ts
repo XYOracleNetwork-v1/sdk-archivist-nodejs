@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /*
  * @Author: XY | The Findables Company <xyo-network>
  * @Date:   Friday, 8th February 2019 3:47:53 pm
@@ -12,31 +10,29 @@
  */
 
 import {
+  IXyoBoundWitnessMutexDelegate,
   XyoBase,
-  IXyoBoundWitnessMutexDelegate
 } from '@xyo-network/sdk-base-nodejs'
-import { receiveProcedureCatalog } from './xyo-recive-catalog'
 import {
-  XyoServerTcpNetwork,
-  XyoFileOriginStateRepository,
-  XyoMemoryBlockRepository,
-  XyoOriginState,
-  XyoSha256,
-  XyoOriginPayloadConstructor,
-  XyoZigZagBoundWitnessHander,
+  addAllDefaults,
+  XyoBoundWitnessInserter,
   XyoGenesisBlockCreator,
   XyoNetworkHandler,
-  XyoBoundWitnessInserter,
-  addAllDefaults,
-  IXyoOriginBlockRepository,
-  IXyoNetworkPipe
+  XyoNetworkPipe,
+  XyoOriginBlockRepository,
+  XyoOriginPayloadConstructor,
+  XyoOriginState,
+  XyoServerTcpNetwork,
+  XyoSha256,
+  XyoZigZagBoundWitnessHander,
 } from '@xyo-network/sdk-core-nodejs'
-import _ from 'lodash'
 import bs58 from 'bs58'
+
+import { receiveProcedureCatalog } from './xyo-recive-catalog'
 
 export class XyoNode extends XyoBase {
   public network: XyoServerTcpNetwork
-  public blockRepository: IXyoOriginBlockRepository
+  public blockRepository: XyoOriginBlockRepository
   public state: XyoOriginState
   public hasher: XyoSha256
   public inserter: XyoBoundWitnessInserter
@@ -47,7 +43,7 @@ export class XyoNode extends XyoBase {
   constructor(
     port: number,
     state: XyoOriginState,
-    blockRepository: IXyoOriginBlockRepository,
+    blockRepository: XyoOriginBlockRepository,
     mutexHandler: IXyoBoundWitnessMutexDelegate
   ) {
     super()
@@ -68,7 +64,7 @@ export class XyoNode extends XyoBase {
     addAllDefaults()
   }
 
-  private handlePipe = async (pipe: IXyoNetworkPipe) => {
+  private handlePipe = async (pipe: XyoNetworkPipe) => {
     this.network.stopListening()
     this.logInfo('New archivist request!')
 
@@ -106,16 +102,13 @@ export class XyoNode extends XyoBase {
       )
       this.logInfo(
         `Created genesis block with hash: ${bs58.encode(
-          genesisBlock
-            .getHash(this.hasher)
-            .getAll()
-            .getContentsCopy()
+          genesisBlock.getHash(this.hasher).getAll().getContentsCopy()
         )}`
       )
       await this.inserter.insert(genesisBlock)
     }
 
-    this.network.onPipeCreated = pipe => {
+    this.network.onPipeCreated = (pipe) => {
       this.handlePipe(pipe)
       return true
     }
@@ -123,6 +116,7 @@ export class XyoNode extends XyoBase {
     this.network.startListening()
   }
 
+  // eslint-disable-next-line require-await
   public async stop() {
     this.network.stopListening()
   }

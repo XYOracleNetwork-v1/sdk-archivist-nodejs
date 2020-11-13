@@ -1,20 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable require-await */
 /*
  * File: main-table.ts
  * Project: @xyo-network/sdk-archivist-nodejs
  * File Created: Tuesday, 23rd April 2019 8:14:51 am
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 23rd April 2019 12:24:05 pm
+ * Last Modified: Friday, 13th November 2020 3:00:09 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
-import { Table } from './table'
 import { DynamoDB } from 'aws-sdk'
 import lruCache from 'lru-cache'
+
+import { Table } from './table'
 
 export class BoundWitnessTable extends Table {
   private cache: lruCache<string, Buffer>
@@ -24,27 +24,27 @@ export class BoundWitnessTable extends Table {
 
     this.cache = new lruCache({
       max: 5000,
-      maxAge: 1000 * 60 * 60 // one hour
+      maxAge: 1000 * 60 * 60, // one hour
     })
 
     this.createTableInput = {
       AttributeDefinitions: [
         {
           AttributeName: 'BlockHash',
-          AttributeType: 'B'
-        }
+          AttributeType: 'B',
+        },
       ],
       KeySchema: [
         {
           AttributeName: 'BlockHash',
-          KeyType: 'HASH'
-        }
+          KeyType: 'HASH',
+        },
       ],
       ProvisionedThroughput: {
         ReadCapacityUnits: 5,
-        WriteCapacityUnits: 5
+        WriteCapacityUnits: 5,
       },
-      TableName: tableName
+      TableName: tableName,
     }
   }
 
@@ -59,11 +59,11 @@ export class BoundWitnessTable extends Table {
         const params: DynamoDB.Types.GetItemInput = {
           Key: {
             BlockHash: {
-              B: hash
-            }
+              B: hash,
+            },
           },
           ReturnConsumedCapacity: 'TOTAL',
-          TableName: this.tableName
+          TableName: this.tableName,
         }
         this.dynamodb.getItem(
           params,
@@ -93,18 +93,18 @@ export class BoundWitnessTable extends Table {
         const params: DynamoDB.Types.PutItemInput = {
           Item: {
             BlockHash: {
-              B: hash
+              B: hash,
             },
             Data: {
-              B: originBlock
-            }
+              B: originBlock,
+            },
           },
           ReturnConsumedCapacity: 'TOTAL',
-          TableName: this.tableName
+          TableName: this.tableName,
         }
         this.dynamodb.putItem(
           params,
-          (err: any, data: DynamoDB.Types.PutItemOutput) => {
+          (err: any, _data: DynamoDB.Types.PutItemOutput) => {
             if (err) {
               reject(err)
             }
@@ -125,15 +125,15 @@ export class BoundWitnessTable extends Table {
         const params: DynamoDB.Types.DeleteItemInput = {
           Key: {
             BlockHash: {
-              B: hash
-            }
+              B: hash,
+            },
           },
           ReturnConsumedCapacity: 'TOTAL',
-          TableName: this.tableName
+          TableName: this.tableName,
         }
         this.dynamodb.deleteItem(
           params,
-          (err: any, data: DynamoDB.Types.DeleteItemOutput) => {
+          (err: any, _data: DynamoDB.Types.DeleteItemOutput) => {
             if (err) {
               this.logError(err)
               reject(err)
@@ -158,13 +158,13 @@ export class BoundWitnessTable extends Table {
         const params: DynamoDB.Types.ScanInput = {
           Limit: limit,
           ReturnConsumedCapacity: 'TOTAL',
-          TableName: this.tableName
+          TableName: this.tableName,
         }
         if (offsetHash) {
           params.ExclusiveStartKey = {
             BlockHash: {
-              B: offsetHash
-            }
+              B: offsetHash,
+            },
           }
         }
 

@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
+
 import { XyoStatSnap } from './xyo-stat-snapshoter'
 
 export class XyoSnapResolver extends XyoBase {
@@ -10,6 +10,7 @@ export class XyoSnapResolver extends XyoBase {
     super()
   }
 
+  // eslint-disable-next-line require-await
   public async resolve(): Promise<any> {
     return this.stats.getPastWeek()
   }

@@ -1,20 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   IXyoPlugin,
   IXyoPluginDelegate,
-  XyoPluginProviders
+  XyoPluginProviders,
 } from '@xyo-network/sdk-base-nodejs'
 import {
-  IXyoOriginBlockGetter,
-  IXyoOriginBlockRepository,
-  IXyoBlockByPublicKeyRepository,
-  IXyoBlocksByGeohashRepository
+  XyoOriginBlockGetter,
+  XyoOriginBlockRepository,
 } from '@xyo-network/sdk-core-nodejs'
+
 import { XyoArchivistLevelRepository } from '../xyo-level-archivist-repository'
 
 class XyoArchivistLevelRepositoryPlugin implements IXyoPlugin {
-  public BLOCK_REPOSITORY_GET: IXyoOriginBlockGetter | undefined
-  public BLOCK_REPOSITORY_ADD: IXyoOriginBlockRepository | undefined
+  public BLOCK_REPOSITORY_GET: XyoOriginBlockGetter | undefined
+  public BLOCK_REPOSITORY_ADD: XyoOriginBlockRepository | undefined
 
   public getName(): string {
     return 'archivist-level-repository'
@@ -23,7 +21,7 @@ class XyoArchivistLevelRepositoryPlugin implements IXyoPlugin {
   public getProvides(): string[] {
     return [
       XyoPluginProviders.BLOCK_REPOSITORY_GET,
-      XyoPluginProviders.BLOCK_REPOSITORY_ADD
+      XyoPluginProviders.BLOCK_REPOSITORY_ADD,
     ]
   }
   public getPluginDependencies(): string[] {

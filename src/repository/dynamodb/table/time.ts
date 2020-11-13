@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Table } from './table'
+/* eslint-disable require-await */
 import { DynamoDB } from 'aws-sdk'
+
+import { Table } from './table'
 
 const TIME_MINUTE = 1000 * 60
 const TIME_HOUR = TIME_MINUTE * 60
@@ -13,28 +13,28 @@ export class TimeTable extends Table {
       AttributeDefinitions: [
         {
           AttributeName: 'Hour',
-          AttributeType: 'N'
+          AttributeType: 'N',
         },
         {
           AttributeName: 'Time',
-          AttributeType: 'N'
-        }
+          AttributeType: 'N',
+        },
       ],
       KeySchema: [
         {
           AttributeName: 'Hour',
-          KeyType: 'HASH'
+          KeyType: 'HASH',
         },
         {
           AttributeName: 'Time',
-          KeyType: 'RANGE'
-        }
+          KeyType: 'RANGE',
+        },
       ],
       ProvisionedThroughput: {
         ReadCapacityUnits: 5,
-        WriteCapacityUnits: 5
+        WriteCapacityUnits: 5,
       },
-      TableName: tableName
+      TableName: tableName,
     }
   }
 
@@ -45,21 +45,21 @@ export class TimeTable extends Table {
       try {
         const params: DynamoDB.Types.PutItemInput = {
           Item: {
+            Bytes: {
+              B: bytes,
+            },
             Hour: {
-              N: Math.floor(currentTime / TIME_HOUR).toString()
+              N: Math.floor(currentTime / TIME_HOUR).toString(),
             },
             Time: {
-              N: currentTime.toString()
+              N: currentTime.toString(),
             },
-            Bytes: {
-              B: bytes
-            }
           },
-          TableName: this.tableName
+          TableName: this.tableName,
         }
         this.dynamodb.putItem(
           params,
-          (err: any, data: DynamoDB.Types.PutItemOutput) => {
+          (err: any, _data: DynamoDB.Types.PutItemOutput) => {
             if (err) {
               reject(err)
             }
@@ -82,18 +82,18 @@ export class TimeTable extends Table {
       (resolve: any, reject: any) => {
         try {
           const params: DynamoDB.Types.QueryInput = {
-            Limit: limit,
-            KeyConditionExpression: '#hour = :hour and #time < :time',
-            ExpressionAttributeValues: {
-              ':hour': { N: hour.toString() },
-              ':time': { N: cursor.toString() }
-            },
             ExpressionAttributeNames: {
               '#hour': 'Hour',
-              '#time': 'Time'
+              '#time': 'Time',
             },
+            ExpressionAttributeValues: {
+              ':hour': { N: hour.toString() },
+              ':time': { N: cursor.toString() },
+            },
+            KeyConditionExpression: '#hour = :hour and #time < :time',
+            Limit: limit,
             ScanIndexForward: false,
-            TableName: this.tableName
+            TableName: this.tableName,
           }
 
           this.dynamodb.query(

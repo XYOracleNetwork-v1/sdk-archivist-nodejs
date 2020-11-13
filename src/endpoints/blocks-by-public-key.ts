@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * @Author: XY | The Findables Company <xyo-network>
  * @Date:   Thursday, 14th February 2019 2:50:26 pm
@@ -12,9 +10,10 @@
  */
 
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
-import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
-import { IXyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
+import { XyoBlockByPublicKeyRepository } from '@xyo-network/sdk-core-nodejs'
 import bs58 from 'bs58'
+
+import { bufferToGraphQlBlock } from './buffer-to-graphql-block'
 
 export class XyoGetBlocksByPublicKeyResolver extends XyoBase {
   public static query =
@@ -22,7 +21,7 @@ export class XyoGetBlocksByPublicKeyResolver extends XyoBase {
   public static queryName = 'blocksByPublicKey'
 
   constructor(
-    private readonly archivistRepository: IXyoBlockByPublicKeyRepository
+    private readonly archivistRepository: XyoBlockByPublicKeyRepository
   ) {
     super()
   }
@@ -64,7 +63,7 @@ export class XyoGetBlocksByPublicKeyResolver extends XyoBase {
 
       return {
         blocks: serializedBoundWitnesses,
-        keySet: [publicKey]
+        keySet: [publicKey],
       }
     } catch (e) {
       this.logError(
@@ -72,7 +71,7 @@ export class XyoGetBlocksByPublicKeyResolver extends XyoBase {
       )
       return {
         blocks: [],
-        keySet: [publicKey]
+        keySet: [publicKey],
       }
     }
   }

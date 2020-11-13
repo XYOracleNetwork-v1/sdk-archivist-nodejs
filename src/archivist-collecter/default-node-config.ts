@@ -13,5 +13,5 @@ import { IXyoArchivistConfig } from './@types'
  */
 
 export const DEFAULT_NODE_ARCHIVIST_CONFIG: IXyoArchivistConfig = {
-  port: 11000
+  port: 11000,
 }

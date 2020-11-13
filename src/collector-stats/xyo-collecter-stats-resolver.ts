@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
+
 import { XyoCollectorStats } from './xyo-collecter-stats'
 
 export class XyoCollecterStatsResolver extends XyoBase {
@@ -23,17 +23,20 @@ export class XyoCollecterStatsResolver extends XyoBase {
     super()
   }
 
+  // eslint-disable-next-line require-await
   public async resolve(): Promise<any> {
     return {
       allTimeBoundWitnesses: this.stats.geAllTimeBoundWitnesses(),
       allTimeCollectedBoundWitnesses: this.stats.getAllTimeCollectedBoundWitnesses(),
       allTimeCollectedPerBoundWitness: this.stats.getMeanBridgeBlockAllTime(),
+      lastBoundWitnessTime: this.stats.getLastBoundWitnessTime().toString(),
+      // a string because graphql only supports 32bit
+      runTimeBoundWitnessMinute: this.stats.getMeanBoundWitnessPerMinuteRuntime(),
+
       runTimeBoundWitnesses: this.stats.getRunTimeBoundWitnesses(),
       runTimeCollectedBoundWitnesses: this.stats.getRunTimeCollectedBoundWitnesses(),
       runTimeCollectedPerBoundWitness: this.stats.getMeanBridgeBlockRuntime(),
-      lastBoundWitnessTime: this.stats.getLastBoundWitnessTime().toString(), // a string because graphql only supports 32bit
-      runTimeBoundWitnessMinute: this.stats.getMeanBoundWitnessPerMinuteRuntime(),
-      runTimeCollectedPerBoundWitnessMinute: this.stats.getMeanCollectedBoundWitnessPerMinuteRuntime()
+      runTimeCollectedPerBoundWitnessMinute: this.stats.getMeanCollectedBoundWitnessPerMinuteRuntime(),
     }
   }
 }

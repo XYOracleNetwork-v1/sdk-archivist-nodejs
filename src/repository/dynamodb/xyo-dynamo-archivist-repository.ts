@@ -1,46 +1,47 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable require-await */
 /*
  * File: xyo-dynamo-archivist-repository.ts
  * Project: sdk-archivist-nodejs
  * File Created: Tuesday, 16th April 2019 2:04:07 pm
  * Author: XYO Development Team (support@xyo.network)
  * -----
- * Last Modified: Tuesday, 30th April 2019 10:08:59 pm
+ * Last Modified: Friday, 13th November 2020 2:57:03 pm
  * Modified By: XYO Development Team (support@xyo.network>)
  * -----
  * Copyright 2017 - 2019 XY - The Persistent Company
  */
 
 import { XyoBase } from '@xyo-network/sdk-base-nodejs'
-import { BoundWitnessTable } from './table/boundwitness'
-import { PublicKeyTable } from './table/publickey'
 import {
-  XyoIterableStructure,
-  IXyoOriginBlockGetter,
-  IXyoOriginBlockRepository,
-  XyoBoundWitness,
-  IXyoBlockByPublicKeyRepository,
-  XyoBoundWitnessOriginGetter,
   addAllDefaults,
-  XyoObjectSchema,
   gpsResolver,
-  IXyoBlocksByTime
+  XyoBlockByPublicKeyRepository,
+  XyoBlocksByTime,
+  XyoBoundWitness,
+  XyoBoundWitnessOriginGetter,
+  XyoIterableStructure,
+  XyoObjectSchema,
+  XyoOriginBlockGetter,
+  XyoOriginBlockRepository,
 } from '@xyo-network/sdk-core-nodejs'
 import crypto from 'crypto'
 import ngeohash from 'ngeohash'
+
+import { BoundWitnessTable } from './table/boundwitness'
 import { GeohashTable } from './table/geo'
+import { PublicKeyTable } from './table/publickey'
 import { TimeTable } from './table/time'
 
 // Note: We use Sha1 hashes in DynamoDB to save space!  All functions calling to the tables
 // must use shortHashes (sha1)
 
-export class XyoArchivistDynamoRepository extends XyoBase
+export class XyoArchivistDynamoRepository
+  extends XyoBase
   implements
-    IXyoOriginBlockGetter,
-    IXyoOriginBlockRepository,
-    IXyoBlockByPublicKeyRepository,
-    IXyoBlocksByTime {
+    XyoOriginBlockGetter,
+    XyoOriginBlockRepository,
+    XyoBlockByPublicKeyRepository,
+    XyoBlocksByTime {
   private maxNumberOfBlockResults = 10_000
   private boundWitnessTable: BoundWitnessTable
   private publicKeyTable: PublicKeyTable
@@ -195,10 +196,8 @@ export class XyoArchivistDynamoRepository extends XyoBase
     const hashesStructure = new XyoIterableStructure(hashes)
     const blockIt = blockStructure.newIterator()
     const hashIt = hashesStructure.newIterator()
-    let i = 0
 
     while (blockIt.hasNext()) {
-      i++
       const block = blockIt.next().value
       const hash = hashIt.next().value
       await this.addOriginBlock(
@@ -230,7 +229,7 @@ export class XyoArchivistDynamoRepository extends XyoBase
 
     return {
       items: result,
-      total: (await this.boundWitnessTable.getRecordCount()) || -1
+      total: (await this.boundWitnessTable.getRecordCount()) || -1,
     }
   }
 
@@ -245,7 +244,7 @@ export class XyoArchivistDynamoRepository extends XyoBase
     if (blocks.results.length >= limit || blocks.results.length === 0) {
       return {
         items: blocks.results,
-        lastTime: blocks.lastTime
+        lastTime: blocks.lastTime,
       }
     }
 
@@ -258,14 +257,11 @@ export class XyoArchivistDynamoRepository extends XyoBase
 
     return {
       items: blocks.results.concat(nextPageOfBlocks.items),
-      lastTime: nextPageOfBlocks.lastTime
+      lastTime: nextPageOfBlocks.lastTime,
     }
   }
 
   private sha1(data: Buffer) {
-    return crypto
-      .createHash('sha1')
-      .update(data)
-      .digest()
+    return crypto.createHash('sha1').update(data).digest()
   }
 }
