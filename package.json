@@ -88,7 +88,7 @@
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.6.10",
     "apollo-link-http": "^1.5.17",
-    "aws-sdk": "^2.446.0",
+    "aws-sdk": "^2.814.0",
     "bs58": "^4.0.1",
     "elasticsearch": "^16.1.1",
     "graphql-tag": "^2.10.1",
