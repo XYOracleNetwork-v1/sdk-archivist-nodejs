@@ -11,9 +11,9 @@
  */
 
 export interface IXyoComponentArchivistFeatureDetail {
-  origins: number
-  graphqlHost: string
-  graphqlPort: number
   boundWitnessHost: string
   boundWitnessPort: number
+  graphqlHost: string
+  graphqlPort: number
+  origins: number
 }

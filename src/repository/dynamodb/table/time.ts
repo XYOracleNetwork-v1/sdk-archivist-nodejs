@@ -77,8 +77,8 @@ export class TimeTable extends Table {
     hour: number,
     cursor: number,
     limit: number
-  ): Promise<{ results: Buffer[]; lastTime: number }> {
-    return new Promise<{ results: Buffer[]; lastTime: number }>(
+  ): Promise<{ lastTime: number; results: Buffer[] }> {
+    return new Promise<{ lastTime: number; results: Buffer[] }>(
       (resolve: any, reject: any) => {
         try {
           const params: DynamoDB.Types.QueryInput = {
