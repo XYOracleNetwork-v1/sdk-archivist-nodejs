@@ -14,8 +14,8 @@ import {
 import { XyoArchivistDynamoRepository } from './xyo-dynamo-archivist-repository'
 
 interface IXyoDynamoRepositoryConfig {
-  tablePrefix?: string
   region?: string
+  tablePrefix?: string
 }
 
 export class XyoArchivistDynamoRepositoryPlugin implements IXyoPlugin {

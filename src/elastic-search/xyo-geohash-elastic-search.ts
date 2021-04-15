@@ -83,7 +83,7 @@ class XyoElasticGeohash extends XyoBase implements IXyoPlugin {
 
             this.logInfo('Elastic inserting records success')
 
-            resolve()
+            resolve(true)
           }
         )
       })

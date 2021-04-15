@@ -36,9 +36,7 @@ export class Table extends XyoBase {
     return description.ItemCount
   }
 
-  protected async readTableDescription(): Promise<
-    DynamoDB.Types.TableDescription
-  > {
+  protected async readTableDescription(): Promise<DynamoDB.Types.TableDescription> {
     return new Promise((resolve, reject) => {
       try {
         this.dynamodb.describeTable(
@@ -51,7 +49,11 @@ export class Table extends XyoBase {
               reject(describeErr)
               return
             }
-            resolve(describeData.Table)
+            if (describeData.Table) {
+              resolve(describeData.Table)
+            } else {
+              reject()
+            }
           }
         )
       } catch (ex) {
