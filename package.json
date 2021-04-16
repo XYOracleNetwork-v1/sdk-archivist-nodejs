@@ -85,7 +85,7 @@
     "@types/redis": "^2.8.13",
     "@types/ws": "^7.4.1",
     "@xyo-network/sdk-base-nodejs": "0.7.6",
-    "@xyo-network/sdk-core-nodejs": "0.71.4",
+    "@xyo-network/sdk-core-nodejs": "0.71.6",
     "abstract-leveldown": "^7.0.0",
     "apollo-cache-inmemory": "^1.5.1",
     "apollo-client": "^2.6.10",
